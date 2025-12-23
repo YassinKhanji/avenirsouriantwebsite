@@ -107,7 +107,7 @@ export default function RegisterPage() {
         <div className="container mx-auto px-4 max-w-2xl">
           <h1 className="text-3xl font-bold mb-4">{t("register.title")}</h1>
           <p className="text-muted-foreground mb-8">{t("register.required")}</p>
-          <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="bg-card border border-border rounded-2xl p-8 space-y-10">
             {error && (
               <div className="rounded-lg border border-red-300 bg-red-50 text-red-700 p-3 text-sm">{error}</div>
             )}
@@ -122,7 +122,7 @@ export default function RegisterPage() {
               <label className="block text-sm mb-2">{t("register.studentName")} *</label>
               <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full rounded-lg border border-border bg-background p-3" required />
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm mb-2">{t("register.age")} *</label>
                 <input type="number" min={1} value={age} onChange={(e) => setAge(e.target.value)} className="w-full rounded-lg border border-border bg-background p-3" required />
@@ -155,7 +155,7 @@ export default function RegisterPage() {
               <label className="block text-sm mb-2">{t("register.childName")} *</label>
               <input type="text" value={childName} onChange={(e) => setChildName(e.target.value)} className="w-full rounded-lg border border-border bg-background p-3" required />
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm mb-2">{t("register.childDob")} *</label>
                 <input type="date" value={childDob} onChange={(e) => setChildDob(e.target.value)} className="w-full rounded-lg border border-border bg-background p-3" required />
@@ -169,7 +169,7 @@ export default function RegisterPage() {
               <label className="block text-sm mb-2">{t("register.parentName")} *</label>
               <input type="text" value={parentName} onChange={(e) => setParentName(e.target.value)} className="w-full rounded-lg border border-border bg-background p-3" required />
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm mb-2">{t("register.parentPhone")} *</label>
                 <input type="tel" value={parentPhone} onChange={(e) => setParentPhone(e.target.value)} className="w-full rounded-lg border border-border bg-background p-3" required />
@@ -179,7 +179,7 @@ export default function RegisterPage() {
                 <input type="tel" value={emergencyPhone} onChange={(e) => setEmergencyPhone(e.target.value)} className="w-full rounded-lg border border-border bg-background p-3" required />
               </div>
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm mb-2">{t("register.signature")} *</label>
                 <input type="text" value={signature} onChange={(e) => setSignature(e.target.value)} className="w-full rounded-lg border border-border bg-background p-3" required />

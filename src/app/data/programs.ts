@@ -25,6 +25,10 @@ export type Course = ProgramBase & {
 export type Activity = ProgramBase & {
   fullDescription: string;
   highlights: string[];
+  nextStartDate?: string;
+  spotsLeft: number;
+  curriculum: string[];
+  requirements: string[];
 };
 
 export function getCourses(t: (key: string) => string): Course[] {
@@ -146,6 +150,7 @@ export function getActivities(t: (key: string) => string): Activity[] {
       category: "activity",
       gradient: "bg-gradient-to-br from-emerald-500 to-green-500",
       fullDescription: t("activities.7.full"),
+      nextStartDate: "Rolling enrollment",
       highlights: [
         t("activities.7.h1"),
         t("activities.7.h2"),
@@ -155,6 +160,20 @@ export function getActivities(t: (key: string) => string): Activity[] {
         t("activities.7.h6"),
         t("activities.7.h7"),
         t("activities.7.h8"),
+      ],
+      spotsLeft: 10,
+      curriculum: [
+        "Team building exercises",
+        "Group projects & challenges",
+        "Social skills development",
+        "Collaborative learning",
+        "Community engagement",
+        "Leadership training",
+      ],
+      requirements: [
+        "No prior experience needed",
+        "Open to all ages",
+        "Commitment to regular attendance",
       ],
     },
     {
@@ -167,6 +186,7 @@ export function getActivities(t: (key: string) => string): Activity[] {
       category: "activity",
       gradient: "bg-gradient-to-br from-cyan-500 to-blue-500",
       fullDescription: t("activities.8.full"),
+      nextStartDate: "Starts Feb 2026",
       highlights: [
         t("activities.8.h1"),
         t("activities.8.h2"),
@@ -176,6 +196,20 @@ export function getActivities(t: (key: string) => string): Activity[] {
         t("activities.8.h6"),
         t("activities.8.h7"),
         t("activities.8.h8"),
+      ],
+      spotsLeft: 7,
+      curriculum: [
+        "Robotics fundamentals",
+        "Programming basics",
+        "Problem-solving drills",
+        "Engineering design process",
+        "Build and iterate projects",
+        "Showcase & competition prep",
+      ],
+      requirements: [
+        "Age 8 and above",
+        "Interest in technology",
+        "Basic computer familiarity",
       ],
     },
   ];

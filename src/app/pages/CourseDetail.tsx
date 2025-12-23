@@ -189,7 +189,7 @@ export default function CourseDetail() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10">
+      <section className="py-32 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10">
         <div className="container mx-auto px-4 text-center max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -201,15 +201,13 @@ export default function CourseDetail() {
             <p className="text-muted-foreground text-lg mb-8">
               {t("courseDetail.cta.desc")}
             </p>
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfEgAjYtASRQV5OY5J8GMCbKgxdMuauq6fj8t-jU-A4vX3HHg/viewform?usp=dialog"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/register"
               className="inline-flex items-center gap-2 px-10 py-4 bg-primary text-primary-foreground rounded-2xl hover:shadow-xl hover:shadow-primary/50 transition-all duration-300 group"
             >
               <span>{t("courseDetail.cta.button")}</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </Link>
           </motion.div>
         </div>
       </section>

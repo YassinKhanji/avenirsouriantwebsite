@@ -13,7 +13,7 @@ export default function ActivitiesPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-blue-500/10">
+      <section className="relative overflow-hidden py-32 bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-blue-500/10">
         <div className="container mx-auto px-4 relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -32,7 +32,7 @@ export default function ActivitiesPage() {
       </section>
 
       {/* Activities Grid */}
-      <section className="py-20">
+      <section className="py-32">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {activities.map((activity, index) => (
@@ -53,14 +53,14 @@ export default function ActivitiesPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-card border-t border-border">
+      <section className="py-32 bg-card border-t border-border">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-16"
           >
             <h2 className="text-3xl font-bold mb-4">{t("activitiesPage.benefits.title")}</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -100,7 +100,7 @@ export default function ActivitiesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-blue-500/10">
+      <section className="py-32 bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-blue-500/10">
         <div className="container mx-auto px-4 text-center max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -112,15 +112,13 @@ export default function ActivitiesPage() {
             <p className="text-muted-foreground text-lg mb-8">
               {t("activitiesPage.cta.desc")}
             </p>
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfEgAjYtASRQV5OY5J8GMCbKgxdMuauq6fj8t-jU-A4vX3HHg/viewform?usp=dialog"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/register"
               className="inline-flex items-center gap-2 px-10 py-4 bg-gradient-to-r from-emerald-600 to-cyan-600 text-white rounded-2xl hover:shadow-xl hover:shadow-emerald-500/50 transition-all duration-300 group"
             >
               <span>{t("activitiesPage.cta.button")}</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </Link>
           </motion.div>
         </div>
       </section>

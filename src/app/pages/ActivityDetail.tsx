@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowRight, Clock, Users, CheckCircle } from "lucide-react";
+import { ArrowRight, Clock, Users, CheckCircle, Calendar, AlertCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo } from "react";
 import { useI18n } from "../i18n";
@@ -42,7 +42,7 @@ export default function ActivityDetail() {
       {/* Activity Info Cards */}
       <section className="py-12 bg-card border-b border-border">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-5 gap-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -52,7 +52,7 @@ export default function ActivityDetail() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <Clock className="w-5 h-5 text-primary" />
-                <span className="text-muted-foreground">{t("activityDetail.duration")}</span>
+                <span className="text-muted-foreground">{t("courseDetail.duration")}</span>
               </div>
               <p className="text-2xl font-bold">{activity.duration}</p>
             </motion.div>
@@ -65,7 +65,7 @@ export default function ActivityDetail() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <Users className="w-5 h-5 text-primary" />
-                <span className="text-muted-foreground">{t("activityDetail.age")}</span>
+                <span className="text-muted-foreground">{t("courseDetail.age")}</span>
               </div>
               <p className="text-2xl font-bold">{activity.ageGroup}</p>
             </motion.div>
@@ -78,9 +78,39 @@ export default function ActivityDetail() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <CheckCircle className="w-5 h-5 text-primary" />
-                <span className="text-muted-foreground">{t("activityDetail.category")}</span>
+                <span className="text-muted-foreground">{t("courseDetail.category")}</span>
               </div>
               <p className="text-2xl font-bold capitalize">{activity.category}</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="bg-background rounded-lg p-6 border border-border"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Calendar className="w-5 h-5 text-primary" />
+                <span className="text-muted-foreground">{t("courseDetail.startDate")}</span>
+              </div>
+              <p className="text-xl font-bold">{activity.nextStartDate || "Available"}</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              viewport={{ once: true }}
+              className={`bg-background rounded-lg p-6 border ${
+                activity.spotsLeft <= 5 ? "border-red-500/30 bg-red-500/5" : "border-border"
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <AlertCircle className={`w-5 h-5 ${activity.spotsLeft <= 5 ? "text-red-600" : "text-primary"}`} />
+                <span className="text-muted-foreground">{t("courseDetail.spotsLeft")}</span>
+              </div>
+              <p className={`text-2xl font-bold ${activity.spotsLeft <= 5 ? "text-red-600" : ""}`}>
+                {activity.spotsLeft}
+              </p>
             </motion.div>
           </div>
         </div>
@@ -116,12 +146,50 @@ export default function ActivityDetail() {
                 </motion.div>
               ))}
             </div>
+
+            {/* Curriculum Section */}
+            <h3 className="text-2xl font-bold mb-6">{t("courseDetail.curriculum")}</h3>
+            <div className="space-y-3 mb-12">
+              {activity.curriculum.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  className="flex items-start gap-3 p-4 bg-card border border-border rounded-lg"
+                >
+                  <span className="flex-shrink-0 w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-sm">
+                    {index + 1}
+                  </span>
+                  <span className="text-lg">{item}</span>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Requirements Section */}
+            <h3 className="text-2xl font-bold mb-6">{t("courseDetail.requirements")}</h3>
+            <div className="space-y-3">
+              {activity.requirements.map((requirement, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  className="flex items-start gap-3"
+                >
+                  <AlertCircle className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
+                  <span className="text-lg">{requirement}</span>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10">
+      <section className="py-32 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10">
         <div className="container mx-auto px-4 text-center max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -133,15 +201,13 @@ export default function ActivityDetail() {
             <p className="text-muted-foreground text-lg mb-8">
               {t("activityDetail.cta.desc")}
             </p>
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfEgAjYtASRQV5OY5J8GMCbKgxdMuauq6fj8t-jU-A4vX3HHg/viewform?usp=dialog"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/register"
               className="inline-flex items-center gap-2 px-10 py-4 bg-primary text-primary-foreground rounded-2xl hover:shadow-xl hover:shadow-primary/50 transition-all duration-300 group"
             >
               <span>{t("activityDetail.cta.button")}</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </a>
+            </Link>
           </motion.div>
         </div>
       </section>
