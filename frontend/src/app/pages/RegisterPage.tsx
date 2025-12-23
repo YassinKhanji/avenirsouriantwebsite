@@ -1,9 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useI18n } from "../i18n";
 import { getCourses, getActivities } from "../data/programs";
 
 export default function RegisterPage() {
   const { t, lang } = useI18n();
+  const [searchParams] = useSearchParams();
   const courses = useMemo(() => getCourses(t), [t, lang]);
   const activities = useMemo(() => getActivities(t), [t, lang]);
   const allPrograms = useMemo(() => [...courses, ...activities], [courses, activities]);
@@ -27,6 +29,14 @@ export default function RegisterPage() {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const [loading, setLoading] = useState(false);
+
+  // Auto-select course from query params
+  useEffect(() => {
+    const courseId = searchParams.get("id");
+    if (courseId && !courseIds.includes(courseId)) {
+      setCourseIds([courseId]);
+    }
+  }, [searchParams]);
 
   function toggleCourse(id: string) {
     setCourseIds(prev => 

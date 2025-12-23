@@ -22,20 +22,34 @@ export default function Layout() {
       {/* Navigation Header */}
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur border-b border-border">
         <div className="container mx-auto px-4 py-2 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="Académie de l'Avenir Souriant" className="h-12 w-auto object-contain" />
-            <span className="brand-title text-lg font-normal text-primary hidden sm:inline">
+          <Link to="/" className="flex items-center gap-2 min-w-0">
+            <img src="/logo.png" alt="Académie de l'Avenir Souriant" className="h-8 md:h-12 w-auto object-contain" />
+            <span className="brand-title text-[13px] md:text-lg font-medium text-primary truncate max-w-[55vw] md:max-w-none">
               {t("common.brand")}
             </span>
           </Link>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2"
-          >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile controls: language dropdown + theme + menu button */}
+          <div className="md:hidden flex items-center gap-2">
+            <label className="sr-only" htmlFor="mobile-lang-select">Language</label>
+            <select
+              id="mobile-lang-select"
+              value={lang}
+              onChange={(e) => setLang(e.target.value as Language)}
+              className="text-xs px-2 py-1 rounded-md border border-border bg-card text-foreground"
+            >
+              {languages.map((code) => (
+                <option key={code} value={code}>{code.toUpperCase()}</option>
+              ))}
+            </select>
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="p-2"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+            >
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex gap-4 items-center text-sm">

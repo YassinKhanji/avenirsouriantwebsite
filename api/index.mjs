@@ -82,6 +82,20 @@ async function initializeDatabase() {
           (8, 'Activity 2', 20);
       `;
     }
+
+    // Subscribers table for newsletter/notify
+    await sql`
+      CREATE TABLE IF NOT EXISTS subscribers (
+        id SERIAL PRIMARY KEY,
+        created_at TIMESTAMP DEFAULT NOW(),
+        email VARCHAR(255) NOT NULL,
+        lang VARCHAR(10) DEFAULT 'en',
+        source VARCHAR(50),
+        course_id INTEGER,
+        course_title VARCHAR(255),
+        page_path VARCHAR(255)
+      );
+    `;
   } catch (error) {
     console.error('Database initialization error:', error);
   }
@@ -100,6 +114,26 @@ const mailer = nodemailer.createTransport({
 app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
+
+// Helper to ensure subscribers table exists in edge cases
+async function ensureSubscribersTable() {
+  try {
+    await sql`
+      CREATE TABLE IF NOT EXISTS subscribers (
+        id SERIAL PRIMARY KEY,
+        created_at TIMESTAMP DEFAULT NOW(),
+        email VARCHAR(255) NOT NULL,
+        lang VARCHAR(10) DEFAULT 'en',
+        source VARCHAR(50),
+        course_id INTEGER,
+        course_title VARCHAR(255),
+        page_path VARCHAR(255)
+      );
+    `;
+  } catch (e) {
+    console.error('Failed to create subscribers table:', e);
+  }
+}
 
 app.post('/api/register', async (req, res) => {
   const b = req.body || {};
@@ -210,6 +244,108 @@ app.get('/api/courses', async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'Failed to fetch courses' });
+  }
+});
+
+// Capture email for notifications (newsletter/notify)
+app.post('/api/notify', async (req, res) => {
+  const b = req.body || {};
+  const email = (b.email || '').toString().trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Invalid email' });
+  }
+  try {
+    await ensureSubscribersTable();
+    await sql`
+      INSERT INTO subscribers (email, lang, source, course_id, course_title, page_path)
+      VALUES (${email}, ${b.lang || 'en'}, ${b.source || null}, ${b.course_id || null}, ${b.course_title || null}, ${b.page_path || null});
+    `;
+    // Non-blocking confirmation email
+    try {
+      const subjects = {
+        en: 'You’re on the list – Avenir Souriant',
+        fr: 'Vous êtes inscrit(e) – Avenir Souriant',
+        ar: 'تم تسجيلك في القائمة – أكاديمية المستقبل الباسم',
+      };
+      const appDomain = process.env.APP_DOMAIN || 'https://avenirsouriant.com';
+      const unsubscribeUrl = `${appDomain}/unsubscribe?email=${encodeURIComponent(email)}`;
+      const bodies = {
+        en: `Thanks for subscribing! We'll email you when ${b.course_title ? '"' + b.course_title + '"' : 'new courses'} open or when we have schedule updates and offers.\n\nClick the link below to unsubscribe:\n${unsubscribeUrl}`,
+        fr: `Merci pour votre inscription! Nous vous écrirons lorsque ${b.course_title ? '« ' + b.course_title + ' »' : 'de nouveaux cours'} ouvriront ou lorsque nous aurons des mises à jour d'horaires et des offres.\n\nCliquez sur le lien ci-dessous pour vous désabonner:\n${unsubscribeUrl}`,
+        ar: `شكراً لاشتراكك! سنراسلك عند فتح ${b.course_title ? '« ' + b.course_title + ' »' : 'دورات جديدة'} أو عند وجود تحديثات للمواعيد والعروض.\n\nانقر على الرابط أدناه لإلغاء الاشتراك:\n${unsubscribeUrl}`,
+      };
+      const htmlBodies = {
+        en: `<p>Thanks for subscribing! We'll email you when ${b.course_title ? '&ldquo;' + b.course_title + '&rdquo;' : 'new courses'} open or when we have schedule updates and offers.</p><p><a href="${unsubscribeUrl}" style="display:inline-block;padding:10px 16px;border-radius:8px;background:#0ea5e9;color:white;text-decoration:none;font-weight:bold;">Unsubscribe</a></p><p>If the button doesn't work, copy and paste this link:<br/><a href="${unsubscribeUrl}">${unsubscribeUrl}</a></p>`,
+        fr: `<p>Merci pour votre inscription! Nous vous écrirons lorsque ${b.course_title ? '« ' + b.course_title + ' »' : 'de nouveaux cours'} ouvriront ou lorsque nous aurons des mises à jour d'horaires et des offres.</p><p><a href="${unsubscribeUrl}" style="display:inline-block;padding:10px 16px;border-radius:8px;background:#0ea5e9;color:white;text-decoration:none;font-weight:bold;">Se désabonner</a></p><p>Si le bouton ne fonctionne pas, copiez et collez ce lien:<br/><a href="${unsubscribeUrl}">${unsubscribeUrl}</a></p>`,
+        ar: `<p>شكراً لاشتراكك! سنراسلك عند فتح ${b.course_title ? '« ' + b.course_title + ' »' : 'دورات جديدة'} أو عند وجود تحديثات للمواعيد والعروض.</p><p><a href="${unsubscribeUrl}" style="display:inline-block;padding:10px 16px;border-radius:8px;background:#0ea5e9;color:white;text-decoration:none;font-weight:bold;">إلغاء الاشتراك</a></p><p>إذا لم يعمل الزر، انسخ الرابط التالي:<br/><a href="${unsubscribeUrl}">${unsubscribeUrl}</a></p>`,
+      };
+      const l = (b.lang || 'en');
+      await mailer.sendMail({
+        from: `Avenir Souriant Academy <${gmailUser}>`,
+        to: email,
+        subject: subjects[l] || subjects.en,
+        text: bodies[l] || bodies.en,
+        html: htmlBodies[l] || htmlBodies.en,
+      });
+    } catch (mailErr) {
+      console.error('Notify confirmation email failed:', mailErr);
+    }
+    res.status(201).json({ ok: true });
+  } catch (e) {
+    console.error('Failed to save subscriber', e);
+    res.status(500).json({ error: 'Failed to save subscriber' });
+  }
+});
+
+// Unsubscribe endpoint
+app.delete('/api/unsubscribe', async (req, res) => {
+  const email = (req.query.email || '').toString().trim().toLowerCase();
+  const lang = (req.query.lang || 'en').toString();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return res.status(400).json({ error: 'Invalid email' });
+  }
+  try {
+    await ensureSubscribersTable();
+  } catch (tableErr) {
+    console.error('Failed to ensure subscribers table', tableErr);
+  }
+  const subjects = {
+    en: 'You have been unsubscribed',
+    fr: 'Vous êtes désinscrit(e)',
+    ar: 'تم إلغاء اشتراكك'
+  };
+  const texts = {
+    en: 'You have been removed from our notifications list. You will no longer receive course or activity updates. If this was a mistake, you can subscribe again anytime on our site.',
+    fr: "Vous avez été retiré(e) de notre liste d'envoi. Vous ne recevrez plus de mises à jour. Si c'était une erreur, vous pouvez vous réabonner à tout moment sur notre site.",
+    ar: 'تمت إزالتك من قائمة الإشعارات لدينا. لن تتلقى تحديثات بعد الآن. إذا كان ذلك عن طريق الخطأ، يمكنك الاشتراك مرة أخرى من موقعنا.'
+  };
+  const htmls = {
+    en: '<p>You have been removed from our notifications list. You will no longer receive course or activity updates.</p><p>If this was a mistake, you can subscribe again anytime from our site.</p>',
+    fr: "<p>Vous avez été retiré(e) de notre liste d'envoi. Vous ne recevrez plus de mises à jour.</p><p>Si c'était une erreur, vous pouvez vous réabonner à tout moment depuis notre site.</p>",
+    ar: '<p>تمت إزالتك من قائمة الإشعارات لدينا. لن تتلقى تحديثات بعد الآن.</p><p>إذا كان ذلك عن طريق الخطأ، يمكنك الاشتراك مرة أخرى من موقعنا.</p>'
+  };
+  try {
+    const result = await sql`
+      DELETE FROM subscribers WHERE LOWER(email) = ${email};
+    `;
+
+    try {
+      const l = subjects[lang] ? lang : 'en';
+      await mailer.sendMail({
+        from: `Avenir Souriant Academy <${gmailUser}>`,
+        to: email,
+        subject: subjects[l],
+        text: texts[l],
+        html: htmls[l],
+      });
+    } catch (mailErr) {
+      console.error('Unsubscribe confirmation email failed:', mailErr);
+    }
+
+    res.json({ ok: true, deleted: result.rowCount });
+  } catch (e) {
+    console.error('Failed to unsubscribe', e);
+    res.status(500).json({ error: 'Failed to unsubscribe' });
   }
 });
 

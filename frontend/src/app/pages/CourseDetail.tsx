@@ -122,6 +122,16 @@ export default function CourseDetail() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
+            {/* Register button before description */}
+            <div className="mb-8">
+              <Link
+                to={`/register?id=${course.id}&title=${encodeURIComponent(course.title)}`}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl hover:shadow-lg hover:shadow-primary/40 transition-all group"
+              >
+                <span>{t("courseDetail.cta.button")}</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
             <h2 className="text-3xl font-bold mb-6">{t("courseDetail.about")}</h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-8">
               {course.fullDescription}
@@ -180,6 +190,17 @@ export default function CourseDetail() {
                   <span className="text-lg">{requirement}</span>
                 </motion.div>
               ))}
+            </div>
+
+            {/* Register button under requirements */}
+            <div className="mt-8">
+              <Link
+                to={`/register?id=${course.id}&title=${encodeURIComponent(course.title)}`}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl hover:shadow-lg hover:shadow-primary/40 transition-all group"
+              >
+                <span>{t("courseDetail.cta.button")}</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </motion.div>
         </div>
