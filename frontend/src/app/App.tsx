@@ -25,6 +25,7 @@ export default function App() {
   const spotsById = useMemo(() => Object.fromEntries(backendCourses.map(c => [c.id, c.spots_left])), [backendCourses]);
   const displayCourses = useMemo(() => courses.map(c => ({ ...c, spotsLeft: spotsById[c.id] ?? c.spotsLeft })), [courses, spotsById]);
   const activities = useMemo(() => getActivities(t), [t, lang]);
+  const activitiesWithDynamicSpots = useMemo(() => activities.map(a => ({ ...a, spotsLeft: spotsById[a.id] ?? a.spotsLeft })), [activities, spotsById]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -203,7 +204,7 @@ export default function App() {
                     {t("programs.courses.sub")}
                   </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
                   {displayCourses.map((course, index) => (
                     <motion.div
                       key={course.id}
@@ -211,6 +212,7 @@ export default function App() {
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
                       viewport={{ once: true }}
+                      className="h-full"
                     >
                       <Link to={`/course/${course.id}`} className="block h-full">
                         <ModernCourseCard {...course} />
@@ -228,14 +230,15 @@ export default function App() {
                     {t("programs.activities.sub")}
                   </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {activities.map((activity, index) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
+                  {activitiesWithDynamicSpots.map((activity, index) => (
                     <motion.div
                       key={activity.id}
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
                       viewport={{ once: true }}
+                      className="h-full"
                     >
                       <Link to={`/activity/${activity.id}`} className="block h-full">
                         <ModernCourseCard {...activity} />
@@ -247,7 +250,7 @@ export default function App() {
             </TabsContent>
 
             <TabsContent value="courses">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
                 {displayCourses.map((course, index) => (
                   <motion.div
                     key={course.id}
@@ -255,6 +258,7 @@ export default function App() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     viewport={{ once: true }}
+                    className="h-full"
                   >
                     <Link to={`/course/${course.id}`} className="block h-full">
                       <ModernCourseCard {...course} />
@@ -265,14 +269,15 @@ export default function App() {
             </TabsContent>
 
             <TabsContent value="activities">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {activities.map((activity, index) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
+                {activitiesWithDynamicSpots.map((activity, index) => (
                   <motion.div
                     key={activity.id}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     viewport={{ once: true }}
+                    className="h-full"
                   >
                     <Link to={`/activity/${activity.id}`} className="block h-full">
                       <ModernCourseCard {...activity} />

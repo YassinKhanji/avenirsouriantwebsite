@@ -28,7 +28,7 @@ export function ModernCourseCard({
     <motion.div
       whileHover={{ y: -8 }}
       transition={{ duration: 0.3 }}
-      className="group relative"
+      className="group relative h-full"
     >
       <div className={`absolute inset-0 ${gradient} opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-300 blur-xl`} />
       
@@ -90,6 +90,7 @@ export function ModernCourseCard({
                 <span className="text-base">📅</span>
                 <span>{nextStartDate}</span>
               </div>
+            </div>
           )}
           
           <button className="group/btn flex items-center gap-2 text-sm text-primary hover:gap-3 transition-all">

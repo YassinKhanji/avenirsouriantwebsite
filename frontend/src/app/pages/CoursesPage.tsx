@@ -59,7 +59,7 @@ export default function CoursesPage() {
       {/* Courses Grid */}
       <section className="py-32">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-fr">
             {coursesWithDynamicSpots.map((course, index) => (
               <motion.div
                 key={course.id}
@@ -67,6 +67,7 @@ export default function CoursesPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
+                className="h-full"
               >
                 <Link to={`/course/${course.id}`} className="block h-full">
                   <ModernCourseCard {...course} />
