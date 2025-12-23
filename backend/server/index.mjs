@@ -77,15 +77,15 @@ async function initializeDatabase() {
 
     // Seed courses if empty
     const courseCount = await sql`SELECT COUNT(*) as count FROM courses;`;
-    if (courseCount.rows[0].count === 0) {
+    if (Number(courseCount.rows[0].count) === 0) {
       await sql`
         INSERT INTO courses (id, title, spots_left) 
         VALUES 
-          (1, 'Course 1', 8),
-          (2, 'Course 2', 12),
-          (3, 'Course 3', 5),
-          (7, 'Activity 1', 10),
-          (8, 'Activity 2', 7);
+          (1, 'Course 1', 20),
+          (2, 'Course 2', 20),
+          (3, 'Course 3', 20),
+          (7, 'Activity 1', 20),
+          (8, 'Activity 2', 20);
       `;
     }
 
@@ -173,7 +173,7 @@ app.post('/api/register', async (req, res) => {
     let emailSent = false;
     try {
       await mailer.sendMail({
-        from: `Avenir Souriant <${gmailUser}>`,
+        from: `Avenir Souriant Administration <administration@avenirsouriant.com>`,
         to: String(b.email),
         subject: 'Avenir Souriant: Waiver Signature Required',
         text: `Hello ${b.student_name},\n\nThank you for registering for ${b.course_title}. Before we can finalize your registration, please sign the waiver at the link below:\n\nhttps://forms.gle/RqNCqDbe99bxRNzw6\n\nIf you have any questions, reply to this email.\n\nRegards,\nAvenir Souriant Academy`,

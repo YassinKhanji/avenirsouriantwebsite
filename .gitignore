@@ -48,3 +48,5 @@ node_modules/
 # OS specific
 *.bak
 *~
+.vercel
+.env*.local

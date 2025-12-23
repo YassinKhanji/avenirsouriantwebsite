@@ -2,13 +2,37 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { ModernCourseCard } from "../components/ModernCourseCard";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useI18n } from "../i18n";
 import { getCourses } from "../data/programs";
 
 export default function CoursesPage() {
   const { t, lang } = useI18n();
   const courses = useMemo(() => getCourses(t), [t, lang]);
+  const [backendCourses, setBackendCourses] = useState<{id:number;spots_left:number}[]>([]);
+  
+  useEffect(() => {
+    fetch('/api/courses')
+      .then(async r => {
+        if (!r.ok) throw new Error('Failed to load courses');
+        return r.json();
+      })
+      .then(setBackendCourses)
+      .catch(() => setBackendCourses([]));
+  }, []);
+  
+  const spotsByIdMap = useMemo(() => 
+    Object.fromEntries(backendCourses.map(c => [c.id, c.spots_left])), 
+    [backendCourses]
+  );
+  
+  const coursesWithDynamicSpots = useMemo(() => 
+    courses.map(c => ({
+      ...c,
+      spotsLeft: spotsByIdMap[c.id] !== undefined ? spotsByIdMap[c.id] : c.spotsLeft
+    })),
+    [courses, spotsByIdMap]
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -36,7 +60,7 @@ export default function CoursesPage() {
       <section className="py-32">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses.map((course, index) => (
+            {coursesWithDynamicSpots.map((course, index) => (
               <motion.div
                 key={course.id}
                 initial={{ opacity: 0, y: 20 }}
