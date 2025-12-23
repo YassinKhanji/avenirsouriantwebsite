@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowRight, Clock, Users, CheckCircle, Calendar, AlertCircle } from "lucide-react";
 import { motion } from "motion/react";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useI18n } from "../i18n";
 import { getActivities } from "../data/programs";
 
@@ -10,6 +10,19 @@ export default function ActivityDetail() {
   const activities = useMemo(() => getActivities(t), [t, lang]);
   const { id } = useParams();
   const activity = activities.find(a => a.id === parseInt(id || "0"));
+  const [backendCourses, setBackendCourses] = useState<{id:number;spots_left:number}[]>([]);
+  
+  useEffect(() => {
+    fetch('/api/courses')
+      .then(async r => {
+        if (!r.ok) throw new Error('Failed to load courses');
+        return r.json();
+      })
+      .then(setBackendCourses)
+      .catch(() => setBackendCourses([]));
+  }, []);
+  
+  const dynamicSpots = backendCourses.find(c => c.id === parseInt(id || "0"))?.spots_left ?? activity?.spotsLeft ?? 0;
 
   if (!activity) {
     return (
@@ -101,15 +114,15 @@ export default function ActivityDetail() {
               transition={{ duration: 0.5, delay: 0.4 }}
               viewport={{ once: true }}
               className={`bg-background rounded-lg p-6 border ${
-                activity.spotsLeft <= 5 ? "border-red-500/30 bg-red-500/5" : "border-border"
+                dynamicSpots <= 5 ? "border-red-500/30 bg-red-500/5" : "border-border"
               }`}
             >
               <div className="flex items-center gap-3 mb-2">
-                <AlertCircle className={`w-5 h-5 ${activity.spotsLeft <= 5 ? "text-red-600" : "text-primary"}`} />
+                <AlertCircle className={`w-5 h-5 ${dynamicSpots <= 5 ? "text-red-600" : "text-primary"}`} />
                 <span className="text-muted-foreground">{t("courseDetail.spotsLeft")}</span>
               </div>
-              <p className={`text-2xl font-bold ${activity.spotsLeft <= 5 ? "text-red-600" : ""}`}>
-                {activity.spotsLeft}
+              <p className={`text-2xl font-bold ${dynamicSpots <= 5 ? "text-red-600" : ""}`}>
+                {dynamicSpots}
               </p>
             </motion.div>
           </div>

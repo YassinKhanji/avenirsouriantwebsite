@@ -64,7 +64,7 @@ export function ModernCourseCard({
         
         {/* Footer */}
         <div className="space-y-4">
-          <div className="flex gap-6 text-sm">
+          <div className="flex gap-6 text-sm flex-wrap">
             <div className="flex items-center gap-2 text-muted-foreground">
               <span className="text-base">👥</span>
               <span>{ageGroup}</span>
@@ -73,6 +73,15 @@ export function ModernCourseCard({
               <span className="text-base">⏱️</span>
               <span>{duration}</span>
             </div>
+            {spotsLeft !== undefined && (
+              <div className="flex items-center gap-2">
+                <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                  spotsLeft <= 5 ? "bg-red-500/10 text-red-600" : "bg-green-500/10 text-green-600"
+                }`}>
+                  {spotsLeft} spots left
+                </span>
+              </div>
+            )}
           </div>
           
           {nextStartDate && (
@@ -81,16 +90,6 @@ export function ModernCourseCard({
                 <span className="text-base">📅</span>
                 <span>{nextStartDate}</span>
               </div>
-              {spotsLeft !== undefined && (
-                <div className="flex items-center gap-2">
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-                    spotsLeft <= 5 ? "bg-red-500/10 text-red-600" : "bg-green-500/10 text-green-600"
-                  }`}>
-                    {spotsLeft} spots left
-                  </span>
-                </div>
-              )}
-            </div>
           )}
           
           <button className="group/btn flex items-center gap-2 text-sm text-primary hover:gap-3 transition-all">
