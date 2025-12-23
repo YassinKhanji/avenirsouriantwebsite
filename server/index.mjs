@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import Database from 'better-sqlite3';
+import { sql } from '@vercel/postgres';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
 
@@ -12,45 +12,59 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Initialize DB
-const db = new Database('./server/data.sqlite');
-db.pragma('journal_mode = WAL');
-db.exec(`
-  CREATE TABLE IF NOT EXISTS registrations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at TEXT DEFAULT (datetime('now')),
-    lang TEXT,
-    email TEXT NOT NULL,
-    student_name TEXT NOT NULL,
-    age INTEGER NOT NULL,
-    phone TEXT NOT NULL,
-    course_id INTEGER NOT NULL,
-    course_title TEXT NOT NULL,
-    comment TEXT,
-    child_name TEXT NOT NULL,
-    child_dob TEXT NOT NULL,
-    date TEXT,
-    parent_name TEXT NOT NULL,
-    parent_phone TEXT NOT NULL,
-    emergency_phone TEXT NOT NULL,
-    signature TEXT NOT NULL,
-    current_date TEXT NOT NULL
-  );
+// Initialize DB tables (runs once on first deployment)
+async function initializeDatabase() {
+  try {
+    // Create registrations table
+    await sql`
+      CREATE TABLE IF NOT EXISTS registrations (
+        id SERIAL PRIMARY KEY,
+        created_at TIMESTAMP DEFAULT NOW(),
+        lang VARCHAR(10) DEFAULT 'en',
+        email VARCHAR(255) NOT NULL,
+        student_name VARCHAR(255) NOT NULL,
+        age INTEGER NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        course_id INTEGER NOT NULL,
+        course_title VARCHAR(255) NOT NULL,
+        comment TEXT,
+        child_name VARCHAR(255) NOT NULL,
+        child_dob VARCHAR(255) NOT NULL,
+        date VARCHAR(255),
+        parent_name VARCHAR(255) NOT NULL,
+        parent_phone VARCHAR(20) NOT NULL,
+        emergency_phone VARCHAR(20) NOT NULL,
+        signature TEXT NOT NULL,
+        current_date VARCHAR(255) NOT NULL
+      );
+    `;
 
-  CREATE TABLE IF NOT EXISTS courses (
-    id INTEGER PRIMARY KEY,
-    title TEXT,
-    spots_left INTEGER NOT NULL
-  );
-`);
+    // Create courses table
+    await sql`
+      CREATE TABLE IF NOT EXISTS courses (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        spots_left INTEGER NOT NULL
+      );
+    `;
 
-// Seed courses if empty
-const countCourses = db.prepare('SELECT COUNT(*) AS c FROM courses').get();
-if (countCourses.c === 0) {
-  const seed = db.prepare('INSERT INTO courses (id, title, spots_left) VALUES (?, ?, ?)');
-  seed.run(1, 'Course 1', 8);
-  seed.run(2, 'Course 2', 12);
-  seed.run(3, 'Course 3', 5);
+    // Seed courses if empty
+    const courseCount = await sql`SELECT COUNT(*) as count FROM courses;`;
+    if (courseCount.rows[0].count === 0) {
+      await sql`
+        INSERT INTO courses (id, title, spots_left) 
+        VALUES 
+          (1, 'Course 1', 8),
+          (2, 'Course 2', 12),
+          (3, 'Course 3', 5);
+      `;
+    }
+
+    console.log('Database initialized successfully');
+  } catch (error) {
+    console.error('Database initialization error:', error);
+    // Don't throw - allow server to continue
+  }
 }
 
 // Configure mail transport
@@ -67,6 +81,9 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
 
+// Initialize database on startup
+initializeDatabase().catch(console.error);
+
 app.post('/api/register', async (req, res) => {
   const b = req.body || {};
   const required = ['email','student_name','age','phone','course_id','course_title','child_name','child_dob','parent_name','parent_phone','emergency_phone','signature','current_date'];
@@ -75,46 +92,55 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ error: `Missing field: ${key}` });
     }
   }
-  const insertStmt = db.prepare(`INSERT INTO registrations (lang,email,student_name,age,phone,course_id,course_title,comment,child_name,child_dob,date,parent_name,parent_phone,emergency_phone,signature,current_date)
-    VALUES (@lang,@email,@student_name,@age,@phone,@course_id,@course_title,@comment,@child_name,@child_dob,@date,@parent_name,@parent_phone,@emergency_phone,@signature,@current_date)`);
-  const getCourse = db.prepare('SELECT id, spots_left FROM courses WHERE id = ?');
-  const updateCourse = db.prepare('UPDATE courses SET spots_left = spots_left - 1 WHERE id = ?');
-
-  const tx = db.transaction(() => {
-    const course = getCourse.get(Number(b.course_id));
-    if (!course) {
-      throw new Error('COURSE_NOT_FOUND');
-    }
-    if (course.spots_left <= 0) {
-      throw new Error('NO_SPOTS_LEFT');
-    }
-    const info = insertStmt.run({
-      lang: b.lang || 'en',
-      email: String(b.email),
-      student_name: String(b.student_name),
-      age: Number(b.age),
-      phone: String(b.phone),
-      course_id: Number(b.course_id),
-      course_title: String(b.course_title),
-      comment: b.comment ? String(b.comment) : null,
-      child_name: String(b.child_name),
-      child_dob: String(b.child_dob),
-      date: b.date ? String(b.date) : null,
-      parent_name: String(b.parent_name),
-      parent_phone: String(b.parent_phone),
-      emergency_phone: String(b.emergency_phone),
-      signature: String(b.signature),
-      current_date: String(b.current_date)
-    });
-    updateCourse.run(Number(b.course_id));
-    return info.lastInsertRowid;
-  });
 
   try {
-    const id = tx();
-    const updated = getCourse.get(Number(b.course_id));
+    // Check if course exists and has spots
+    const courseResult = await sql`SELECT id, spots_left FROM courses WHERE id = ${Number(b.course_id)};`;
+    
+    if (courseResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Course not found.' });
+    }
 
-    // Send waiver email (non-blocking response)
+    const course = courseResult.rows[0];
+    if (course.spots_left <= 0) {
+      return res.status(409).json({ error: 'No spots left for this course.' });
+    }
+
+    // Insert registration
+    const result = await sql`
+      INSERT INTO registrations (
+        lang, email, student_name, age, phone, course_id, course_title, 
+        comment, child_name, child_dob, date, parent_name, parent_phone, 
+        emergency_phone, signature, current_date
+      ) VALUES (
+        ${b.lang || 'en'},
+        ${String(b.email)},
+        ${String(b.student_name)},
+        ${Number(b.age)},
+        ${String(b.phone)},
+        ${Number(b.course_id)},
+        ${String(b.course_title)},
+        ${b.comment ? String(b.comment) : null},
+        ${String(b.child_name)},
+        ${String(b.child_dob)},
+        ${b.date ? String(b.date) : null},
+        ${String(b.parent_name)},
+        ${String(b.parent_phone)},
+        ${String(b.emergency_phone)},
+        ${String(b.signature)},
+        ${String(b.current_date)}
+      )
+      RETURNING id;
+    `;
+
+    // Update course spots
+    await sql`
+      UPDATE courses SET spots_left = spots_left - 1 WHERE id = ${Number(b.course_id)};
+    `;
+
+    const updatedCourse = await sql`SELECT spots_left FROM courses WHERE id = ${Number(b.course_id)};`;
+
+    // Send waiver email (non-blocking)
     let emailSent = false;
     try {
       await mailer.sendMail({
@@ -129,41 +155,67 @@ app.post('/api/register', async (req, res) => {
       console.error('Email send failed:', mailErr);
     }
 
-    res.status(201).json({ id, spots_left: updated.spots_left, emailSent });
+    res.status(201).json({ 
+      id: result.rows[0].id, 
+      spots_left: updatedCourse.rows[0].spots_left, 
+      emailSent 
+    });
   } catch (e) {
-    if (e && e.message === 'NO_SPOTS_LEFT') {
-      return res.status(409).json({ error: 'No spots left for this course.' });
-    }
-    if (e && e.message === 'COURSE_NOT_FOUND') {
-      return res.status(404).json({ error: 'Course not found.' });
-    }
     console.error(e);
     res.status(500).json({ error: 'Failed to save registration' });
   }
 });
 
-app.get('/api/registrations', (req, res) => {
-  const rows = db.prepare('SELECT * FROM registrations ORDER BY created_at DESC').all();
-  res.json(rows);
+app.get('/api/registrations', async (req, res) => {
+  try {
+    const result = await sql`SELECT * FROM registrations ORDER BY created_at DESC;`;
+    res.json(result.rows);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to fetch registrations' });
+  }
 });
 
-app.get('/api/registrations.csv', (req, res) => {
-  const rows = db.prepare('SELECT * FROM registrations ORDER BY created_at DESC').all();
-  const headers = Object.keys(rows[0] || {});
-  const csv = [headers.join(','), ...rows.map(r => headers.map(h => {
-    const v = r[h];
-    if (v == null) return '';
-    const s = String(v).replace(/"/g, '""');
-    return /[",\n]/.test(s) ? `"${s}"` : s;
-  }).join(','))].join('\n');
-  res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', 'attachment; filename="registrations.csv"');
-  res.send(csv);
+app.get('/api/registrations.csv', async (req, res) => {
+  try {
+    const result = await sql`SELECT * FROM registrations ORDER BY created_at DESC;`;
+    const rows = result.rows;
+    
+    if (rows.length === 0) {
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename="registrations.csv"');
+      res.send('No registrations found');
+      return;
+    }
+
+    const headers = Object.keys(rows[0]);
+    const csv = [
+      headers.join(','),
+      ...rows.map(r => headers.map(h => {
+        const v = r[h];
+        if (v == null) return '';
+        const s = String(v).replace(/"/g, '""');
+        return /[",\n]/.test(s) ? `"${s}"` : s;
+      }).join(','))
+    ].join('\n');
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="registrations.csv"');
+    res.send(csv);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to export registrations' });
+  }
 });
 
-app.get('/api/courses', (req, res) => {
-  const rows = db.prepare('SELECT id, spots_left FROM courses ORDER BY id').all();
-  res.json(rows);
+app.get('/api/courses', async (req, res) => {
+  try {
+    const result = await sql`SELECT id, spots_left FROM courses ORDER BY id;`;
+    res.json(result.rows);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Failed to fetch courses' });
+  }
 });
 
 app.listen(PORT, () => {

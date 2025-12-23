@@ -1,0 +1,80 @@
+#!/usr/bin/env node
+/**
+ * Database Migration Script for Vercel Postgres
+ * Run this once after setting up Vercel Postgres database
+ * Usage: node server/migrate.mjs
+ */
+
+import { sql } from '@vercel/postgres';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: './server/.env' });
+
+async function migrate() {
+  console.log('Starting database migration...');
+
+  try {
+    // Create registrations table
+    console.log('Creating registrations table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS registrations (
+        id SERIAL PRIMARY KEY,
+        created_at TIMESTAMP DEFAULT NOW(),
+        lang VARCHAR(10) DEFAULT 'en',
+        email VARCHAR(255) NOT NULL,
+        student_name VARCHAR(255) NOT NULL,
+        age INTEGER NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        course_id INTEGER NOT NULL,
+        course_title VARCHAR(255) NOT NULL,
+        comment TEXT,
+        child_name VARCHAR(255) NOT NULL,
+        child_dob VARCHAR(255) NOT NULL,
+        date VARCHAR(255),
+        parent_name VARCHAR(255) NOT NULL,
+        parent_phone VARCHAR(20) NOT NULL,
+        emergency_phone VARCHAR(20) NOT NULL,
+        signature TEXT NOT NULL,
+        current_date VARCHAR(255) NOT NULL
+      );
+    `;
+    console.log('✓ Registrations table created');
+
+    // Create courses table
+    console.log('Creating courses table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS courses (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        spots_left INTEGER NOT NULL
+      );
+    `;
+    console.log('✓ Courses table created');
+
+    // Seed courses if empty
+    console.log('Checking if courses need to be seeded...');
+    const courseCount = await sql`SELECT COUNT(*) as count FROM courses;`;
+    
+    if (courseCount.rows[0].count === 0) {
+      console.log('Seeding courses...');
+      await sql`
+        INSERT INTO courses (id, title, spots_left) 
+        VALUES 
+          (1, 'Course 1', 8),
+          (2, 'Course 2', 12),
+          (3, 'Course 3', 5);
+      `;
+      console.log('✓ Courses seeded');
+    } else {
+      console.log(`✓ Courses already exist (${courseCount.rows[0].count} courses)`);
+    }
+
+    console.log('\n✓ Database migration completed successfully!');
+    process.exit(0);
+  } catch (error) {
+    console.error('✗ Migration failed:', error);
+    process.exit(1);
+  }
+}
+
+migrate();
