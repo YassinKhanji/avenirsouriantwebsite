@@ -8,6 +8,8 @@ import ActivitiesPage from "./app/pages/ActivitiesPage.tsx";
 import CourseDetail from "./app/pages/CourseDetail.tsx";
 import ActivityDetail from "./app/pages/ActivityDetail.tsx";
 import ContactPage from "./app/pages/ContactPage.tsx";
+import RegisterPage from "./app/pages/RegisterPage.tsx";
+import AdminRegistrations from "./app/pages/AdminRegistrations";
 import AboutPage from "./app/pages/AboutPage.tsx";
 import { LanguageProvider } from "./app/i18n.tsx";
 import { ThemeProvider } from "./app/theme-provider.tsx";
@@ -26,6 +28,8 @@ createRoot(document.getElementById("root")!).render(
             <Route path="course/:id" element={<CourseDetail />} />
             <Route path="activity/:id" element={<ActivityDetail />} />
             <Route path="contact" element={<ContactPage />} />
+            <Route path="register" element={<RegisterPage />} />
+            <Route path="admin" element={<AdminRegistrations />} />
           </Route>
         </Routes>
       </BrowserRouter>

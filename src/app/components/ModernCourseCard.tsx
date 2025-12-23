@@ -9,6 +9,8 @@ interface ModernCourseCardProps {
   duration: string;
   category: "language" | "activity";
   gradient: string;
+  nextStartDate?: string;
+  spotsLeft?: number;
 }
 
 export function ModernCourseCard({ 
@@ -18,7 +20,9 @@ export function ModernCourseCard({
   ageGroup, 
   duration,
   category,
-  gradient
+  gradient,
+  nextStartDate,
+  spotsLeft
 }: ModernCourseCardProps) {
   return (
     <motion.div
@@ -70,6 +74,24 @@ export function ModernCourseCard({
               <span>{duration}</span>
             </div>
           </div>
+          
+          {nextStartDate && (
+            <div className="flex gap-3 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <span className="text-base">📅</span>
+                <span>{nextStartDate}</span>
+              </div>
+              {spotsLeft !== undefined && (
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                    spotsLeft <= 5 ? "bg-red-500/10 text-red-600" : "bg-green-500/10 text-green-600"
+                  }`}>
+                    {spotsLeft} spots left
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
           
           <button className="group/btn flex items-center gap-2 text-sm text-primary hover:gap-3 transition-all">
             <span>Learn more</span>

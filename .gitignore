@@ -1,23 +1,50 @@
-# Dependencies
-node_modules/
-package-lock.json
+# VS Code - create .gitignore in your project
+# Add these lines:
 
-# Build output
+# System files
+.DS_Store
+Thumbs.db
+.bash_history
+.boto
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
 dist/
 build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
 
 # Environment variables
 .env
 .env.local
 
-# IDE
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
+# Node modules (if using any JS)
+node_modules/
 
 # Logs
 *.log
-npm-debug.log*
+
+# OS specific
+*.bak
+*~

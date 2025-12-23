@@ -16,6 +16,10 @@ export type ProgramBase = {
 export type Course = ProgramBase & {
   fullDescription: string;
   highlights: string[];
+  nextStartDate: string;
+  spotsLeft: number;
+  curriculum: string[];
+  requirements: string[];
 };
 
 export type Activity = ProgramBase & {
@@ -43,6 +47,21 @@ export function getCourses(t: (key: string) => string): Course[] {
         t("courses.1.h5"),
         t("courses.1.h6"),
       ],
+      nextStartDate: t("courses.1.startDate"),
+      spotsLeft: 8,
+      curriculum: [
+        t("courses.1.curriculum.1"),
+        t("courses.1.curriculum.2"),
+        t("courses.1.curriculum.3"),
+        t("courses.1.curriculum.4"),
+        t("courses.1.curriculum.5"),
+        t("courses.1.curriculum.6"),
+      ],
+      requirements: [
+        t("courses.1.req.1"),
+        t("courses.1.req.2"),
+        t("courses.1.req.3"),
+      ],
     },
     {
       id: 2,
@@ -62,13 +81,28 @@ export function getCourses(t: (key: string) => string): Course[] {
         t("courses.2.h5"),
         t("courses.2.h6"),
       ],
+      nextStartDate: t("courses.2.startDate"),
+      spotsLeft: 12,
+      curriculum: [
+        t("courses.2.curriculum.1"),
+        t("courses.2.curriculum.2"),
+        t("courses.2.curriculum.3"),
+        t("courses.2.curriculum.4"),
+        t("courses.2.curriculum.5"),
+        t("courses.2.curriculum.6"),
+      ],
+      requirements: [
+        t("courses.2.req.1"),
+        t("courses.2.req.2"),
+        t("courses.2.req.3"),
+      ],
     },
     {
       id: 3,
       title: t("courses.3.title"),
       description: t("courses.3.desc"),
       icon: BookOpen,
-      ageGroup: "Adults",
+      ageGroup: "Teens & Adults",
       duration: "16 weeks",
       category: "language",
       gradient: "bg-gradient-to-br from-indigo-500 to-purple-500",
@@ -81,62 +115,20 @@ export function getCourses(t: (key: string) => string): Course[] {
         t("courses.3.h5"),
         t("courses.3.h6"),
       ],
-    },
-    {
-      id: 4,
-      title: t("courses.4.title"),
-      description: t("courses.4.desc"),
-      icon: Sparkles,
-      ageGroup: "Teens & Adults",
-      duration: "10 weeks",
-      category: "language",
-      gradient: "bg-gradient-to-br from-amber-500 to-orange-500",
-      fullDescription: t("courses.4.full"),
-      highlights: [
-        t("courses.4.h1"),
-        t("courses.4.h2"),
-        t("courses.4.h3"),
-        t("courses.4.h4"),
-        t("courses.4.h5"),
-        t("courses.4.h6"),
+      nextStartDate: t("courses.3.startDate"),
+      spotsLeft: 5,
+      curriculum: [
+        t("courses.3.curriculum.1"),
+        t("courses.3.curriculum.2"),
+        t("courses.3.curriculum.3"),
+        t("courses.3.curriculum.4"),
+        t("courses.3.curriculum.5"),
+        t("courses.3.curriculum.6"),
       ],
-    },
-    {
-      id: 5,
-      title: t("courses.5.title"),
-      description: t("courses.5.desc"),
-      icon: GraduationCap,
-      ageGroup: "11-17 years",
-      duration: "12 weeks",
-      category: "language",
-      gradient: "bg-gradient-to-br from-violet-500 to-purple-500",
-      fullDescription: t("courses.5.full"),
-      highlights: [
-        t("courses.5.h1"),
-        t("courses.5.h2"),
-        t("courses.5.h3"),
-        t("courses.5.h4"),
-        t("courses.5.h5"),
-        t("courses.5.h6"),
-      ],
-    },
-    {
-      id: 6,
-      title: t("courses.6.title"),
-      description: t("courses.6.desc"),
-      icon: Users,
-      ageGroup: "Adults",
-      duration: "14 weeks",
-      category: "language",
-      gradient: "bg-gradient-to-br from-blue-500 to-indigo-500",
-      fullDescription: t("courses.6.full"),
-      highlights: [
-        t("courses.6.h1"),
-        t("courses.6.h2"),
-        t("courses.6.h3"),
-        t("courses.6.h4"),
-        t("courses.6.h5"),
-        t("courses.6.h6"),
+      requirements: [
+        t("courses.3.req.1"),
+        t("courses.3.req.2"),
+        t("courses.3.req.3"),
       ],
     },
   ];

@@ -1,6 +1,6 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import { Menu, X, Moon, Sun } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Language, useI18n } from "./i18n";
 import { useTheme } from "./theme-provider";
 
@@ -8,17 +8,23 @@ export default function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { t, lang, setLang } = useI18n();
   const { theme, toggleTheme } = useTheme();
+  const location = useLocation();
 
   const languages: Language[] = ["en", "fr", "ar"];
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Navigation Header */}
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur border-b border-border">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="Académie de l'Avenir Souriant" className="h-12 w-12" />
-            <span className="text-xl font-bold text-primary hidden sm:inline">
+            <img src="/logo.png" alt="Académie de l'Avenir Souriant" className="h-12 w-auto object-contain" />
+            <span className="brand-title text-lg font-normal text-primary hidden sm:inline">
               {t("common.brand")}
             </span>
           </Link>
@@ -32,7 +38,7 @@ export default function Layout() {
           </button>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex gap-6 items-center">
+          <div className="hidden md:flex gap-4 items-center text-sm">
             <Link to="/" className="hover:text-primary transition-colors">{t("nav.home")}</Link>
             <Link to="/about" className="hover:text-primary transition-colors">{t("nav.about")}</Link>
             <Link to="/courses" className="hover:text-primary transition-colors">{t("nav.courses")}</Link>
@@ -40,17 +46,17 @@ export default function Layout() {
             <Link to="/contact" className="hover:text-primary transition-colors">{t("nav.contact")}</Link>
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-muted transition-colors"
+              className="p-1.5 rounded-lg hover:bg-muted transition-colors"
               aria-label="Toggle theme"
             >
-              {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+              {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
             </button>
-            <div className="flex items-center gap-1 bg-card border border-border rounded-full px-2 py-1">
+            <div className="flex items-center gap-1 bg-card border border-border rounded-full px-2 py-0.5">
               {languages.map((code) => (
                 <button
                   key={code}
                   onClick={() => setLang(code)}
-                  className={`px-2 py-1 rounded-full text-xs font-semibold transition-colors ${
+                  className={`px-2 py-0.5 rounded-full text-xs font-semibold transition-colors ${
                     lang === code ? "bg-primary text-primary-foreground" : "hover:bg-muted"
                   }`}
                 >
@@ -58,14 +64,12 @@ export default function Layout() {
                 </button>
               ))}
             </div>
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfEgAjYtASRQV5OY5J8GMCbKgxdMuauq6fj8t-jU-A4vX3HHg/viewform?usp=dialog"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:shadow-lg transition-all hover:bg-primary/90"
+            <Link
+              to="/register"
+              className="px-5 py-1.5 bg-primary text-primary-foreground rounded-lg hover:shadow-lg transition-all hover:bg-primary/90"
             >
               {t("nav.register")}
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -98,14 +102,12 @@ export default function Layout() {
                   </button>
                 ))}
               </div>
-              <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLSfEgAjYtASRQV5OY5J8GMCbKgxdMuauq6fj8t-jU-A4vX3HHg/viewform?usp=dialog"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/register"
                 className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:shadow-lg transition-all text-center hover:bg-primary/90"
               >
                 {t("nav.register")}
-              </a>
+              </Link>
             </div>
           </div>
         )}

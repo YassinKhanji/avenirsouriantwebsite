@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ModernCourseCard } from "./components/ModernCourseCard";
 import { HeroIllustration } from "./components/HeroIllustration";
 import { FeatureIllustration } from "./components/FeatureIllustration";
@@ -12,6 +12,18 @@ import { getCourses, getActivities } from "./data/programs";
 export default function App() {
   const { t, lang } = useI18n();
   const courses = useMemo(() => getCourses(t), [t, lang]);
+  const [backendCourses, setBackendCourses] = useState<{ id: number; spots_left: number }[]>([]);
+  useEffect(() => {
+    fetch('/api/courses')
+      .then(async r => {
+        if (!r.ok) throw new Error('Failed to load courses');
+        return r.json();
+      })
+      .then(setBackendCourses)
+      .catch(() => setBackendCourses([]));
+  }, []);
+  const spotsById = useMemo(() => Object.fromEntries(backendCourses.map(c => [c.id, c.spots_left])), [backendCourses]);
+  const displayCourses = useMemo(() => courses.map(c => ({ ...c, spotsLeft: spotsById[c.id] ?? c.spotsLeft })), [courses, spotsById]);
   const activities = useMemo(() => getActivities(t), [t, lang]);
 
   return (
@@ -47,12 +59,13 @@ export default function App() {
         />
         
         <div className="container mx-auto px-4 py-20 lg:py-32 relative">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left content */}
+          <div className="flex flex-col items-center justify-center text-center">
+            {/* Center content */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
+              className="max-w-4xl"
             >
               <div className="inline-block mb-6">
                 <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 text-purple-600 border border-purple-500/20">
@@ -61,15 +74,15 @@ export default function App() {
                 </span>
               </div>
               
-              <h1 className="mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              <h1 className="mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent font-inter text-6xl lg:text-7xl font-bold">
                 {t("hero.title")}
               </h1>
               
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+              <p className="text-2xl text-muted-foreground mb-8 leading-relaxed font-inter">
                 {t("hero.description")}
               </p>
               
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4 justify-center">
                 <Link
                   to="/courses"
                   className="px-8 py-4 bg-primary text-primary-foreground rounded-2xl hover:shadow-lg hover:shadow-primary/50 transition-all duration-300 flex items-center gap-2 group"
@@ -84,61 +97,7 @@ export default function App() {
                   {t("hero.cta.about")}
                 </Link>
               </div>
-              
-              {/* Stats */}
-              <motion.div 
-                className="grid grid-cols-3 gap-8 mt-12 pt-12 border-t border-border"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
-                >
-                  <div className="text-3xl font-bold text-primary">500+</div>
-                  <div className="text-sm text-muted-foreground mt-1">{t("hero.stats.students")}</div>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                >
-                  <div className="text-3xl font-bold text-accent">15+</div>
-                  <div className="text-sm text-muted-foreground mt-1">{t("hero.stats.teachers")}</div>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.7 }}
-                >
-                  <div className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">98%</div>
-                  <div className="text-sm text-muted-foreground mt-1">{t("hero.stats.satisfaction")}</div>
-                </motion.div>
-              </motion.div>
-            </motion.div>
-            
-            {/* Right illustration */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ 
-                opacity: 1, 
-                scale: 1,
-                y: [0, -20, 0]
-              }}
-              transition={{ 
-                opacity: { duration: 0.6, delay: 0.2 },
-                scale: { duration: 0.6, delay: 0.2 },
-                y: {
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }
-              }}
-              className="relative"
-            >
-              <HeroIllustration />
+
             </motion.div>
           </div>
         </div>
@@ -245,7 +204,7 @@ export default function App() {
                   </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {courses.map((course, index) => (
+                  {displayCourses.map((course, index) => (
                     <motion.div
                       key={course.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -289,7 +248,7 @@ export default function App() {
 
             <TabsContent value="courses">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {courses.map((course, index) => (
+                {displayCourses.map((course, index) => (
                   <motion.div
                     key={course.id}
                     initial={{ opacity: 0, y: 20 }}

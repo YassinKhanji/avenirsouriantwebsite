@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowRight, Clock, Users, CheckCircle } from "lucide-react";
+import { ArrowRight, Clock, Users, CheckCircle, Calendar, AlertCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo } from "react";
 import { useI18n } from "../i18n";
@@ -42,7 +42,7 @@ export default function CourseDetail() {
       {/* Course Info Cards */}
       <section className="py-12 bg-card border-b border-border">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-5 gap-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -82,6 +82,36 @@ export default function CourseDetail() {
               </div>
               <p className="text-2xl font-bold capitalize">{course.category}</p>
             </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="bg-background rounded-lg p-6 border border-border"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Calendar className="w-5 h-5 text-primary" />
+                <span className="text-muted-foreground">{t("courseDetail.startDate")}</span>
+              </div>
+              <p className="text-xl font-bold">{course.nextStartDate}</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              viewport={{ once: true }}
+              className={`bg-background rounded-lg p-6 border ${
+                course.spotsLeft <= 5 ? "border-red-500/30 bg-red-500/5" : "border-border"
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <AlertCircle className={`w-5 h-5 ${course.spotsLeft <= 5 ? "text-red-600" : "text-primary"}`} />
+                <span className="text-muted-foreground">{t("courseDetail.spotsLeft")}</span>
+              </div>
+              <p className={`text-2xl font-bold ${course.spotsLeft <= 5 ? "text-red-600" : ""}`}>
+                {course.spotsLeft}
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -113,6 +143,44 @@ export default function CourseDetail() {
                 >
                   <CheckCircle className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
                   <span className="text-lg">{highlight}</span>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Curriculum Section */}
+            <h3 className="text-2xl font-bold mb-6">{t("courseDetail.curriculum")}</h3>
+            <div className="space-y-3 mb-12">
+              {course.curriculum.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  className="flex items-start gap-3 p-4 bg-card border border-border rounded-lg"
+                >
+                  <span className="flex-shrink-0 w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-sm">
+                    {index + 1}
+                  </span>
+                  <span className="text-lg">{item}</span>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Requirements Section */}
+            <h3 className="text-2xl font-bold mb-6">{t("courseDetail.requirements")}</h3>
+            <div className="space-y-3">
+              {course.requirements.map((requirement, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  className="flex items-start gap-3"
+                >
+                  <AlertCircle className="w-5 h-5 text-accent mt-1 flex-shrink-0" />
+                  <span className="text-lg">{requirement}</span>
                 </motion.div>
               ))}
             </div>
