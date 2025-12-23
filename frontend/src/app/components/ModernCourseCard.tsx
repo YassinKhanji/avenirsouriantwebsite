@@ -1,5 +1,7 @@
 import { ArrowRight, LucideIcon } from "lucide-react";
 import { motion } from "motion/react";
+import { Link } from "react-router-dom";
+import { useI18n } from "../i18n";
 
 interface ModernCourseCardProps {
   title: string;
@@ -11,6 +13,7 @@ interface ModernCourseCardProps {
   gradient: string;
   nextStartDate?: string;
   spotsLeft?: number;
+  learnMoreTo?: string;
 }
 
 export function ModernCourseCard({ 
@@ -22,9 +25,12 @@ export function ModernCourseCard({
   category,
   gradient,
   nextStartDate,
-  spotsLeft
+  spotsLeft,
+  learnMoreTo
 }: ModernCourseCardProps) {
-  return (
+  const { t } = useI18n();
+  
+  const cardContent = (
     <motion.div
       whileHover={{ y: -8 }}
       transition={{ duration: 0.3 }}
@@ -32,7 +38,7 @@ export function ModernCourseCard({
     >
       <div className={`absolute inset-0 ${gradient} opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-300 blur-xl`} />
       
-      <div className="relative bg-card border border-border rounded-3xl p-8 hover:border-primary/20 transition-all duration-300 h-full flex flex-col">
+      <div className="relative bg-card border border-border rounded-3xl p-8 hover:border-primary/20 transition-all duration-300 h-full flex flex-col cursor-pointer">
         {/* Icon */}
         <div className={`inline-flex p-4 rounded-2xl ${gradient} bg-opacity-10 mb-6 w-fit`}>
           <Icon className="w-8 h-8" style={{ 
@@ -50,7 +56,7 @@ export function ModernCourseCard({
               ? "bg-purple-500/10 text-purple-600" 
               : "bg-emerald-500/10 text-emerald-600"
           }`}>
-            {category === "language" ? "Arabic Course" : "Activity"}
+            {category === "language" ? t("badge.language") : t("badge.activity")}
           </span>
         </div>
         
@@ -84,12 +90,27 @@ export function ModernCourseCard({
             </div>
           )}
           
-          <button className="group/btn flex items-center gap-2 text-sm text-primary hover:gap-3 transition-all">
-            <span>Learn more</span>
-            <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-          </button>
+          <div className="flex flex-col gap-3">
+            {learnMoreTo ? (
+              <Link to={learnMoreTo} className="group/btn inline-flex items-center gap-2 text-sm text-primary hover:gap-3 transition-all">
+                <span>{t("common.learnMore")}</span>
+                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+              </Link>
+            ) : (
+              <button className="group/btn flex items-center gap-2 text-sm text-primary hover:gap-3 transition-all">
+                <span>{t("common.learnMore")}</span>
+                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
   );
+
+  if (learnMoreTo) {
+    return <Link to={learnMoreTo} className="no-underline">{cardContent}</Link>;
+  }
+
+  return cardContent;
 }

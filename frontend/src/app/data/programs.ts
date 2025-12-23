@@ -9,6 +9,7 @@ export type ProgramBase = {
   icon: any;
   ageGroup: string;
   duration: string;
+  price: string;
   category: ProgramCategory;
   gradient: string;
 };
@@ -38,8 +39,9 @@ export function getCourses(t: (key: string) => string): Course[] {
       title: t("courses.2.title"),
       description: t("courses.2.desc"),
       icon: Baby,
-      ageGroup: "5-10 years",
-      duration: "8 weeks",
+      ageGroup: t("courses.2.age"),
+      duration: t("courses.2.duration"),
+      price: t("pricing.contact"),
       category: "language",
       gradient: "bg-gradient-to-br from-cyan-500 to-blue-500",
       fullDescription: t("courses.2.full"),
@@ -72,8 +74,9 @@ export function getCourses(t: (key: string) => string): Course[] {
       title: t("courses.3.title"),
       description: t("courses.3.desc"),
       icon: BookOpen,
-      ageGroup: "Teens & Adults",
-      duration: "16 weeks",
+      ageGroup: t("courses.3.age"),
+      duration: t("courses.3.duration"),
+      price: t("pricing.contact"),
       category: "language",
       gradient: "bg-gradient-to-br from-indigo-500 to-purple-500",
       fullDescription: t("courses.3.full"),
@@ -101,6 +104,41 @@ export function getCourses(t: (key: string) => string): Course[] {
         t("courses.3.req.3"),
       ],
     },
+    {
+      id: 9,
+      title: t("courses.9.title"),
+      description: t("courses.9.desc"),
+      icon: GraduationCap,
+      ageGroup: t("courses.9.age"),
+      duration: t("courses.9.duration"),
+      price: t("pricing.contact"),
+      category: "language",
+      gradient: "bg-gradient-to-br from-amber-500 to-orange-500",
+      fullDescription: t("courses.9.full"),
+      highlights: [
+        t("courses.9.h1"),
+        t("courses.9.h2"),
+        t("courses.9.h3"),
+        t("courses.9.h4"),
+        t("courses.9.h5"),
+        t("courses.9.h6"),
+      ],
+      nextStartDate: t("courses.9.startDate"),
+      spotsLeft: 0,
+      curriculum: [
+        t("courses.9.curriculum.1"),
+        t("courses.9.curriculum.2"),
+        t("courses.9.curriculum.3"),
+        t("courses.9.curriculum.4"),
+        t("courses.9.curriculum.5"),
+        t("courses.9.curriculum.6"),
+      ],
+      requirements: [
+        t("courses.9.req.1"),
+        t("courses.9.req.2"),
+        t("courses.9.req.3"),
+      ],
+    },
   ];
 }
 
@@ -111,12 +149,13 @@ export function getActivities(t: (key: string) => string): Activity[] {
       title: t("activities.7.title"),
       description: t("activities.7.desc"),
       icon: Users,
-      ageGroup: "6-16 years",
-      duration: "Ongoing",
+      ageGroup: t("activities.7.age"),
+      duration: t("activities.7.duration"),
+      price: t("pricing.contact"),
       category: "activity",
       gradient: "bg-gradient-to-br from-emerald-500 to-green-500",
       fullDescription: t("activities.7.full"),
-      nextStartDate: "Rolling enrollment",
+      nextStartDate: t("activities.7.startDate"),
       highlights: [
         t("activities.7.h1"),
         t("activities.7.h2"),
@@ -147,12 +186,13 @@ export function getActivities(t: (key: string) => string): Activity[] {
       title: t("activities.8.title"),
       description: t("activities.8.desc"),
       icon: Bot,
-      ageGroup: "8-15 years",
-      duration: "10 weeks",
+      ageGroup: t("activities.8.age"),
+      duration: t("activities.8.duration"),
+      price: t("pricing.contact"),
       category: "activity",
       gradient: "bg-gradient-to-br from-cyan-500 to-blue-500",
       fullDescription: t("activities.8.full"),
-      nextStartDate: "Starts Feb 2026",
+      nextStartDate: t("activities.8.startDate"),
       highlights: [
         t("activities.8.h1"),
         t("activities.8.h2"),

@@ -76,6 +76,22 @@ async function migrate() {
     `;
     console.log('✓ Courses table created');
 
+    // Create subscribers table
+    console.log('Creating subscribers table...');
+    await sql`
+      CREATE TABLE IF NOT EXISTS subscribers (
+        id SERIAL PRIMARY KEY,
+        created_at TIMESTAMP DEFAULT NOW(),
+        email VARCHAR(255) NOT NULL,
+        lang VARCHAR(10) DEFAULT 'en',
+        source VARCHAR(50),
+        course_id INTEGER,
+        course_title VARCHAR(255),
+        page_path VARCHAR(255)
+      );
+    `;
+    console.log('✓ Subscribers table created');
+
     // Seed courses if empty
     console.log('Checking if courses need to be seeded...');
     const courseCount = await sql`SELECT COUNT(*) as count FROM courses;`;
@@ -87,6 +103,7 @@ async function migrate() {
         VALUES 
           (2, 'Course 2', 20),
           (3, 'Course 3', 20),
+          (9, 'Arabic for Non-Speakers', 20),
           (7, 'Activity 1', 20),
           (8, 'Activity 2', 20);
       `;

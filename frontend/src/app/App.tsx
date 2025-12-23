@@ -8,6 +8,8 @@ import { Sparkles, ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
 import { useI18n } from "./i18n";
 import { getCourses, getActivities } from "./data/programs";
+import InlineSubscribe from "./components/InlineSubscribe";
+import { config } from "./config";
 
 export default function App() {
   const { t, lang } = useI18n();
@@ -203,9 +205,7 @@ export default function App() {
                       viewport={{ once: true }}
                       className="h-full"
                     >
-                      <Link to={`/course/${course.id}`} className="block h-full">
-                        <ModernCourseCard {...course} />
-                      </Link>
+                      <ModernCourseCard {...course} learnMoreTo={`/course/${course.id}`} />
                     </motion.div>
                   ))}
                 </div>
@@ -229,9 +229,7 @@ export default function App() {
                       viewport={{ once: true }}
                       className="h-full"
                     >
-                      <Link to={`/activity/${activity.id}`} className="block h-full">
-                        <ModernCourseCard {...activity} />
-                      </Link>
+                      <ModernCourseCard {...activity} learnMoreTo={`/activity/${activity.id}`} />
                     </motion.div>
                   ))}
                 </div>
@@ -249,9 +247,7 @@ export default function App() {
                     viewport={{ once: true }}
                     className="h-full"
                   >
-                    <Link to={`/course/${course.id}`} className="block h-full">
-                      <ModernCourseCard {...course} />
-                    </Link>
+                    <ModernCourseCard {...course} learnMoreTo={`/course/${course.id}`} />
                   </motion.div>
                 ))}
               </div>
@@ -268,14 +264,19 @@ export default function App() {
                     viewport={{ once: true }}
                     className="h-full"
                   >
-                    <Link to={`/activity/${activity.id}`} className="block h-full">
-                      <ModernCourseCard {...activity} />
-                    </Link>
+                    <ModernCourseCard {...activity} learnMoreTo={`/activity/${activity.id}`} />
                   </motion.div>
                 ))}
               </div>
             </TabsContent>
           </Tabs>
+        </div>
+      </section>
+
+      {/* Inline Updates Section */}
+      <section className="py-16 border-t border-border">
+        <div className="container mx-auto px-4">
+          <InlineSubscribe />
         </div>
       </section>
 
@@ -298,7 +299,7 @@ export default function App() {
               {t("home.cta.desc")}
             </p>
             <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfEgAjYtASRQV5OY5J8GMCbKgxdMuauq6fj8t-jU-A4vX3HHg/viewform?usp=dialog"
+              href={config.googleFormUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="px-10 py-4 bg-primary text-primary-foreground rounded-2xl hover:shadow-xl hover:shadow-primary/50 transition-all duration-300 inline-flex items-center gap-2 group"

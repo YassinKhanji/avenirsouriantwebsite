@@ -153,8 +153,9 @@ export default function Layout() {
           <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-muted-foreground">{t("common.allRights")}</p>
             <div className="flex gap-6 mt-4 md:mt-0 text-sm text-muted-foreground">
-              <a href="#" className="hover:text-primary transition-colors">{t("common.privacy")}</a>
-              <a href="#" className="hover:text-primary transition-colors">{t("common.terms")}</a>
+              <Link to="/privacy" className="hover:text-primary transition-colors">{t("common.privacy")}</Link>
+              <Link to="/terms" className="hover:text-primary transition-colors">{t("common.terms")}</Link>
+                <Link to="/unsubscribe" className="hover:text-primary transition-colors">{t("common.unsubscribe")}</Link>
             </div>
           </div>
         </div>

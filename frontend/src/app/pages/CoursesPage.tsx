@@ -5,6 +5,7 @@ import { ModernCourseCard } from "../components/ModernCourseCard";
 import { useMemo } from "react";
 import { useI18n } from "../i18n";
 import { getCourses } from "../data/programs";
+import InlineSubscribe from "../components/InlineSubscribe";
 
 export default function CoursesPage() {
   const { t, lang } = useI18n();
@@ -23,11 +24,10 @@ export default function CoursesPage() {
             className="text-center"
           >
             <h1 className="mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent text-4xl md:text-5xl font-bold">
-              Arabic Language Courses
+              {t("coursesPage.title")}
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-              Discover our comprehensive collection of Arabic courses designed for all ages and skill levels. 
-              Choose from beginner to advanced courses and start your learning journey today.
+              {t("coursesPage.desc")}
             </p>
           </motion.div>
         </div>
@@ -46,12 +46,17 @@ export default function CoursesPage() {
                 viewport={{ once: true }}
                 className="h-full"
               >
-                <Link to={`/course/${course.id}`} className="block h-full">
-                  <ModernCourseCard {...course} />
-                </Link>
+                <ModernCourseCard {...course} learnMoreTo={`/course/${course.id}`} />
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Inline Updates Section */}
+      <section className="py-20 border-t border-border">
+        <div className="container mx-auto px-4">
+          <InlineSubscribe />
         </div>
       </section>
 

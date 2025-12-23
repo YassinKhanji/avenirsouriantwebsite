@@ -11,6 +11,9 @@ import ContactPage from "./app/pages/ContactPage.tsx";
 import RegisterPage from "./app/pages/RegisterPage.tsx";
 import AdminRegistrations from "./app/pages/AdminRegistrations";
 import AboutPage from "./app/pages/AboutPage.tsx";
+import TermsPage from "./app/pages/TermsPage.tsx";
+import PrivacyPage from "./app/pages/PrivacyPage.tsx";
+import UnsubscribePage from "./app/pages/UnsubscribePage.tsx";
 import { LanguageProvider } from "./app/i18n.tsx";
 import { ThemeProvider } from "./app/theme-provider.tsx";
 import "./styles/index.css";
@@ -30,6 +33,9 @@ createRoot(document.getElementById("root")!).render(
             <Route path="contact" element={<ContactPage />} />
             <Route path="register" element={<RegisterPage />} />
             <Route path="admin" element={<AdminRegistrations />} />
+            <Route path="terms" element={<TermsPage />} />
+            <Route path="privacy" element={<PrivacyPage />} />
+            <Route path="unsubscribe" element={<UnsubscribePage />} />
           </Route>
         </Routes>
       </BrowserRouter>

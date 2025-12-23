@@ -140,8 +140,9 @@ export default function RegisterPage() {
                         onChange={() => toggleCourse(String(c.id))}
                         className="w-4 h-4 rounded cursor-pointer accent-primary"
                       />
-                      <span className="flex-1">
-                        {c.title}
+                      <span className="flex-1 flex items-center justify-between">
+                        <span>{c.title}</span>
+                        <span className="text-muted-foreground text-sm ml-3">{c.price}</span>
                       </span>
                     </label>
                   ))

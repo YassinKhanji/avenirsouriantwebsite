@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowRight, Clock, Users, CheckCircle, Calendar, AlertCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo } from "react";
+import InlineSubscribe from "../components/InlineSubscribe";
 import { useI18n } from "../i18n";
 import { getCourses } from "../data/programs";
 
@@ -42,7 +43,7 @@ export default function CourseDetail() {
       {/* Course Info Cards */}
       <section className="py-12 bg-card border-b border-border">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-stretch">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -80,7 +81,7 @@ export default function CourseDetail() {
                 <CheckCircle className="w-5 h-5 text-primary" />
                 <span className="text-muted-foreground">{t("courseDetail.category")}</span>
               </div>
-              <p className="text-2xl font-bold capitalize">{course.category}</p>
+              <p className="text-2xl font-bold capitalize">{course.category === "language" ? t("category.language") : t("category.activity")}</p>
             </motion.div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -94,6 +95,19 @@ export default function CourseDetail() {
                 <span className="text-muted-foreground">{t("courseDetail.startDate")}</span>
               </div>
               <p className="text-xl font-bold">{course.nextStartDate}</p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="bg-background rounded-lg p-6 border border-border w-full h-full"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <span className="w-5 h-5 text-primary">💵</span>
+                <span className="text-muted-foreground">{t("courseDetail.price")}</span>
+              </div>
+              <p className="text-2xl font-bold">{(course as any).price}</p>
             </motion.div>
           </div>
         </div>
@@ -171,7 +185,7 @@ export default function CourseDetail() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA or Notify Section */}
       <section className="py-32 bg-gradient-to-br from-primary/10 via-accent/10 to-primary/10">
         <div className="container mx-auto px-4 text-center max-w-2xl">
           <motion.div
@@ -180,17 +194,28 @@ export default function CourseDetail() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-bold mb-6">{t("courseDetail.cta.title")}</h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              {t("courseDetail.cta.desc")}
-            </p>
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 px-10 py-4 bg-primary text-primary-foreground rounded-2xl hover:shadow-xl hover:shadow-primary/50 transition-all duration-300 group"
-            >
-              <span>{t("courseDetail.cta.button")}</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
+            {course.category === "language" && /Upcoming|À venir|قريب/.test(course.nextStartDate) ? (
+              <div>
+                <h2 className="text-3xl font-bold mb-6">{t("updates.notifyCourse")}</h2>
+                <div className="mt-4">
+                  <InlineSubscribe source="course-detail" courseId={course.id} courseTitle={course.title} />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h2 className="text-3xl font-bold mb-6">{t("courseDetail.cta.title")}</h2>
+                <p className="text-muted-foreground text-lg mb-8">
+                  {t("courseDetail.cta.desc")}
+                </p>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-2 px-10 py-4 bg-primary text-primary-foreground rounded-2xl hover:shadow-xl hover:shadow-primary/50 transition-all duration-300 group"
+                >
+                  <span>{t("courseDetail.cta.button")}</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            )}
           </motion.div>
         </div>
       </section>

@@ -182,10 +182,6 @@ export default function ContactPage() {
                 a: t("contact.faq.a3")
               },
               {
-                q: t("contact.faq.q4"),
-                a: t("contact.faq.a4")
-              },
-              {
                 q: t("contact.faq.q5"),
                 a: t("contact.faq.a5")
               }

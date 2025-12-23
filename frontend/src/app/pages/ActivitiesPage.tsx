@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { ModernCourseCard } from "../components/ModernCourseCard";
+import InlineSubscribe from "../components/InlineSubscribe";
 import { useMemo } from "react";
 import { useI18n } from "../i18n";
 import { getActivities } from "../data/programs";
@@ -45,12 +46,17 @@ export default function ActivitiesPage() {
                 viewport={{ once: true }}
                 className="h-full"
               >
-                <Link to={`/activity/${activity.id}`} className="block h-full">
-                  <ModernCourseCard {...activity} />
-                </Link>
+                <ModernCourseCard {...activity} learnMoreTo={`/activity/${activity.id}`} />
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Inline Updates Section */}
+      <section className="py-20 border-t border-border">
+        <div className="container mx-auto px-4">
+          <InlineSubscribe />
         </div>
       </section>
 
