@@ -2,37 +2,14 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { ModernCourseCard } from "../components/ModernCourseCard";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import { useI18n } from "../i18n";
 import { getCourses } from "../data/programs";
 
 export default function CoursesPage() {
   const { t, lang } = useI18n();
   const courses = useMemo(() => getCourses(t), [t, lang]);
-  const [backendCourses, setBackendCourses] = useState<{id:number;spots_left:number}[]>([]);
-  
-  useEffect(() => {
-    fetch('/api/courses')
-      .then(async r => {
-        if (!r.ok) throw new Error('Failed to load courses');
-        return r.json();
-      })
-      .then(setBackendCourses)
-      .catch(() => setBackendCourses([]));
-  }, []);
-  
-  const spotsByIdMap = useMemo(() => 
-    Object.fromEntries(backendCourses.map(c => [c.id, c.spots_left])), 
-    [backendCourses]
-  );
-  
-  const coursesWithDynamicSpots = useMemo(() => 
-    courses.map(c => ({
-      ...c,
-      spotsLeft: spotsByIdMap[c.id] !== undefined ? spotsByIdMap[c.id] : c.spotsLeft
-    })),
-    [courses, spotsByIdMap]
-  );
+  const coursesWithDynamicSpots = courses;
 
   return (
     <div className="min-h-screen bg-background">
@@ -49,7 +26,7 @@ export default function CoursesPage() {
               Arabic Language Courses
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-              Discover our comprehensive collection of AI-powered Arabic courses designed for all ages and skill levels. 
+              Discover our comprehensive collection of Arabic courses designed for all ages and skill levels. 
               Choose from beginner to advanced courses and start your learning journey today.
             </p>
           </motion.div>

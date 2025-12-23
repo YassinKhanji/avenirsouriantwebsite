@@ -2,37 +2,14 @@ import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { ModernCourseCard } from "../components/ModernCourseCard";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import { useI18n } from "../i18n";
 import { getActivities } from "../data/programs";
 
 export default function ActivitiesPage() {
   const { t, lang } = useI18n();
   const activities = useMemo(() => getActivities(t), [t, lang]);
-  const [backendCourses, setBackendCourses] = useState<{id:number;spots_left:number}[]>([]);
-  
-  useEffect(() => {
-    fetch('/api/courses')
-      .then(async r => {
-        if (!r.ok) throw new Error('Failed to load courses');
-        return r.json();
-      })
-      .then(setBackendCourses)
-      .catch(() => setBackendCourses([]));
-  }, []);
-  
-  const spotsByIdMap = useMemo(() => 
-    Object.fromEntries(backendCourses.map(c => [c.id, c.spots_left])), 
-    [backendCourses]
-  );
-  
-  const activitiesWithDynamicSpots = useMemo(() => 
-    activities.map(a => ({
-      ...a,
-      spotsLeft: spotsByIdMap[a.id] !== undefined ? spotsByIdMap[a.id] : a.spotsLeft
-    })),
-    [activities, spotsByIdMap]
-  );
+  const activitiesWithDynamicSpots = activities;
 
   return (
     <div className="min-h-screen bg-background">

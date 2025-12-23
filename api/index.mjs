@@ -76,7 +76,6 @@ async function initializeDatabase() {
       await sql`
         INSERT INTO courses (id, title, spots_left) 
         VALUES 
-          (1, 'Course 1', 20),
           (2, 'Course 2', 20),
           (3, 'Course 3', 20),
           (7, 'Activity 1', 20),
@@ -104,7 +103,7 @@ app.get('/api/health', (req, res) => {
 
 app.post('/api/register', async (req, res) => {
   const b = req.body || {};
-  const required = ['email','student_name','age','phone','course_id','course_title','child_name','child_dob','parent_name','parent_phone','emergency_phone','signature','current_date'];
+  const required = ['email','student_name','age','phone','course_id','course_title','child_name','child_dob','parent_name','parent_phone','emergency_phone','signature','submitted_date'];
   for (const key of required) {
     if (!b[key]) {
       return res.status(400).json({ error: `Missing field: ${key}` });
@@ -112,16 +111,6 @@ app.post('/api/register', async (req, res) => {
   }
 
   try {
-    const courseResult = await sql`SELECT id, spots_left FROM courses WHERE id = ${Number(b.course_id)};`;
-    if (courseResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Course not found.' });
-    }
-
-    const course = courseResult.rows[0];
-    if (course.spots_left <= 0) {
-      return res.status(409).json({ error: 'No spots left for this course.' });
-    }
-
     const result = await sql`
       INSERT INTO registrations (
         lang, email, student_name, age, phone, course_id, course_title, 
@@ -148,20 +137,14 @@ app.post('/api/register', async (req, res) => {
       RETURNING id;
     `;
 
-    await sql`
-      UPDATE courses SET spots_left = spots_left - 1 WHERE id = ${Number(b.course_id)};
-    `;
-
-    const updatedCourse = await sql`SELECT spots_left FROM courses WHERE id = ${Number(b.course_id)};`;
-
     let emailSent = false;
     try {
       await mailer.sendMail({
-        from: `Avenir Souriant Administration <administration@avenirsouriant.com>`,
+        from: `Avenir Souriant Academy <${gmailUser}>`,
         to: String(b.email),
-        subject: 'Avenir Souriant: Waiver Signature Required',
-        text: `Hello ${b.student_name},\n\nThank you for registering for ${b.course_title}. Before we can finalize your registration, please sign the waiver at the link below:\n\nhttps://forms.gle/RqNCqDbe99bxRNzw6\n\nIf you have any questions, reply to this email.\n\nRegards,\nAvenir Souriant Academy`,
-        html: `<p>Hello ${b.student_name},</p><p>Thank you for registering for <strong>${b.course_title}</strong>. Before we can finalize your registration, please sign the waiver at the link below:</p><p><a href="https://forms.gle/RqNCqDbe99bxRNzw6" target="_blank">Sign the waiver</a></p><p>If you have any questions, reply to this email.</p><p>Regards,<br/>Avenir Souriant Academy</p>`,
+        subject: 'Avenir Souriant: Registration Received',
+        text: `Hello ${b.student_name},\n\nThank you for registering for ${b.course_title}. Your registration has been received. Our team will review your submission and get back to you shortly with all the details.\n\nIf you have any questions, reply to this email.\n\nRegards,\nAvenir Souriant Academy`,
+        html: `<p>Hello ${b.student_name},</p><p>Thank you for registering for <strong>${b.course_title}</strong>. Your registration has been received.</p><p>Our team will review your submission and get back to you shortly with all the details.</p><p>If you have any questions, just reply to this email.</p><p>Regards,<br/>Avenir Souriant Academy</p>`,
       });
       emailSent = true;
     } catch (mailErr) {
@@ -170,7 +153,6 @@ app.post('/api/register', async (req, res) => {
 
     res.status(201).json({ 
       id: result.rows[0].id, 
-      spots_left: updatedCourse.rows[0].spots_left, 
       emailSent 
     });
   } catch (e) {

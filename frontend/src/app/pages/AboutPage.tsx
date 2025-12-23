@@ -102,8 +102,8 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-8">
             {[
               {
-                title: t("about.why.ai.title"),
-                description: t("about.why.ai")
+                title: t("about.why.personalized.title"),
+                description: t("about.why.personalized")
               },
               {
                 title: t("about.why.instructors.title"),

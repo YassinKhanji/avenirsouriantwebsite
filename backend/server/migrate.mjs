@@ -85,7 +85,6 @@ async function migrate() {
       await sql`
         INSERT INTO courses (id, title, spots_left) 
         VALUES 
-          (1, 'Course 1', 20),
           (2, 'Course 2', 20),
           (3, 'Course 3', 20),
           (7, 'Activity 1', 20),

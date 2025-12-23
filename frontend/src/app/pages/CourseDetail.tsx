@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { ArrowRight, Clock, Users, CheckCircle, Calendar, AlertCircle } from "lucide-react";
 import { motion } from "motion/react";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import { useI18n } from "../i18n";
 import { getCourses } from "../data/programs";
 
@@ -10,19 +10,6 @@ export default function CourseDetail() {
   const courses = useMemo(() => getCourses(t), [t, lang]);
   const { id } = useParams();
   const course = courses.find(c => c.id === parseInt(id || "0"));
-  const [backendCourses, setBackendCourses] = useState<{id:number;spots_left:number}[]>([]);
-  
-  useEffect(() => {
-    fetch('/api/courses')
-      .then(async r => {
-        if (!r.ok) throw new Error('Failed to load courses');
-        return r.json();
-      })
-      .then(setBackendCourses)
-      .catch(() => setBackendCourses([]));
-  }, []);
-  
-  const dynamicSpots = backendCourses.find(c => c.id === parseInt(id || "0"))?.spots_left ?? course?.spotsLeft ?? 0;
 
   if (!course) {
     return (
@@ -55,13 +42,13 @@ export default function CourseDetail() {
       {/* Course Info Cards */}
       <section className="py-12 bg-card border-b border-border">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-5 gap-6">
+          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="bg-background rounded-lg p-6 border border-border"
+              className="bg-background rounded-lg p-6 border border-border w-full h-full"
             >
               <div className="flex items-center gap-3 mb-2">
                 <Clock className="w-5 h-5 text-primary" />
@@ -74,7 +61,7 @@ export default function CourseDetail() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
-              className="bg-background rounded-lg p-6 border border-border"
+              className="bg-background rounded-lg p-6 border border-border w-full h-full"
             >
               <div className="flex items-center gap-3 mb-2">
                 <Users className="w-5 h-5 text-primary" />
@@ -87,7 +74,7 @@ export default function CourseDetail() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
-              className="bg-background rounded-lg p-6 border border-border"
+              className="bg-background rounded-lg p-6 border border-border w-full h-full"
             >
               <div className="flex items-center gap-3 mb-2">
                 <CheckCircle className="w-5 h-5 text-primary" />
@@ -100,30 +87,13 @@ export default function CourseDetail() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               viewport={{ once: true }}
-              className="bg-background rounded-lg p-6 border border-border"
+              className="bg-background rounded-lg p-6 border border-border w-full h-full"
             >
               <div className="flex items-center gap-3 mb-2">
                 <Calendar className="w-5 h-5 text-primary" />
                 <span className="text-muted-foreground">{t("courseDetail.startDate")}</span>
               </div>
               <p className="text-xl font-bold">{course.nextStartDate}</p>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              viewport={{ once: true }}
-              className={`bg-background rounded-lg p-6 border ${
-                dynamicSpots <= 5 ? "border-red-500/30 bg-red-500/5" : "border-border"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <AlertCircle className={`w-5 h-5 ${dynamicSpots <= 5 ? "text-red-600" : "text-primary"}`} />
-                <span className="text-muted-foreground">{t("courseDetail.spotsLeft")}</span>
-              </div>
-              <p className={`text-2xl font-bold ${dynamicSpots <= 5 ? "text-red-600" : ""}`}>
-                {dynamicSpots}
-              </p>
             </motion.div>
           </div>
         </div>

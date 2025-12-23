@@ -34,40 +34,6 @@ export type Activity = ProgramBase & {
 export function getCourses(t: (key: string) => string): Course[] {
   return [
     {
-      id: 1,
-      title: t("courses.1.title"),
-      description: t("courses.1.desc"),
-      icon: Bot,
-      ageGroup: "All Ages",
-      duration: "12 weeks",
-      category: "language",
-      gradient: "bg-gradient-to-br from-purple-500 to-pink-500",
-      fullDescription: t("courses.1.full"),
-      highlights: [
-        t("courses.1.h1"),
-        t("courses.1.h2"),
-        t("courses.1.h3"),
-        t("courses.1.h4"),
-        t("courses.1.h5"),
-        t("courses.1.h6"),
-      ],
-      nextStartDate: t("courses.1.startDate"),
-      spotsLeft: 8,
-      curriculum: [
-        t("courses.1.curriculum.1"),
-        t("courses.1.curriculum.2"),
-        t("courses.1.curriculum.3"),
-        t("courses.1.curriculum.4"),
-        t("courses.1.curriculum.5"),
-        t("courses.1.curriculum.6"),
-      ],
-      requirements: [
-        t("courses.1.req.1"),
-        t("courses.1.req.2"),
-        t("courses.1.req.3"),
-      ],
-    },
-    {
       id: 2,
       title: t("courses.2.title"),
       description: t("courses.2.desc"),

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { ModernCourseCard } from "./components/ModernCourseCard";
 import { HeroIllustration } from "./components/HeroIllustration";
 import { FeatureIllustration } from "./components/FeatureIllustration";
@@ -12,20 +12,9 @@ import { getCourses, getActivities } from "./data/programs";
 export default function App() {
   const { t, lang } = useI18n();
   const courses = useMemo(() => getCourses(t), [t, lang]);
-  const [backendCourses, setBackendCourses] = useState<{ id: number; spots_left: number }[]>([]);
-  useEffect(() => {
-    fetch('/api/courses')
-      .then(async r => {
-        if (!r.ok) throw new Error('Failed to load courses');
-        return r.json();
-      })
-      .then(setBackendCourses)
-      .catch(() => setBackendCourses([]));
-  }, []);
-  const spotsById = useMemo(() => Object.fromEntries(backendCourses.map(c => [c.id, c.spots_left])), [backendCourses]);
-  const displayCourses = useMemo(() => courses.map(c => ({ ...c, spotsLeft: spotsById[c.id] ?? c.spotsLeft })), [courses, spotsById]);
+  const displayCourses = courses;
   const activities = useMemo(() => getActivities(t), [t, lang]);
-  const activitiesWithDynamicSpots = useMemo(() => activities.map(a => ({ ...a, spotsLeft: spotsById[a.id] ?? a.spotsLeft })), [activities, spotsById]);
+  const activitiesWithDynamicSpots = activities;
 
   return (
     <div className="min-h-screen bg-background">
@@ -123,19 +112,19 @@ export default function App() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                title: t("why.ai.title"),
-                description: t("why.ai.desc"),
-                type: "ai" as const,
-              },
-              {
-                title: t("why.soccer.title"),
-                description: t("why.soccer.desc"),
+                title: t("why.programs.title"),
+                description: t("why.programs.desc"),
                 type: "soccer" as const,
               },
               {
-                title: t("why.robotics.title"),
-                description: t("why.robotics.desc"),
+                title: 'Robotics & Coding Club',
+                description: 'Hands-on robotics and programming classes',
                 type: "robotics" as const,
+              },
+              {
+                title: 'Enriching Activities',
+                description: 'Extracurricular programs to develop new skills and interests',
+                type: "soccer" as const,
               },
             ].map((feature, index) => (
               <motion.div

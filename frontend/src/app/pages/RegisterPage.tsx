@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useI18n } from "../i18n";
 import { getCourses, getActivities } from "../data/programs";
 
@@ -7,18 +7,8 @@ export default function RegisterPage() {
   const courses = useMemo(() => getCourses(t), [t, lang]);
   const activities = useMemo(() => getActivities(t), [t, lang]);
   const allPrograms = useMemo(() => [...courses, ...activities], [courses, activities]);
-  const [backendCourses, setBackendCourses] = useState<{id:number;spots_left:number}[]>([]);
-  useEffect(() => {
-    fetch('/api/courses')
-      .then(async r => {
-        if (!r.ok) throw new Error('Failed to load courses');
-        return r.json();
-      })
-      .then(setBackendCourses)
-      .catch(() => setBackendCourses([]));
-  }, [lang]);
   const titleById = useMemo(() => Object.fromEntries(allPrograms.map(p => [p.id, p.title])), [allPrograms]);
-  const openCourses = backendCourses.filter(c => c.spots_left > 0).map(c => ({ id: c.id, title: titleById[c.id] || `Program ${c.id}`, spotsLeft: c.spots_left }));
+  const openCourses = allPrograms;
 
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -100,8 +90,6 @@ export default function RegisterPage() {
         setEmergencyPhone('');
         setSignature('');
         setSubmittedDate('');
-        // refresh courses to reflect new spots left
-        fetch('/api/courses').then(r => r.json()).then(setBackendCourses).catch(() => {});
       })
       .catch((err) => {
         setError(err.message);
@@ -153,7 +141,7 @@ export default function RegisterPage() {
                         className="w-4 h-4 rounded cursor-pointer accent-primary"
                       />
                       <span className="flex-1">
-                        {c.title} ({c.spotsLeft} spots left)
+                        {c.title}
                       </span>
                     </label>
                   ))
