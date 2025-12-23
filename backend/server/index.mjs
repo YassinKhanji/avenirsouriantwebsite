@@ -83,7 +83,9 @@ async function initializeDatabase() {
         VALUES 
           (1, 'Course 1', 8),
           (2, 'Course 2', 12),
-          (3, 'Course 3', 5);
+          (3, 'Course 3', 5),
+          (7, 'Activity 1', 10),
+          (8, 'Activity 2', 7);
       `;
     }
 

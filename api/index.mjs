@@ -3,19 +3,33 @@ import cors from 'cors';
 import { sql } from '@vercel/postgres';
 import dotenv from 'dotenv';
 import nodemailer from 'nodemailer';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config({ path: './server/.env' });
+// Robust env loading for local dev and Vercel
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const envCandidates = [
+  path.resolve(__dirname, '../backend/.env'),
+  path.resolve(__dirname, '../backend/server/.env'),
+  path.resolve(process.cwd(), '.env'),
+  path.resolve(__dirname, '.env'),
+];
+for (const p of envCandidates) {
+  if (fs.existsSync(p)) {
+    dotenv.config({ path: p });
+    break;
+  }
+}
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-
 app.use(cors());
 app.use(express.json());
 
-// Initialize DB tables (runs once on first deployment)
+// Initialize DB tables (cold-start safe)
 async function initializeDatabase() {
   try {
-    // Create registrations table
     await sql`
       CREATE TABLE IF NOT EXISTS registrations (
         id SERIAL PRIMARY KEY,
@@ -30,16 +44,25 @@ async function initializeDatabase() {
         comment TEXT,
         child_name VARCHAR(255) NOT NULL,
         child_dob VARCHAR(255) NOT NULL,
-        date VARCHAR(255),
+        event_date VARCHAR(255),
         parent_name VARCHAR(255) NOT NULL,
         parent_phone VARCHAR(20) NOT NULL,
         emergency_phone VARCHAR(20) NOT NULL,
         signature TEXT NOT NULL,
-        current_date VARCHAR(255) NOT NULL
+        submitted_date VARCHAR(255) NOT NULL
       );
     `;
 
-    // Create courses table
+    // Rename legacy columns if present
+    const legacyDate = await sql`SELECT 1 FROM information_schema.columns WHERE table_name = 'registrations' AND column_name = 'date' LIMIT 1;`;
+    if (legacyDate.rowCount > 0) {
+      await sql`ALTER TABLE registrations RENAME COLUMN "date" TO event_date;`;
+    }
+    const legacyCurrentDate = await sql`SELECT 1 FROM information_schema.columns WHERE table_name = 'registrations' AND column_name = 'current_date' LIMIT 1;`;
+    if (legacyCurrentDate.rowCount > 0) {
+      await sql`ALTER TABLE registrations RENAME COLUMN "current_date" TO submitted_date;`;
+    }
+
     await sql`
       CREATE TABLE IF NOT EXISTS courses (
         id SERIAL PRIMARY KEY,
@@ -48,22 +71,20 @@ async function initializeDatabase() {
       );
     `;
 
-    // Seed courses if empty
     const courseCount = await sql`SELECT COUNT(*) as count FROM courses;`;
-    if (courseCount.rows[0].count === 0) {
+    if (Number(courseCount.rows?.[0]?.count || 0) === 0) {
       await sql`
         INSERT INTO courses (id, title, spots_left) 
         VALUES 
           (1, 'Course 1', 8),
           (2, 'Course 2', 12),
-          (3, 'Course 3', 5);
+          (3, 'Course 3', 5),
+          (7, 'Activity 1', 10),
+          (8, 'Activity 2', 7);
       `;
     }
-
-    console.log('Database initialized successfully');
   } catch (error) {
     console.error('Database initialization error:', error);
-    // Don't throw - allow server to continue
   }
 }
 
@@ -81,9 +102,6 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
 
-// Initialize database on startup
-initializeDatabase().catch(console.error);
-
 app.post('/api/register', async (req, res) => {
   const b = req.body || {};
   const required = ['email','student_name','age','phone','course_id','course_title','child_name','child_dob','parent_name','parent_phone','emergency_phone','signature','current_date'];
@@ -94,9 +112,7 @@ app.post('/api/register', async (req, res) => {
   }
 
   try {
-    // Check if course exists and has spots
     const courseResult = await sql`SELECT id, spots_left FROM courses WHERE id = ${Number(b.course_id)};`;
-    
     if (courseResult.rows.length === 0) {
       return res.status(404).json({ error: 'Course not found.' });
     }
@@ -106,12 +122,11 @@ app.post('/api/register', async (req, res) => {
       return res.status(409).json({ error: 'No spots left for this course.' });
     }
 
-    // Insert registration
     const result = await sql`
       INSERT INTO registrations (
         lang, email, student_name, age, phone, course_id, course_title, 
-        comment, child_name, child_dob, date, parent_name, parent_phone, 
-        emergency_phone, signature, current_date
+        comment, child_name, child_dob, event_date, parent_name, parent_phone, 
+        emergency_phone, signature, submitted_date
       ) VALUES (
         ${b.lang || 'en'},
         ${String(b.email)},
@@ -123,24 +138,22 @@ app.post('/api/register', async (req, res) => {
         ${b.comment ? String(b.comment) : null},
         ${String(b.child_name)},
         ${String(b.child_dob)},
-        ${b.date ? String(b.date) : null},
+        ${b.event_date ? String(b.event_date) : null},
         ${String(b.parent_name)},
         ${String(b.parent_phone)},
         ${String(b.emergency_phone)},
         ${String(b.signature)},
-        ${String(b.current_date)}
+        ${String(b.submitted_date)}
       )
       RETURNING id;
     `;
 
-    // Update course spots
     await sql`
       UPDATE courses SET spots_left = spots_left - 1 WHERE id = ${Number(b.course_id)};
     `;
 
     const updatedCourse = await sql`SELECT spots_left FROM courses WHERE id = ${Number(b.course_id)};`;
 
-    // Send waiver email (non-blocking)
     let emailSent = false;
     try {
       await mailer.sendMail({
@@ -180,7 +193,7 @@ app.get('/api/registrations.csv', async (req, res) => {
   try {
     const result = await sql`SELECT * FROM registrations ORDER BY created_at DESC;`;
     const rows = result.rows;
-    
+
     if (rows.length === 0) {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', 'attachment; filename="registrations.csv"');
@@ -218,6 +231,8 @@ app.get('/api/courses', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
-});
+// Run DB init on cold start
+initializeDatabase().catch(console.error);
+
+// Export Express app as a handler for Vercel Node Functions
+export default (req, res) => app(req, res);

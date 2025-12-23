@@ -4,7 +4,7 @@
   "installCommand": "npm install",
   "framework": null,
   "functions": {
-    "server/index.mjs": {
+    "api/index.mjs": {
       "runtime": "@vercel/node@3.1.0",
       "memory": 1024,
       "maxDuration": 60
@@ -13,7 +13,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/server/index.mjs"
+      "destination": "/api/index.mjs"
     }
   ],
   "env": {
