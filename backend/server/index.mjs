@@ -115,7 +115,7 @@ initializeDatabase().catch(console.error);
 
 app.post('/api/register', async (req, res) => {
   const b = req.body || {};
-  const required = ['email','student_name','age','phone','course_id','course_title','child_name','child_dob','parent_name','parent_phone','emergency_phone','signature','current_date'];
+  const required = ['email','student_name','age','phone','course_id','course_title','child_name','child_dob','parent_name','parent_phone','emergency_phone','signature','submitted_date'];
   for (const key of required) {
     if (!b[key]) {
       return res.status(400).json({ error: `Missing field: ${key}` });
@@ -173,7 +173,7 @@ app.post('/api/register', async (req, res) => {
     let emailSent = false;
     try {
       await mailer.sendMail({
-        from: `Avenir Souriant Administration <administration@avenirsouriant.com>`,
+        from: `Avenir Souriant Academy <${gmailUser}>`,
         to: String(b.email),
         subject: 'Avenir Souriant: Waiver Signature Required',
         text: `Hello ${b.student_name},\n\nThank you for registering for ${b.course_title}. Before we can finalize your registration, please sign the waiver at the link below:\n\nhttps://forms.gle/RqNCqDbe99bxRNzw6\n\nIf you have any questions, reply to this email.\n\nRegards,\nAvenir Souriant Academy`,
@@ -182,6 +182,37 @@ app.post('/api/register', async (req, res) => {
       emailSent = true;
     } catch (mailErr) {
       console.error('Email send failed:', mailErr);
+    }
+
+    // Send admin notification email (non-blocking)
+    try {
+      await mailer.sendMail({
+        from: `Avenir Souriant Academy <${gmailUser}>`,
+        to: 'administration@avenirsouriant.com',
+        subject: 'New Registration: ' + b.student_name,
+        html: `
+          <h2>New Registration Received</h2>
+          <p><strong>Course/Activity:</strong> ${b.course_title}</p>
+          <hr/>
+          <h3>Student Information</h3>
+          <p><strong>Student Name:</strong> ${b.student_name}</p>
+          <p><strong>Age:</strong> ${b.age}</p>
+          <p><strong>Date of Birth:</strong> ${b.child_dob}</p>
+          <hr/>
+          <h3>Parent Information</h3>
+          <p><strong>Parent Name:</strong> ${b.parent_name}</p>
+          <p><strong>Email:</strong> ${b.email}</p>
+          <p><strong>Parent Phone:</strong> ${b.parent_phone}</p>
+          <p><strong>Emergency Phone:</strong> ${b.emergency_phone}</p>
+          <hr/>
+          <h3>Additional Information</h3>
+          <p><strong>Signature:</strong> ${b.signature}</p>
+          <p><strong>Comments:</strong> ${b.comment || 'None'}</p>
+          <p><strong>Registration Date:</strong> ${b.submitted_date}</p>
+        `,
+      });
+    } catch (adminEmailErr) {
+      console.error('Admin email send failed:', adminEmailErr);
     }
 
     res.status(201).json({ 

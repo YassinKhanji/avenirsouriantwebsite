@@ -24,7 +24,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [phone, setPhone] = useState("");
-  const [courseId, setCourseId] = useState<string>("");
+  const [courseIds, setCourseIds] = useState<string[]>([]);
   const [comment, setComment] = useState("");
   // Additional fields
   const [childName, setChildName] = useState("");
@@ -38,51 +38,60 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
+  function toggleCourse(id: string) {
+    setCourseIds(prev => 
+      prev.includes(id) ? prev.filter(cid => cid !== id) : [...prev, id]
+    );
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     setSuccess("");
-    if (!email || !name || !age || !phone || !courseId || !childName || !childDob || !parentName || !parentPhone || !emergencyPhone || !signature || !submittedDate) {
-      setError("Please fill all required fields.");
+    if (!email || !name || !age || !phone || courseIds.length === 0 || !childName || !childDob || !parentName || !parentPhone || !emergencyPhone || !signature || !submittedDate) {
+      setError("Please fill all required fields and select at least one course.");
       return;
     }
-    const course = openCourses.find((c) => String(c.id) === courseId);
     setLoading(true);
-    fetch('/api/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        lang,
-        email,
-        student_name: name,
-        age: Number(age),
-        phone,
-        course_id: Number(courseId),
-        course_title: course ? course.title : '',
-        comment,
-        child_name: childName,
-        child_dob: childDob,
-        parent_name: parentName,
-        parent_phone: parentPhone,
-        emergency_phone: emergencyPhone,
-        signature,
-        submitted_date: submittedDate,
-      }),
-    })
-      .then(async (r) => {
+    const registrationPromises = courseIds.map(cid => {
+      const course = openCourses.find((c) => String(c.id) === cid);
+      return fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          lang,
+          email,
+          student_name: name,
+          age: Number(age),
+          phone,
+          course_id: Number(cid),
+          course_title: course ? course.title : '',
+          comment,
+          child_name: childName,
+          child_dob: childDob,
+          parent_name: parentName,
+          parent_phone: parentPhone,
+          emergency_phone: emergencyPhone,
+          signature,
+          submitted_date: submittedDate,
+        }),
+      }).then(async (r) => {
         if (!r.ok) {
           const data = await r.json().catch(() => ({}));
           throw new Error(data.error || 'Failed to submit');
         }
         return r.json();
-      })
-      .then((data) => {
-        setSuccess('Registration submitted successfully.');
+      });
+    });
+    
+    Promise.all(registrationPromises)
+      .then(() => {
+        setSuccess(`Successfully registered for ${courseIds.length} course(s).`);
         setEmail('');
         setName('');
         setAge('');
         setPhone('');
-        setCourseId('');
+        setCourseIds([]);
         setComment('');
         setChildName('');
         setChildDob('');
@@ -133,16 +142,27 @@ export default function RegisterPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-3">{t("register.course")} *</label>
-              <select value={courseId} onChange={(e) => setCourseId(e.target.value)} className="w-full rounded-lg border border-border bg-background p-3" required>
-                <option value="" disabled>Select a course</option>
-                {openCourses.map((c) => (
-                  <option key={c.id} value={String(c.id)}>
-                    {c.title} ({c.spotsLeft} spots left)
-                  </option>
-                ))}
-              </select>
-              {openCourses.length === 0 && (
-                <p className="text-sm text-muted-foreground mt-2">No courses currently have available spots.</p>
+              <div className="space-y-3">
+                {openCourses.length > 0 ? (
+                  openCourses.map((c) => (
+                    <label key={c.id} className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-primary hover:bg-opacity-10 cursor-pointer transition-colors">
+                      <input 
+                        type="checkbox" 
+                        checked={courseIds.includes(String(c.id))}
+                        onChange={() => toggleCourse(String(c.id))}
+                        className="w-4 h-4 rounded cursor-pointer accent-primary"
+                      />
+                      <span className="flex-1">
+                        {c.title} ({c.spotsLeft} spots left)
+                      </span>
+                    </label>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">No courses currently have available spots.</p>
+                )}
+              </div>
+              {courseIds.length > 0 && (
+                <p className="text-sm text-green-600 mt-3">Selected: {courseIds.length} course(s)</p>
               )}
             </div>
 
@@ -183,7 +203,7 @@ export default function RegisterPage() {
               <textarea value={comment} onChange={(e) => setComment(e.target.value)} className="w-full rounded-lg border border-border bg-background p-3" rows={4} />
             </div>
             <div className="flex justify-end">
-              <button type="submit" disabled={loading} className="px-6 py-3 bg-primary text-primary-foreground rounded-xl disabled:opacity-60">
+              <button type="submit" disabled={loading} className="px-6 py-3 bg-primary text-primary-foreground rounded-xl disabled:opacity-60 cursor-pointer hover:cursor-pointer">
                 {t("register.submit")}
               </button>
             </div>
