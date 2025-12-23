@@ -47,14 +47,24 @@ async function initializeDatabase() {
         comment TEXT,
         child_name VARCHAR(255) NOT NULL,
         child_dob VARCHAR(255) NOT NULL,
-        "date" VARCHAR(255),
+        event_date VARCHAR(255),
         parent_name VARCHAR(255) NOT NULL,
         parent_phone VARCHAR(20) NOT NULL,
         emergency_phone VARCHAR(20) NOT NULL,
         signature TEXT NOT NULL,
-        "current_date" VARCHAR(255) NOT NULL
+        submitted_date VARCHAR(255) NOT NULL
       );
     `;
+
+    // Rename legacy columns if present
+    const legacyDate = await sql`SELECT 1 FROM information_schema.columns WHERE table_name = 'registrations' AND column_name = 'date' LIMIT 1;`;
+    if (legacyDate.rowCount > 0) {
+      await sql`ALTER TABLE registrations RENAME COLUMN "date" TO event_date;`;
+    }
+    const legacyCurrentDate = await sql`SELECT 1 FROM information_schema.columns WHERE table_name = 'registrations' AND column_name = 'current_date' LIMIT 1;`;
+    if (legacyCurrentDate.rowCount > 0) {
+      await sql`ALTER TABLE registrations RENAME COLUMN "current_date" TO submitted_date;`;
+    }
 
     // Create courses table
     await sql`
@@ -127,8 +137,8 @@ app.post('/api/register', async (req, res) => {
     const result = await sql`
       INSERT INTO registrations (
         lang, email, student_name, age, phone, course_id, course_title, 
-        comment, child_name, child_dob, "date", parent_name, parent_phone, 
-        emergency_phone, signature, "current_date"
+        comment, child_name, child_dob, event_date, parent_name, parent_phone, 
+        emergency_phone, signature, submitted_date
       ) VALUES (
         ${b.lang || 'en'},
         ${String(b.email)},
@@ -140,12 +150,12 @@ app.post('/api/register', async (req, res) => {
         ${b.comment ? String(b.comment) : null},
         ${String(b.child_name)},
         ${String(b.child_dob)},
-        ${b.date ? String(b.date) : null},
+        ${b.event_date ? String(b.event_date) : null},
         ${String(b.parent_name)},
         ${String(b.parent_phone)},
         ${String(b.emergency_phone)},
         ${String(b.signature)},
-        ${String(b.current_date)}
+        ${String(b.submitted_date)}
       )
       RETURNING id;
     `;

@@ -45,14 +45,24 @@ async function migrate() {
         comment TEXT,
         child_name VARCHAR(255) NOT NULL,
         child_dob VARCHAR(255) NOT NULL,
-        "date" VARCHAR(255),
+        event_date VARCHAR(255),
         parent_name VARCHAR(255) NOT NULL,
         parent_phone VARCHAR(20) NOT NULL,
         emergency_phone VARCHAR(20) NOT NULL,
         signature TEXT NOT NULL,
-        "current_date" VARCHAR(255) NOT NULL
+        submitted_date VARCHAR(255) NOT NULL
       );
     `;
+
+    // Rename legacy columns if present
+    const legacyDate = await sql`SELECT 1 FROM information_schema.columns WHERE table_name = 'registrations' AND column_name = 'date' LIMIT 1;`;
+    if (legacyDate.rowCount > 0) {
+      await sql`ALTER TABLE registrations RENAME COLUMN "date" TO event_date;`;
+    }
+    const legacyCurrentDate = await sql`SELECT 1 FROM information_schema.columns WHERE table_name = 'registrations' AND column_name = 'current_date' LIMIT 1;`;
+    if (legacyCurrentDate.rowCount > 0) {
+      await sql`ALTER TABLE registrations RENAME COLUMN "current_date" TO submitted_date;`;
+    }
     console.log('✓ Registrations table created');
 
     // Create courses table
