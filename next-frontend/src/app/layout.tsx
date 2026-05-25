@@ -20,10 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${nunito.variable} font-sans antialiased text-slate-800 bg-white min-h-screen flex flex-col pt-20`}
-      >
+    <html lang="en" className="scroll-smooth">
+      <body className={`${nunito.variable} min-h-screen flex flex-col`}>
         <Header />
         <main className="flex-grow">
           {children}
