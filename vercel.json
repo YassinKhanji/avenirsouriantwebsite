@@ -3,7 +3,7 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": null,
-  "outputDirectory": "frontend/dist",
+  "outputDirectory": "next-frontend/out",
   "functions": {
     "api/index.mjs": {
       "runtime": "@vercel/node@3.1.0",
