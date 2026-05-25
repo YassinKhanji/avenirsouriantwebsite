@@ -9,7 +9,7 @@ export default function Header() {
           <div className="flex justify-start">
             <Link href="/">
               <Image 
-                src="/images/Avenir_Souriant_Logo_2-removebg-preview.png" 
+                src="/images/logo.png" 
                 alt="Avenir Souriant Logo" 
                 width={200} 
                 height={50} 
