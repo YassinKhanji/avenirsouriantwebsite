@@ -1,46 +1,8 @@
-"use client";
-
-import React, { useRef } from "react";
 import Link from "next/link";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 export default function Home() {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(
-    () => {
-      // Hero stagger-in
-      gsap.from(".hero-anim > *", {
-        y: 40,
-        opacity: 0,
-        duration: 0.9,
-        stagger: 0.15,
-        ease: "power3.out",
-      });
-
-      // Scroll-reveal for each section
-      gsap.utils.toArray<HTMLElement>(".reveal-section").forEach((section) => {
-        gsap.from(section.querySelectorAll(".reveal-item"), {
-          scrollTrigger: { trigger: section, start: "top 80%" },
-          y: 40,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.15,
-          ease: "power2.out",
-        });
-      });
-    },
-    { scope: containerRef }
-  );
-
   return (
-    <div ref={containerRef} className="min-h-screen flex flex-col font-sans text-slate-800">
+    <div className="min-h-screen flex flex-col font-sans text-slate-800">
       {/* ─── HEADER ─── */}
       <header className="flex justify-between items-center px-6 py-4 bg-primary-blue border-b border-slate-200">
         <div className="flex items-center gap-2">
@@ -65,8 +27,8 @@ export default function Home() {
       </header>
 
       {/* ─── HERO ─── */}
-      <section className="bg-primary-blue py-20 px-4 flex flex-col items-center text-center border-b border-slate-200">
-        <div className="hero-anim flex flex-col items-center">
+      <section className="bg-primary-blue py-20 px-4 flex flex-col items-center text-center border-b border-slate-200 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/hero-bg.jpg')" }}>
+        <div className="flex flex-col items-center">
           <h1 className="text-4xl md:text-6xl font-black text-dark-navy leading-tight mb-6">
             Empowering the
             <br />
@@ -104,13 +66,13 @@ export default function Home() {
       {/* ─── ABOUT US ─── */}
       <section
         id="about"
-        className="py-20 px-4 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center reveal-section"
+        className="py-20 px-4 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
       >
-        <div className="reveal-item h-80 bg-slate-100 border border-slate-300 rounded-3xl flex items-center justify-center">
+        <div className="h-80 bg-slate-100 border border-slate-300 rounded-3xl flex items-center justify-center">
           <span className="text-6xl">⚙️ 📖 🧠</span>
         </div>
 
-        <div className="flex flex-col gap-4 reveal-item">
+        <div className="flex flex-col gap-4">
           <h4 className="text-accent-teal font-extrabold text-lg">About Us</h4>
           <h2 className="text-3xl md:text-4xl font-black text-dark-navy">
             A World of Discovery & Joy
@@ -126,8 +88,8 @@ export default function Home() {
       </section>
 
       {/* ─── OUR PROGRAMS ─── */}
-      <section id="programs" className="py-20 px-4 max-w-6xl mx-auto w-full reveal-section">
-        <h2 className="text-3xl md:text-4xl font-black text-center text-dark-navy mb-12 reveal-item">
+      <section id="programs" className="py-20 px-4 max-w-6xl mx-auto w-full">
+        <h2 className="text-3xl md:text-4xl font-black text-center text-dark-navy mb-12">
           Our Programs
         </h2>
 
@@ -140,7 +102,7 @@ export default function Home() {
           ].map((program) => (
             <div
               key={program.title}
-              className="reveal-item border-2 border-slate-200 rounded-xl p-6 flex flex-col items-center text-center bg-white hover:-translate-y-1 hover:border-accent-teal hover:shadow-lg transition-all cursor-pointer"
+              className="border-2 border-slate-200 rounded-xl p-6 flex flex-col items-center text-center bg-white hover:-translate-y-1 hover:border-accent-teal hover:shadow-lg transition-all cursor-pointer"
             >
               <div className="w-20 h-20 rounded-full bg-primary-blue border border-slate-200 flex items-center justify-center text-4xl mb-4">
                 {program.icon}
@@ -159,12 +121,12 @@ export default function Home() {
       </section>
 
       {/* ─── LOCATION & CONTACT ─── */}
-      <section id="location" className="py-20 px-4 max-w-5xl mx-auto w-full reveal-section">
-        <h2 className="text-3xl md:text-4xl font-black text-center text-dark-navy mb-12 reveal-item">
+      <section id="location" className="py-20 px-4 max-w-5xl mx-auto w-full">
+        <h2 className="text-3xl md:text-4xl font-black text-center text-dark-navy mb-12">
           Location & Contact
         </h2>
 
-        <div className="reveal-item grid grid-cols-1 md:grid-cols-2 gap-0 border border-slate-300 rounded-xl overflow-hidden shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-slate-300 rounded-xl overflow-hidden shadow-sm">
           {/* Map */}
           <div className="h-80 bg-slate-200 flex items-center justify-center relative">
             <div className="px-6 py-3 bg-white border border-slate-300 rounded-lg shadow text-center">
@@ -207,13 +169,13 @@ export default function Home() {
       {/* ─── TESTIMONIALS ─── */}
       <section
         id="testimonials"
-        className="bg-accent-teal py-20 px-4 text-center reveal-section"
+        className="bg-accent-teal py-20 px-4 text-center"
       >
-        <h2 className="text-3xl md:text-4xl font-black text-white mb-12 reveal-item">
+        <h2 className="text-3xl md:text-4xl font-black text-white mb-12">
           Testimonials
         </h2>
 
-        <div className="flex items-center justify-center gap-4 max-w-5xl mx-auto reveal-item">
+        <div className="flex items-center justify-center gap-4 max-w-5xl mx-auto">
           {/* Left arrow */}
           <button className="w-10 h-10 rounded-full bg-white/20 text-white font-bold text-xl hidden md:flex items-center justify-center hover:bg-white/30 transition-colors">
             ❮
