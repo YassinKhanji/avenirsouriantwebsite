@@ -1,282 +1,196 @@
-import Link from "next/link";
+import React from 'react';
+import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col font-sans text-slate-800">
-      {/* ─── HEADER ─── */}
-      <header className="flex justify-between items-center px-6 py-4 bg-primary-blue border-b border-slate-200">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">🌞📖</span>
-          <span className="font-black text-dark-navy leading-tight text-sm">
-            Avenir
-            <br />
-            Souriant
-          </span>
+    <main className="min-h-screen bg-amber-50 text-slate-800 font-sans selection:bg-emerald-200">
+      
+      {/* HEADER */}
+      <header className="absolute top-0 left-0 right-0 z-50 flex justify-between items-center px-6 md:px-12 py-6">
+        <div className="font-bold text-2xl tracking-tighter text-emerald-900">
+          SonnenBloom
         </div>
-
-        <nav className="hidden md:flex gap-8 font-bold text-dark-navy">
-          <Link href="#about" className="hover:text-accent-teal transition-colors">About</Link>
-          <Link href="#programs" className="hover:text-accent-teal transition-colors">Programs</Link>
-          <Link href="#location" className="hover:text-accent-teal transition-colors">Location</Link>
-          <Link href="#testimonials" className="hover:text-accent-teal transition-colors">Testimonials</Link>
+        <nav className="hidden md:flex gap-8 text-emerald-900/80 font-medium">
+          <Link href="#about" className="hover:text-emerald-900 transition-colors">About</Link>
+          <Link href="#programs" className="hover:text-emerald-900 transition-colors">Programs</Link>
+          <Link href="#testimonials" className="hover:text-emerald-900 transition-colors">Families</Link>
+          <Link href="#contact" className="hover:text-emerald-900 transition-colors">Contact</Link>
         </nav>
-
-        <div className="text-sm font-semibold text-text-grey">
-          🌐 <strong className="text-dark-navy">EN</strong> | FR | AR
-        </div>
+        <Link href="#contact" className="px-6 py-2 bg-emerald-700 text-amber-50 rounded-full font-medium hover:bg-emerald-800 transition-colors">
+          Book a Tour
+        </Link>
       </header>
 
-      {/* ─── HERO ─── */}
-      <section className="bg-primary-blue py-20 px-4 flex flex-col items-center text-center border-b border-slate-200 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/hero-bg.jpg')" }}>
-        <div className="flex flex-col items-center">
-          <h1 className="text-4xl md:text-6xl font-black text-dark-navy leading-tight mb-6">
-            Empowering the
-            <br />
-            Next Generation
+      {/* HERO SECTION */}
+      <section className="relative pt-40 pb-24 md:pt-56 md:pb-32 px-6 overflow-hidden">
+        {/* Soft background glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-yellow-200/40 rounded-full blur-3xl -z-10" />
+        
+        <div className="container mx-auto max-w-5xl text-center">
+          <span className="inline-block py-1 px-4 rounded-full bg-emerald-100 text-emerald-800 font-semibold text-sm mb-6 uppercase tracking-wider">
+            Little Blooms
+          </span>
+          <h1 className="text-5xl md:text-7xl font-bold text-emerald-950 mb-8 leading-tight tracking-tight">
+            A world of wonder, creativity, <br className="hidden md:block"/> and gentle growth awaits
           </h1>
-
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <span className="px-5 py-2 bg-tag-orange-bg text-tag-orange-text rounded-full font-bold text-sm">
-              Toddlers (1-3)
-            </span>
-            <span className="px-5 py-2 bg-tag-blue-bg text-tag-blue-text rounded-full font-bold text-sm">
-              Preschool (3-5)
-            </span>
-            <span className="px-5 py-2 bg-tag-green-bg text-tag-green-text rounded-full font-bold text-sm">
-              School Age (5-12)
-            </span>
-          </div>
-
-          <a
-            href="#enroll"
-            className="px-10 py-3 bg-accent-yellow text-dark-navy border-2 border-dark-navy rounded-full font-bold text-lg hover:-translate-y-0.5 hover:shadow-lg transition-all mb-12"
-          >
-            Enroll Now
-          </a>
-
-          {/* Hero Image Placeholder */}
-          <div className="w-full max-w-5xl h-64 md:h-80 bg-slate-200 border border-slate-300 rounded-2xl flex items-center justify-center shadow-lg">
-            <span className="text-slate-400 font-bold text-lg">
-              [ Hero Image: Children Sitting Together ]
-            </span>
-          </div>
+          <p className="text-xl md:text-2xl text-emerald-800/80 max-w-2xl mx-auto mb-12">
+            Welcome to SonnenBloom Kinderhaus, where your child's curiosity blossoms.
+          </p>
+          <Link href="#about" className="inline-block px-8 py-4 bg-yellow-400 text-yellow-950 rounded-full font-bold text-lg hover:bg-yellow-500 hover:-translate-y-1 transition-all shadow-lg shadow-yellow-400/30">
+            Discover Our World
+          </Link>
         </div>
       </section>
 
-      {/* ─── ABOUT US ─── */}
-      <section
-        id="about"
-        className="py-20 px-4 max-w-6xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
-      >
-        <div className="h-80 bg-slate-100 border border-slate-300 rounded-3xl flex items-center justify-center">
-          <span className="text-6xl">⚙️ 📖 🧠</span>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          <h4 className="text-accent-teal font-extrabold text-lg">About Us</h4>
-          <h2 className="text-3xl md:text-4xl font-black text-dark-navy">
-            A World of Discovery & Joy
+      {/* ABOUT SECTION */}
+      <section id="about" className="py-24 px-6 bg-white">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl md:text-5xl font-bold text-emerald-950 mb-8">
+            A Nurturing Place to Grow
           </h2>
-          <p className="text-text-grey text-lg leading-relaxed">
-            Avenir Souriant is a specialized playful learning and commitment to
-            state-of-the-art facilities to ensure safety and standard performing
-            environments. We are committed to inspiring children and improving
-            creative minds through carefully designed activities and a network of
-            support.
+          <p className="text-lg md:text-xl text-slate-600 leading-relaxed">
+            At SonnenBloom, we believe every child is a unique individual with boundless potential. Our sunlit spaces and nature-infused curriculum provide the perfect environment for curiosity to flourish and friendships to form.
           </p>
         </div>
       </section>
 
-      {/* ─── OUR PROGRAMS ─── */}
-      <section id="programs" className="py-20 px-4 max-w-6xl mx-auto w-full">
-        <h2 className="text-3xl md:text-4xl font-black text-center text-dark-navy mb-12">
-          Our Programs
-        </h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { icon: "🔍", title: "Early Explorers", desc: "Early explorers passions and magnifying learners and explorers." },
-            { icon: "🖌️", title: "Creative Minds", desc: "We are committed to creative minds, discovery and creative skills." },
-            { icon: "🚀", title: "Future Leaders", desc: "We are centered around building leadership and future skills." },
-            { icon: "🤖", title: "Tech & Innovation", desc: "Robust measurement tech & innovation for our communication." },
-          ].map((program) => (
-            <div
-              key={program.title}
-              className="border-2 border-slate-200 rounded-xl p-6 flex flex-col items-center text-center bg-white hover:-translate-y-1 hover:border-accent-teal hover:shadow-lg transition-all cursor-pointer"
-            >
-              <div className="w-20 h-20 rounded-full bg-primary-blue border border-slate-200 flex items-center justify-center text-4xl mb-4">
-                {program.icon}
-              </div>
-              <h3 className="font-extrabold text-dark-navy text-lg mb-2">{program.title}</h3>
-              <p className="text-text-grey text-sm mb-6 leading-relaxed">{program.desc}</p>
-              <a
-                href="#"
-                className="px-6 py-2 bg-accent-teal text-white rounded-full font-bold text-sm hover:opacity-90 transition-opacity"
-              >
-                Learn More
-              </a>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── LOCATION & CONTACT ─── */}
-      <section id="location" className="py-20 px-4 max-w-5xl mx-auto w-full">
-        <h2 className="text-3xl md:text-4xl font-black text-center text-dark-navy mb-12">
-          Location & Contact
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-slate-300 rounded-xl overflow-hidden shadow-sm">
-          {/* Map */}
-          <div className="h-80 bg-slate-200 flex items-center justify-center relative">
-            <div className="px-6 py-3 bg-white border border-slate-300 rounded-lg shadow text-center">
-              <p className="font-bold text-dark-navy">Saint-Laurent, QC</p>
-              <p className="text-sm text-text-grey">1325 Rue Cartier</p>
-            </div>
+      {/* FEATURES / PROGRAMS SECTION */}
+      <section id="programs" className="py-24 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-emerald-950 mb-6">Learning Through Joyful Discovery</h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+              We blend structured activities with imaginative free play, focusing on emotional, social, and cognitive development.
+            </p>
           </div>
 
-          {/* Contact Info */}
-          <div className="bg-primary-blue p-8 flex flex-col justify-center gap-5 border-l border-slate-300">
-            <div className="flex items-start gap-4 bg-white rounded-lg p-4 border border-slate-200">
-              <span className="text-accent-teal text-xl">📞</span>
-              <div>
-                <strong className="text-dark-navy">Phone</strong>
-                <p className="text-text-grey text-sm">+1 514 555 1234</p>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Feature 1 */}
+            <div className="bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-shadow border border-amber-100">
+              <div className="w-16 h-16 bg-pink-100 text-pink-600 rounded-2xl flex items-center justify-center mb-8 text-3xl">🎨</div>
+              <h3 className="text-2xl font-bold text-emerald-950 mb-4">Creative Expression</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Daily art, music, and storytelling to ignite imagination and foster early social skills.
+              </p>
             </div>
-            <div className="flex items-start gap-4 bg-white rounded-lg p-4 border border-slate-200">
-              <span className="text-accent-teal text-xl">✉️</span>
-              <div>
-                <strong className="text-dark-navy">Email</strong>
-                <p className="text-text-grey text-sm">info@avenirsouriant.ca</p>
-              </div>
+            
+            {/* Feature 2 */}
+            <div className="bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-shadow border border-amber-100">
+              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-8 text-3xl">🧩</div>
+              <h3 className="text-2xl font-bold text-emerald-950 mb-4">Play-Based Academics</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Introducing early literacy and numeracy through engaging games that celebrate each child's unique spirit.
+              </p>
             </div>
-            <div className="flex items-start gap-4 bg-white rounded-lg p-4 border border-slate-200">
-              <span className="text-accent-teal text-xl">🕒</span>
-              <div>
-                <strong className="text-dark-navy">Opening Hours</strong>
-                <p className="text-text-grey text-sm">
-                  10:00 am – 2:00 pm
-                  <br />
-                  12:00 pm – 2:00 pm
-                </p>
-              </div>
+
+            {/* Feature 3 */}
+            <div className="bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-shadow border border-amber-100">
+              <div className="w-16 h-16 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mb-8 text-3xl">🌿</div>
+              <h3 className="text-2xl font-bold text-emerald-950 mb-4">Nature Connection</h3>
+              <p className="text-slate-600 leading-relaxed">
+                Exploring the outdoors in our garden classroom to build resilience and respect for the natural world.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── TESTIMONIALS ─── */}
-      <section
-        id="testimonials"
-        className="bg-accent-teal py-20 px-4 text-center"
-      >
-        <h2 className="text-3xl md:text-4xl font-black text-white mb-12">
-          Testimonials
-        </h2>
+      {/* BANNER SECTION */}
+      <section className="py-32 px-6 bg-emerald-900 text-amber-50 text-center">
+        <div className="container mx-auto max-w-4xl">
+          <h2 className="text-4xl md:text-5xl font-bold mb-8">The Rhythm of Our Day</h2>
+          <p className="text-xl md:text-2xl leading-relaxed text-emerald-100/90 font-light">
+            From circle time songs to garden adventures, our days are filled with <span className="text-yellow-400 font-medium">laughter and learning</span>. We balance energetic play with quiet moments, ensuring a <span className="text-yellow-400 font-medium">happy and harmonious</span> experience for all.
+          </p>
+        </div>
+      </section>
 
-        <div className="flex items-center justify-center gap-4 max-w-5xl mx-auto">
-          {/* Left arrow */}
-          <button className="w-10 h-10 rounded-full bg-white/20 text-white font-bold text-xl hidden md:flex items-center justify-center hover:bg-white/30 transition-colors">
-            ❮
-          </button>
+      {/* TESTIMONIALS */}
+      <section id="testimonials" className="py-24 px-6 bg-amber-50">
+        <div className="container mx-auto max-w-6xl">
+          <h2 className="text-3xl md:text-5xl font-bold text-center text-emerald-950 mb-16">What Our Families Say</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-10 rounded-3xl relative">
+              <div className="text-6xl text-amber-200 absolute top-4 left-6 font-serif">"</div>
+              <p className="text-slate-600 relative z-10 mb-8 italic">
+                SonnenBloom is more than a school; it's a community where our daughter has truly thrived and found her spark.
+              </p>
+              <div className="font-bold text-emerald-900">Anouk De Vries</div>
+            </div>
+            
+            <div className="bg-white p-10 rounded-3xl relative">
+              <div className="text-6xl text-amber-200 absolute top-4 left-6 font-serif">"</div>
+              <p className="text-slate-600 relative z-10 mb-8 italic">
+                A beautiful philosophy brought to life with care and intention. The team creates such a warm, nurturing environment - truly a magical place for children to grow, explore, and feel safe.
+              </p>
+              <div className="font-bold text-emerald-900">Clara Dubois</div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-            {[
-              {
-                quote:
-                  '"Our overall positive experience revolved utilizing this loving center. A highly recommended environment."',
-                name: "Garent Eliesashin",
-                role: "Parents Pawsso",
-              },
-              {
-                quote:
-                  '"The team earns this experience, very skilled and tactful approach."',
-                name: "Tady Ek",
-                role: "Parents Pawsso",
-              },
-            ].map((t) => (
-              <div
-                key={t.name}
-                className="bg-white p-6 rounded-xl flex gap-4 text-left border border-slate-200 shadow-sm"
-              >
-                <div className="w-14 h-14 rounded-full bg-slate-200 shrink-0" />
-                <div className="flex flex-col gap-1">
-                  <p className="text-text-grey text-sm italic leading-relaxed">
-                    {t.quote}
-                  </p>
-                  <strong className="text-dark-navy text-sm mt-2">{t.name}</strong>
-                  <span className="text-text-grey text-xs">{t.role}</span>
-                </div>
+            <div className="bg-white p-10 rounded-3xl relative">
+              <div className="text-6xl text-amber-200 absolute top-4 left-6 font-serif">"</div>
+              <p className="text-slate-600 relative z-10 mb-8 italic">
+                The teachers' dedication is incredible. They celebrate each child's unique spirit every single day.
+              </p>
+              <div className="font-bold text-emerald-900">Matteo Rossi</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* GALLERY PLACEHOLDER */}
+      <section className="py-24 px-6 bg-white">
+        <div className="container mx-auto max-w-6xl text-center">
+          <h2 className="text-3xl md:text-5xl font-bold text-emerald-950 mb-12">A Sneak Peek into Our World</h2>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+            {[1, 2, 3, 4].map((item) => (
+              <div key={item} className="aspect-square bg-amber-100 rounded-2xl flex items-center justify-center text-amber-800/30 text-2xl font-medium">
+                0{item}
               </div>
             ))}
           </div>
 
-          {/* Right arrow */}
-          <button className="w-10 h-10 rounded-full bg-white/20 text-white font-bold text-xl hidden md:flex items-center justify-center hover:bg-white/30 transition-colors">
-            ❯
+          <button className="px-8 py-3 rounded-full border-2 border-emerald-900 text-emerald-900 font-bold hover:bg-emerald-900 hover:text-white transition-colors">
+            See Our World in Bloom
           </button>
-        </div>
-
-        {/* Dots */}
-        <div className="flex justify-center gap-2 mt-8">
-          <div className="w-2.5 h-2.5 rounded-full bg-white" />
-          <div className="w-2.5 h-2.5 rounded-full bg-white/40" />
-          <div className="w-2.5 h-2.5 rounded-full bg-white/40" />
         </div>
       </section>
 
-      {/* ─── FOOTER ─── */}
-      <footer className="bg-dark-navy text-white pt-16 pb-8 px-4">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">🌞📖</span>
-              <span className="font-black leading-tight text-sm">
-                Avenir
-                <br />
-                Souriant
-              </span>
+      {/* FOOTER */}
+      <footer id="contact" className="bg-emerald-950 text-emerald-100 py-16 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16 pb-16 border-b border-emerald-800">
+            <div>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Ready to Start the Journey?</h2>
+              <button className="px-8 py-4 bg-yellow-400 text-yellow-950 rounded-full font-bold text-lg hover:bg-yellow-500 transition-colors">
+                Book a Tour
+              </button>
             </div>
-            <p className="text-slate-400 text-sm">© 2022 – Avenir Souriant</p>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-bold mb-4">Quick Links</h4>
-            <ul className="flex flex-col gap-2 text-slate-400 text-sm">
-              <li><Link href="#about" className="hover:text-accent-teal transition-colors">About</Link></li>
-              <li><Link href="#programs" className="hover:text-accent-teal transition-colors">Programs</Link></li>
-              <li><Link href="#location" className="hover:text-accent-teal transition-colors">Location</Link></li>
-              <li><Link href="#testimonials" className="hover:text-accent-teal transition-colors">Testimonials</Link></li>
-            </ul>
-          </div>
-
-          {/* Address */}
-          <div>
-            <h4 className="font-bold mb-4">Address</h4>
-            <p className="text-slate-400 text-sm mb-2">📍 1325 Rue Cartier, Saint-Laurent, QC</p>
-            <p className="text-slate-400 text-sm">📞 +1 514 555 1234</p>
-          </div>
-
-          {/* Social */}
-          <div className="flex flex-col gap-4">
-            <div className="flex gap-3 text-lg">
-              <span>📘</span>
-              <span>📸</span>
-              <span>🐦</span>
-              <span>▶️</span>
+            
+            <div className="flex flex-col gap-4 text-lg">
+              <p className="font-bold text-white text-xl mb-2">Contact Us</p>
+              <p>500 Terry Francine St<br/>San Francisco, CA 94158</p>
+              <p>123-456-7890</p>
+              <p>info@mysite.com</p>
+              <div className="flex gap-4 mt-4">
+                <a href="#" className="hover:text-white transition-colors underline decoration-emerald-500 underline-offset-4">Instagram</a>
+                <a href="#" className="hover:text-white transition-colors underline decoration-emerald-500 underline-offset-4">Facebook</a>
+              </div>
             </div>
-            <div className="text-slate-400 text-sm">EN | FR | AR</div>
           </div>
-        </div>
 
-        <div className="max-w-6xl mx-auto border-t border-slate-700 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
-          <span>© 2022 – Avenir Souriant. All rights reserved.</span>
-          <span className="mt-4 md:mt-0">EN | FR | AR</span>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-emerald-400">
+            <p>Nurturing the unique spark in every child through nature, play, and creative discovery since 2035.</p>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-white">Accessibility Statement</a>
+              <a href="#" className="hover:text-white">Privacy Policy</a>
+              <span>&copy; 2035 by SonnenBloom.</span>
+            </div>
+          </div>
         </div>
       </footer>
-    </div>
+      
+    </main>
   );
 }
