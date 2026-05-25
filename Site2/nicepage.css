@@ -49087,3 +49087,14 @@ body, p, span, div, a, li, .u-text-font, .u-text {
 h1, h2, h3, h4, h5, h6, .u-heading-font, .u-title {
     font-family: 'Fredoka', sans-serif !important;
 }
+
+
+/* BRUTE FORCE FONT OVERRIDES */
+* {
+    font-family: 'Raleway', sans-serif !important;
+}
+h1, h2, h3, h4, h5, h6, 
+h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
+.u-title, .u-heading-font, .brand {
+    font-family: 'Fredoka', sans-serif !important;
+}
