@@ -49077,3 +49077,13 @@ a.u-link.u-text-hover-color-var.hover {
  /*begin-variables base-font-size*/ 
  html { font-size: 16px; }
  /*end-variables base-font-size*/
+/* === CUSTOM FONT OVERRIDES === */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Raleway:wght@300;400;500;600;700&display=swap');
+
+body, p, span, div, a, li, .u-text-font, .u-text {
+    font-family: 'Raleway', sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6, .u-heading-font, .u-title {
+    font-family: 'Fredoka', sans-serif !important;
+}
