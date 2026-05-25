@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { Open_Sans, Montserrat, Fredoka } from "next/font/google";
+import { Fredoka, Raleway } from "next/font/google";
 import "./globals.css";
-
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
-  subsets: ["latin"],
-});
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-});
 
 const fredoka = Fredoka({
   variable: "--font-fredoka",
+  subsets: ["latin"],
+});
+
+const raleway = Raleway({
+  variable: "--font-raleway",
   subsets: ["latin"],
 });
 
@@ -29,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${openSans.variable} ${montserrat.variable} ${fredoka.variable} font-sans antialiased text-gray-800 bg-white min-h-screen flex flex-col`}>
+      <body className={`${fredoka.variable} ${raleway.variable} font-sans antialiased text-gray-800 bg-white min-h-screen flex flex-col`}>
         {children}
       </body>
     </html>
