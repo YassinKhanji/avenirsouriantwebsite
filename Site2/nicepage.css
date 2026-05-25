@@ -49098,3 +49098,74 @@ h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
 .u-title, .u-heading-font, .brand {
     font-family: 'Fredoka', sans-serif !important;
 }
+
+/* === BRAND COLORS & SPLASH SCREEN === */
+
+:root {
+    --palette-2-base: #069b73 !important;
+    --palette-2-light-1: #08b88a !important;
+    --palette-2-light-2: #0cd19d !important;
+    --palette-2-light-3: #e6f7f2 !important;
+    --palette-2-dark-1: #047053 !important;
+    --palette-2-dark-2: #034f3b !important;
+    --primary-color: #069b73 !important;
+}
+
+/* Force overrides on Nicepage color classes */
+.u-palette-2-base, .u-active-palette-2-base:active, .u-hover-palette-2-base:hover, .u-active-palette-2-base.u-active, .u-active-palette-2-base.active {
+    background-color: #069b73 !important;
+    color: #ffffff !important;
+}
+
+.u-text-palette-2-base, .u-active-text-palette-2-base:active, .u-hover-text-palette-2-base:hover, .u-active-text-palette-2-base.u-active, .u-active-text-palette-2-base.active {
+    color: #069b73 !important;
+}
+
+.u-border-palette-2-base {
+    border-color: #069b73 !important;
+}
+
+.u-palette-2-light-3 {
+    background-color: #e6f7f2 !important;
+}
+
+/* Splash Screen CSS */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #069b73;
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+#splash-screen img {
+    height: 120px;
+    width: auto;
+    animation: pulse 2s infinite;
+}
+
+#splash-screen.splash-hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+#splash-screen.splash-visible {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
