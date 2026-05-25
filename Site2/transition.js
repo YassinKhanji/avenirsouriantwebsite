@@ -34,3 +34,26 @@ window.addEventListener('pageshow', function(event) {
         if (splash) splash.classList.add("splash-hidden");
     }
 });
+
+// Smart Header Logic
+document.addEventListener("DOMContentLoaded", function() {
+    let lastScrollTop = 0;
+    const header = document.querySelector('.u-header');
+
+    if (header) {
+        header.style.transition = 'transform 0.3s ease-in-out';
+        
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > lastScrollTop && scrollTop > header.offsetHeight) {
+                // Scroll down
+                header.style.transform = 'translateY(-100%)';
+            } else {
+                // Scroll up
+                header.style.transform = 'translateY(0)';
+            }
+            lastScrollTop = scrollTop;
+        });
+    }
+});
