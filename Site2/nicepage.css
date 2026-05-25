@@ -49089,15 +49089,7 @@ h1, h2, h3, h4, h5, h6, .u-heading-font, .u-title {
 }
 
 
-/* BRUTE FORCE FONT OVERRIDES */
-* {
-    font-family: 'Raleway', sans-serif !important;
-}
-h1, h2, h3, h4, h5, h6, 
-h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
-.u-title, .u-heading-font, .brand {
-    font-family: 'Fredoka', sans-serif !important;
-}
+
 
 /* === BRAND COLORS & SPLASH SCREEN === */
 
@@ -49129,43 +49121,7 @@ h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
     background-color: #e6f7f2 !important;
 }
 
-/* Splash Screen CSS */
-#splash-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #069b73;
-    z-index: 99999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-    transform: translateY(0);
-    opacity: 1;
-}
 
-#splash-screen img {
-    height: 120px;
-    width: auto;
-    animation: pulse 2s infinite;
-}
-
-#splash-screen.splash-hidden {
-    transform: translateY(-100%);
-    opacity: 0;
-    pointer-events: none;
-}
-
-#splash-screen.splash-visible {
-    transform: translateY(0) !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
     50% { transform: scale(1.05); }
     100% { transform: scale(1); }
 }
@@ -49202,4 +49158,56 @@ h1, h2, h3, h4, h5, h6, .u-title, .u-heading-font, .u-nav-link, .brand {
 /* Ensure all paragraph text is Raleway */
 p, .u-text, body {
     font-family: 'Raleway', sans-serif !important;
+}
+
+/* === REFINED FONTS & ANIMATIONS === */
+
+/* Force paragraph text to Raleway */
+body, p, .u-text, .u-text-font, span, div, li {
+    font-family: 'Raleway', sans-serif;
+}
+
+/* Force headings and tabs to Fredoka */
+h1, h2, h3, h4, h5, h6, .u-heading-font, .u-title, .u-nav-link {
+    font-family: 'Fredoka', sans-serif !important;
+}
+
+/* Animated Underline for Tabs */
+.u-nav-item .u-nav-link {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.u-nav-item .u-nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 3px;
+    bottom: -4px;
+    left: 0;
+    background-color: #069b73;
+    transition: width 0.3s ease;
+}
+
+.u-nav-item .u-nav-link:hover::after {
+    width: 100%;
+}
+
+/* Smart Header */
+.u-header {
+    transition: transform 0.4s ease-in-out;
+    position: fixed !important;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.header-hidden {
+    transform: translateY(-100%);
+}
+
+/* Push body content down so it's not hidden behind fixed header */
+body {
+    padding-top: 80px; /* Adjust if your header is taller */
 }
