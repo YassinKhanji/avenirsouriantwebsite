@@ -13,6 +13,8 @@ export default function Header() {
   const pathname = usePathname();
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
 
+  const normalizePath = (p: string) => p.replace(/\/$/, '') || '/';
+
   // Smart Header Logic
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() || 0;
@@ -55,7 +57,7 @@ export default function Header() {
           </div>
           <nav className="hidden md:flex space-x-12" onMouseLeave={() => setHoveredTab(null)}>
             {navLinks.map((link) => {
-              const isActive = pathname === link.path;
+              const isActive = normalizePath(pathname) === normalizePath(link.path);
               return (
                 <div 
                   key={link.path} 
@@ -119,7 +121,7 @@ export default function Header() {
           >
             <div className="px-6 pt-4 pb-6 space-y-6 shadow-inner">
               {navLinks.map((link) => {
-                const isActive = pathname === link.path;
+                const isActive = normalizePath(pathname) === normalizePath(link.path);
                 return (
                   <div key={link.path} className="block" onClick={() => setIsMobileMenuOpen(false)}>
                     <TransitionLink 
