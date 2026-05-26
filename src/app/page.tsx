@@ -37,15 +37,15 @@ export default function Home() {
 
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center p-8">
             <h1 className="text-5xl md:text-6xl font-bold font-heading text-gray-900 mb-8 leading-tight drop-shadow-sm">
-              Discover the <span className="text-secondary">Joy</span> <br className="hidden sm:inline" /> of Learning <span className="text-secondary">Arabic</span>
+              Discover the <span className="text-secondary">Joy</span> <br className="hidden sm:inline" /> of Learning <span className="text-primary">Arabic</span>
             </h1>
             <TransitionLink href="/register" className="inline-block px-10 py-4 bg-secondary text-white rounded-full font-bold text-xl hover:bg-opacity-90 mb-6 shadow-lg transition-transform hover:scale-105">
               Learn More
             </TransitionLink>
             <p className="text-gray-800 mb-6 font-semibold text-xl drop-shadow-sm">or</p>
-            <a href="tel:+15145154492" className="text-4xl font-bold text-white transition-all duration-300 flex items-center justify-center drop-shadow-sm group">
+            <a href="tel:+15145815305" className="text-4xl font-bold text-white transition-all duration-300 flex items-center justify-center drop-shadow-sm group">
               <span className="mr-3 group-hover:scale-110 transition-transform">📞</span>
-              <span className="group-hover:[-webkit-text-stroke:1.5px_#1abc9c] transition-all duration-300">(514) 515-4492</span>
+              <span className="group-hover:[-webkit-text-stroke:1.5px_#1abc9c] transition-all duration-300">(514) 581-5305</span>
             </a>
           </div>
         </section>
@@ -237,7 +237,7 @@ export default function Home() {
                   </p>
                   <p className="flex items-center text-lg">
                     <span className="text-2xl mr-4">📞</span>
-                    <a href="tel:+15145154492" className="font-bold text-primary hover:text-primary-light transition-colors">(514) 515-4492</a>
+                    <a href="tel:+15145815305" className="font-bold text-primary hover:text-primary-light transition-colors">(514) 581-5305</a>
                   </p>
                 </div>
               </div>

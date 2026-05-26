@@ -44,7 +44,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-2">
           <div className="flex justify-start">
-            <TransitionLink href="/" onClick={() => setIsMobileMenuOpen(false)}>
+            <TransitionLink href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3">
               <Image 
                 src="/images/logo.png" 
                 alt="Avenir Souriant Logo" 
@@ -53,6 +53,7 @@ export default function Header() {
                 className="w-20 md:w-28 object-contain"
                 priority
               />
+              <span className="font-heading font-bold text-2xl text-primary hidden sm:block mt-1">Avenir Souriant</span>
             </TransitionLink>
           </div>
           <nav className="hidden md:flex space-x-12" onMouseLeave={() => setHoveredTab(null)}>

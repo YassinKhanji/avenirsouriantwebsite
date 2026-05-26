@@ -180,7 +180,7 @@ export default function Register() {
                   </p>
                   <p className="flex items-center text-lg">
                     <span className="text-2xl mr-4">📞</span>
-                    <a href="tel:+15145154492" className="font-bold text-primary hover:text-primary-light transition-colors">(514) 515-4492</a>
+                    <a href="tel:+15145815305" className="font-bold text-primary hover:text-primary-light transition-colors">(514) 581-5305</a>
                   </p>
                 </div>
               </div>
