@@ -100,10 +100,7 @@ export default function Home() {
         </section>
 
         {/* Need a Babysitter & Solutions */}
-        <section 
-          className="py-24 bg-cover bg-center bg-no-repeat flex items-center justify-center min-h-[700px]"
-          style={{ backgroundImage: "url('/images/section4-bg.jpg')" }}
-        >
+        <section className="py-24 bg-gray-50 flex items-center justify-center min-h-[700px]">
           <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
             <div className="p-8">
               <h2 className="text-3xl font-bold font-heading mb-8 text-center text-gray-900">Got Questions?</h2>
