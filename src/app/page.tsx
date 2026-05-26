@@ -30,8 +30,9 @@ export default function Home() {
               Learn More
             </TransitionLink>
             <p className="text-gray-800 mb-6 font-semibold text-xl drop-shadow-sm">or</p>
-            <a href="tel:+15145154492" className="text-4xl font-bold text-primary hover:text-primary-light transition-colors flex items-center justify-center drop-shadow-sm">
-              <span className="mr-3">📞</span> (514) 515-4492
+            <a href="tel:+15145154492" className="text-4xl font-bold text-white transition-all duration-300 flex items-center justify-center drop-shadow-sm group">
+              <span className="mr-3 group-hover:scale-110 transition-transform">📞</span>
+              <span className="group-hover:[-webkit-text-stroke:1.5px_#1abc9c] transition-all duration-300">(514) 515-4492</span>
             </a>
           </div>
         </section>
