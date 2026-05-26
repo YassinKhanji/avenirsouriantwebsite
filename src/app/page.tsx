@@ -22,15 +22,15 @@ export default function Home() {
           </video>
           
           {/* Subtle overlay to ensure text legibility against video */}
-          <div className="absolute inset-0 bg-white/40 z-0"></div>
+          <div className="absolute inset-0 bg-black/50 z-0"></div>
 
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center p-8">
-            <h1 className="text-5xl md:text-6xl font-bold font-heading text-gray-900 mb-8 leading-tight drop-shadow-sm">Discover the Joy of Learning Arabic</h1>
+            <h1 className="text-5xl md:text-6xl font-bold font-heading text-white mb-8 leading-tight drop-shadow-md">Discover the Joy of Learning Arabic</h1>
             <TransitionLink href="/register" className="inline-block px-10 py-4 bg-secondary text-white rounded-full font-bold text-xl hover:bg-opacity-90 mb-6 shadow-lg transition-transform hover:scale-105">
               Enroll Now
             </TransitionLink>
-            <p className="text-gray-800 mb-6 font-semibold text-xl drop-shadow-sm">or</p>
-            <a href="tel:+15145154492" className="text-4xl font-bold text-primary hover:text-primary-light transition-colors flex items-center justify-center drop-shadow-sm">
+            <p className="text-white/90 mb-6 font-semibold text-xl drop-shadow-md">or</p>
+            <a href="tel:+15145154492" className="text-4xl font-bold text-white hover:text-primary-light transition-colors flex items-center justify-center drop-shadow-md">
               <span className="mr-3">📞</span> (514) 515-4492
             </a>
           </div>
