@@ -24,13 +24,12 @@ export default function Register() {
         >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white/80 backdrop-blur-md p-8 md:p-12 rounded-3xl shadow-2xl border border-white/50">
-              <div className="flex justify-center hidden lg:flex">
+              <div className="hidden lg:flex justify-center w-full h-full relative min-h-[400px]">
                 <Image 
                   src="/images/register-illustration.png" 
-                  alt="Registration illustration" 
-                  width={450}
-                  height={450}
-                  className="object-contain"
+                  alt="Registration photo" 
+                  fill
+                  className="object-cover rounded-2xl shadow-inner border border-white/40"
                 />
               </div>
               <div>
