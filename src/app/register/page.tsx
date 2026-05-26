@@ -10,7 +10,7 @@ export default function Register() {
         {/* Register Hero Section */}
         <section 
           className="relative py-20 text-center bg-cover bg-left md:bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/register-bg.jpg')" }}
+          style={{ backgroundImage: "url('/images/register_hero_bg.png')" }}
         >
           <div className="absolute inset-0 bg-white/60 z-0"></div>
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-4">
