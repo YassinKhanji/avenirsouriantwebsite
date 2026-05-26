@@ -1,5 +1,0 @@
-{
-  "framework": null,
-  "buildCommand": "echo 'Static site - skipping build'",
-  "outputDirectory": "Site2"
-}
