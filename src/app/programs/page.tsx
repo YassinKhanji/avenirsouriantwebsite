@@ -22,7 +22,10 @@ export default function Services() {
         </section>
 
         {/* Services List */}
-        <section className="py-20">
+        <section 
+          className="py-20 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/screen.png')" }}
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-16">
               {[
