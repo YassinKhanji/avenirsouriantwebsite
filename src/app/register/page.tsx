@@ -22,7 +22,10 @@ export default function Register() {
         </section>
 
         {/* Register Form */}
-        <section className="py-24 bg-gray-50 min-h-[80vh] flex items-center">
+        <section 
+          className="py-24 bg-repeat bg-center min-h-[80vh] flex items-center"
+          style={{ backgroundImage: "url('/images/register_bg_pattern.png')", backgroundSize: "512px" }}
+        >
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white/80 backdrop-blur-md p-8 md:p-12 rounded-3xl shadow-2xl border border-white/50">
               <div className="hidden lg:flex justify-center w-full h-full relative min-h-[400px]">
