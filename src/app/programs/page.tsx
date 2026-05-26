@@ -15,12 +15,12 @@ const AnimatedProgramCard = ({ service, idx }: { service: any, idx: number }) =>
       <motion.div
         initial={{ gap: "2px", opacity: 0, scaleX: 0 }}
         whileInView={{ 
-          gap: ["2px", "24px", "4px"], 
+          gap: ["2px", "32px", "4px"], 
           opacity: [0, 1, 0],
-          scaleX: [0.2, 1, 0.2]
+          scaleX: [0.2, 1.5, 0.2]
         }}
-        transition={{ duration: 0.9, times: [0, 0.5, 1], ease: "easeInOut" }}
-        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 1.2, times: [0, 0.5, 1], ease: "easeInOut" }}
+        viewport={{ once: true, amount: 0.2 }}
         style={{ originX: isEven ? 1 : 0 }}
         className={`absolute top-1/2 -translate-y-1/2 flex items-center z-0 hidden md:flex ${
           isEven ? 'right-[95%] flex-row' : 'left-[95%] flex-row-reverse'
@@ -33,10 +33,10 @@ const AnimatedProgramCard = ({ service, idx }: { service: any, idx: number }) =>
 
       {/* The Card */}
       <motion.div 
-        initial={{ x: isEven ? -200 : 200 }}
+        initial={{ x: isEven ? "-100vw" : "100vw" }}
         whileInView={{ x: 0 }}
-        transition={{ type: "spring", stiffness: 50, damping: 12, mass: 1 }}
-        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 1.2, ease: "easeInOut" }}
+        viewport={{ once: true, amount: 0.2 }}
         className="relative z-10 flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-colors"
       >
         <div className="relative w-full md:w-1/3 h-64 bg-primary-light rounded-xl flex items-center justify-center text-4xl text-primary font-bold text-center overflow-hidden">
