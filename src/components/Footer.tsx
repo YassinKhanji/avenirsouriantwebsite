@@ -78,22 +78,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-primary-light mt-12 pt-8 text-center">
-          <h3 className="text-xl font-semibold mb-4">Newsletter</h3>
-          <form className="max-w-md mx-auto flex gap-2 justify-center items-center mb-8">
-            <input 
-              type="text" 
-              placeholder="Enter your Name" 
-              className="px-4 py-2 rounded-md bg-blue-400 text-white placeholder-blue-100 border-none focus:outline-none focus:ring-2 focus:ring-white w-full"
-              required 
-            />
-            <button 
-              type="submit" 
-              className="px-6 py-2 bg-white text-primary font-medium rounded-full hover:bg-gray-100 transition-colors"
-            >
-              Submit
-            </button>
-          </form>
+        <div className="border-t border-white/20 mt-12 pt-8 text-center">
           <p className="text-sm opacity-75">
             Avenir Souriant © {new Date().getFullYear()} All rights reserved. Terms of use and Privacy Policy
           </p>
