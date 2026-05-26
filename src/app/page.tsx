@@ -150,7 +150,7 @@ export default function Home() {
         {/* Stats Section */}
         <section 
           className="relative py-20 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/stats-bg.jpg')" }}
+          style={{ backgroundImage: "url('/images/geometric-pattern-bg.png')" }}
         >
           <div className="absolute inset-0 bg-white/70 z-0"></div>
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
