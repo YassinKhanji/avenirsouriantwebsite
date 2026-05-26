@@ -35,7 +35,7 @@ export default function Services() {
                     <p className="text-gray-600 text-lg mb-6">{service.desc}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-semibold text-primary">{service.price}</span>
-                      <button className="px-6 py-2 bg-primary text-white rounded-md font-medium hover:bg-opacity-90 transition-colors">
+                      <button className="px-6 py-2 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90 transition-colors">
                         Book Now
                       </button>
                     </div>

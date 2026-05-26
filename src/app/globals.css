@@ -10,8 +10,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-raleway), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-fredoka), ui-sans-serif, system-ui, sans-serif;
-  --color-primary: #478ac9;
-  --color-primary-light: #f2f6fa;
+  --color-primary: #1abc9c; /* Turquoise */
+  --color-primary-light: #e8f8f5;
+  --color-secondary: #ff9f43; /* Orange */
+  --color-secondary-light: #fff5eb;
 }
 
 body {

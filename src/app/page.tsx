@@ -14,7 +14,7 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="order-2 lg:order-1 text-center lg:text-left">
                 <h1 className="text-5xl font-bold font-heading text-gray-900 mb-6">Quickly find a Babysitter</h1>
-                <TransitionLink href="/register" className="inline-block px-8 py-3 bg-primary text-white rounded-full font-medium hover:bg-opacity-90 mb-4">
+                <TransitionLink href="/register" className="inline-block px-8 py-3 bg-secondary text-white rounded-full font-medium hover:bg-opacity-90 mb-4">
                   Book a Babysitter
                 </TransitionLink>
                 <p className="text-gray-500 mb-4">or</p>
@@ -61,7 +61,7 @@ export default function Home() {
                     <span className="text-primary mr-3">✔</span> Learning New Skills and Interests
                   </li>
                 </ul>
-                <TransitionLink href="/programs" className="inline-block px-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-opacity-90">
+                <TransitionLink href="/programs" className="inline-block px-8 py-3 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90">
                   Learn More
                 </TransitionLink>
               </div>
@@ -166,7 +166,7 @@ export default function Home() {
                 <p className="text-gray-600 mb-8">
                   Sample text. Click to select the Text Element. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat,
                 </p>
-                <TransitionLink href="/programs" className="inline-block px-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-opacity-90">
+                <TransitionLink href="/programs" className="inline-block px-8 py-3 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90">
                   Learn More
                 </TransitionLink>
               </div>

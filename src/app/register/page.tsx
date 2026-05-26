@@ -34,7 +34,7 @@ export default function Register() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                   <input type="tel" placeholder="+1 (555) 000-0000" className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow" required />
                 </div>
-                <button type="button" className="w-full px-8 py-4 bg-primary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-colors shadow-md">
+                <button type="button" className="w-full px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-colors shadow-md">
                   Register
                 </button>
               </form>
