@@ -38,10 +38,9 @@ export default function Services() {
                   <div className="w-full md:w-2/3">
                     <h2 className="text-3xl font-bold font-heading mb-4">{service.title}</h2>
                     <p className="text-gray-600 text-lg mb-6">{service.desc}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-semibold text-primary">{service.price}</span>
+                    <div className="flex items-center justify-end">
                       <Link href="/register">
-                        <button className="px-6 py-2 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90 transition-colors">
+                        <button className="px-6 py-2 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90 transition-colors cursor-pointer">
                           Enroll Now
                         </button>
                       </Link>
