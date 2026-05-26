@@ -47,7 +47,7 @@ export default function Home() {
                 <h2 className="text-4xl font-bold font-heading mb-8">Welcome to Avenir Souriant</h2>
                 <div className="relative aspect-[1024/558] w-full rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-white">
                   <Image 
-                    src="/images/welcome-illustration.png"
+                    src="/images/welcome-illustration.jpg"
                     alt="Welcome to Avenir Souriant"
                     fill
                     className="object-contain"
