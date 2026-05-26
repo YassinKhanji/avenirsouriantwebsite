@@ -1,9 +1,20 @@
+'use client';
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import { TransitionLink } from '@/components/TransitionLink';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef } from 'react';
 
 export default function Home() {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+  
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.3]);
   return (
     <>
       <Header />
@@ -45,13 +56,15 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-4xl font-bold font-heading mb-8">Welcome to Avenir Souriant</h2>
-                <div className="relative aspect-[1024/558] w-full rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-white">
-                  <Image 
-                    src="/images/welcome-illustration.jpg"
-                    alt="Welcome to Avenir Souriant"
-                    fill
-                    className="object-contain"
-                  />
+                <div ref={containerRef} className="relative aspect-[1024/558] w-full rounded-2xl overflow-hidden border border-gray-100 shadow-sm bg-white">
+                  <motion.div style={{ scale, width: '100%', height: '100%', position: 'relative' }}>
+                    <Image 
+                      src="/images/welcome-illustration.jpg"
+                      alt="Welcome to Avenir Souriant"
+                      fill
+                      className="object-contain"
+                    />
+                  </motion.div>
                 </div>
               </div>
               <div>
