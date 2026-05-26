@@ -56,13 +56,9 @@ export default function Footer() {
               <a href="tel:+15145154492" className="hover:text-primary-light">(514) 515-4492</a>
             </p>
             <div className="border-t border-primary-light opacity-50 mb-6"></div>
-            <p className="mb-4">
-              Mon-Fri: 9 AM - 6 PM<br />
-              Sat-Sun: Closed
-            </p>
             <p className="flex items-center">
               <span className="mr-2">✉️</span>
-              <a href="mailto:babycare@support.com" className="hover:text-primary-light">babycare@support.com</a>
+              <a href="mailto:administration@avenirsouriant.com" className="hover:text-primary-light">administration@avenirsouriant.com</a>
             </p>
           </div>
 
