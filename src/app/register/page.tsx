@@ -11,15 +11,16 @@ export default function Register() {
     email: '',
     phone: '',
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
+
+  const comment = 'My child is eager to begin their Arabic learning journey with Avenir Souriant!';
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     // Basic validation
     if (!formData.name || !formData.email || !formData.phone) {
       setError('Please fill in all required fields.');
@@ -27,29 +28,26 @@ export default function Register() {
     }
 
     setError('');
-    setIsSubmitting(true);
 
-    try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          comment: 'I am interested in Arabic lessons',
-        }),
-      });
+    // Build mailto link with prefilled info
+    const subject = encodeURIComponent(`New Registration - ${formData.name}`);
+    const body = encodeURIComponent(
+      `New Registration Request\n` +
+      `========================\n\n` +
+      `Name: ${formData.name}\n` +
+      `Email: ${formData.email}\n` +
+      `Phone: ${formData.phone}\n` +
+      `Comment: ${comment}\n\n` +
+      `---\n` +
+      `Sent from Avenir Souriant Website`
+    );
 
-      if (!res.ok) {
-        throw new Error('Failed to send');
-      }
+    // Open mailto
+    window.location.href = `mailto:administration@avenirsouriant.com?subject=${subject}&body=${body}`;
 
-      setShowModal(true);
-      setFormData({ name: '', email: '', phone: '' });
-    } catch {
-      setError('Something went wrong. Please try again or contact us directly.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Show confirmation modal
+    setShowModal(true);
+    setFormData({ name: '', email: '', phone: '' });
   };
 
   return (
@@ -124,15 +122,13 @@ export default function Register() {
                       required
                     />
                   </div>
-                  {/* Comment field - read-only with sample text */}
+
+                  {/* Comment section - read-only with gray sample text */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Comment</label>
-                    <textarea
-                      value="I am interested in Arabic lessons"
-                      readOnly
-                      className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-50 text-gray-400 outline-none cursor-not-allowed resize-none italic"
-                      rows={2}
-                    />
+                    <div className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-100 text-gray-400 italic select-none">
+                      {comment}
+                    </div>
                   </div>
 
                   {error && (
@@ -142,10 +138,9 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className="w-full px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="w-full px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md"
                   >
-                    {isSubmitting ? 'Sending...' : 'Register'}
+                    Register
                   </button>
                 </form>
               </div>
