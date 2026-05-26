@@ -64,7 +64,10 @@ export default function Home() {
         </section>
 
         {/* What We Offer */}
-        <section className="py-20 bg-primary-light">
+        <section 
+          className="py-20 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/section3-bg.jpg')" }}
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl font-bold font-heading mb-4">What We Offer</h2>
             <p className="text-gray-600 mb-12 max-w-2xl mx-auto">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip</p>
