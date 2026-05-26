@@ -55,7 +55,8 @@ export default function Services() {
                 { 
                   title: "Other Activities", 
                   desc: "We offer a variety of other engaging activities tailored to your child's interests and developmental needs. Contact us to learn more!", 
-                  price: "Learn More" 
+                  price: "Learn More",
+                  image: "/images/classroom.jpg"
                 }
               ].map((service, idx) => (
                 <div key={idx} className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-colors">
