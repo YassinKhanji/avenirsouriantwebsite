@@ -123,25 +123,32 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Need a Babysitter & Solutions */}
-        <section className="py-24 bg-gray-50 flex items-center justify-center min-h-[700px]">
-          <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="p-8">
-              <h2 className="text-3xl font-bold font-heading mb-8 text-center text-gray-900">Got Questions?</h2>
-              <form className="space-y-5">
-                <div>
-                  <input type="text" placeholder="Enter your Name" className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white/90 shadow-sm" required />
-                </div>
-                <div>
-                  <input type="tel" placeholder="Enter your phone" className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white/90 shadow-sm" required />
-                </div>
-                <div>
-                  <textarea placeholder="Enter your message" rows={4} className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white/90 shadow-sm" required></textarea>
-                </div>
-                <button type="button" className="px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 w-full shadow-md transition-transform hover:scale-105">
-                  Send Message
-                </button>
-              </form>
+        {/* Register CTA Callout Section */}
+        <section className="py-24 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white p-8 md:p-12 rounded-3xl border border-gray-100 shadow-sm">
+              <div className="relative h-96 w-full rounded-2xl overflow-hidden">
+                <Image 
+                  src="/images/register_callout.png"
+                  alt="Register at Avenir Souriant"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="flex flex-col items-start justify-center">
+                <h2 className="text-4xl font-bold font-heading mb-6 text-gray-900 leading-tight">
+                  Ready to Join Avenir Souriant?
+                </h2>
+                <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+                  Give your child the gift of language, creativity, and coding. Join the Avenir Souriant family and watch them build confidence, make friends, and discover the joy of learning Arabic through hands-on activities, robotics, and sports.
+                </p>
+                <TransitionLink 
+                  href="/register" 
+                  className="inline-block px-10 py-4 bg-secondary text-white rounded-full font-bold text-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 shadow-md cursor-pointer"
+                >
+                  Register Now
+                </TransitionLink>
+              </div>
             </div>
           </div>
         </section>
