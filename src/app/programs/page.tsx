@@ -41,7 +41,7 @@ export default function Services() {
                     <div className="flex items-center justify-end">
                       <Link href="/register">
                         <button className="px-6 py-2 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90 transition-colors cursor-pointer">
-                          Enroll Now
+                          Learn More
                         </button>
                       </Link>
                     </div>

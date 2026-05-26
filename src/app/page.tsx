@@ -27,7 +27,7 @@ export default function Home() {
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center p-8">
             <h1 className="text-5xl md:text-6xl font-bold font-heading text-gray-900 mb-8 leading-tight drop-shadow-sm">Discover the <span className="text-secondary">Joy</span> of Learning <span className="text-secondary">Arabic</span></h1>
             <TransitionLink href="/register" className="inline-block px-10 py-4 bg-secondary text-white rounded-full font-bold text-xl hover:bg-opacity-90 mb-6 shadow-lg transition-transform hover:scale-105">
-              Enroll Now
+              Learn More
             </TransitionLink>
             <p className="text-gray-800 mb-6 font-semibold text-xl drop-shadow-sm">or</p>
             <a href="tel:+15145154492" className="text-4xl font-bold text-primary hover:text-primary-light transition-colors flex items-center justify-center drop-shadow-sm">
