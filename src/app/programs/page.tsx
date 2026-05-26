@@ -24,7 +24,7 @@ export default function Services() {
         {/* Services List */}
         <section 
           className="py-20 bg-repeat bg-center"
-          style={{ backgroundImage: "url('/images/screen.png')", backgroundSize: "350px" }}
+          style={{ backgroundImage: "url('/images/screen.png')", backgroundSize: "688px" }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-16">
