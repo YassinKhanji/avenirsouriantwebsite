@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer 
       className="relative text-white pt-16 pb-8 bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/images/footer-bg.jpg')" }}
+      style={{ backgroundImage: "url('/images/geometric-pattern-bg.png')" }}
     >
       {/* Overlay to ensure text legibility */}
       <div className="absolute inset-0 bg-primary/60"></div>
