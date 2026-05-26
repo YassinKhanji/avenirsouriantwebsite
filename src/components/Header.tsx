@@ -39,14 +39,14 @@ export default function Header() {
       className="sticky top-0 z-50 bg-white shadow-sm w-full font-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center py-2">
           <div className="flex justify-start">
             <TransitionLink href="/">
               <Image 
                 src="/images/logo.png" 
                 alt="Avenir Souriant Logo" 
-                width={200} 
-                height={50} 
+                width={150} 
+                height={40} 
                 className="object-contain"
                 priority
               />
