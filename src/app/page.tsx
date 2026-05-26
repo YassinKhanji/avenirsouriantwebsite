@@ -148,8 +148,12 @@ export default function Home() {
         </section>
 
         {/* Stats Section */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section 
+          className="relative py-20 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/stats-bg.jpg')" }}
+        >
+          <div className="absolute inset-0 bg-white/70 z-0"></div>
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-center">
               <div className="flex justify-center">
                 <Image 
