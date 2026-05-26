@@ -46,9 +46,9 @@ export default function Header() {
               <Image 
                 src="/images/logo.png" 
                 alt="Avenir Souriant Logo" 
-                width={150} 
-                height={40} 
-                className="object-contain"
+                width={100} 
+                height={28} 
+                className="w-20 md:w-28 object-contain"
                 priority
               />
             </TransitionLink>
