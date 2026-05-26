@@ -148,7 +148,7 @@ export default function Home() {
         </section>
 
         {/* Stats Section */}
-        <section className="py-20 bg-primary-light">
+        <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-center">
               <div className="flex justify-center">
@@ -187,7 +187,7 @@ export default function Home() {
         </section>
 
         {/* Location & Map Section */}
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-primary-light">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-4xl font-bold font-heading mb-12 text-center">Visit Our Center</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
