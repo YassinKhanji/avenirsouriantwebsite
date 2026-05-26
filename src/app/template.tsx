@@ -7,21 +7,21 @@ export default function Template({ children }: { children: React.ReactNode }) {
   return (
     <>
       <motion.div
-        className="fixed inset-0 z-[100] bg-primary flex items-center justify-center pointer-events-none"
-        initial={{ y: '100%' }}
-        animate={{ y: ['100%', '0%', '0%', '-100%'] }}
-        transition={{ duration: 1.5, times: [0, 0.4, 0.6, 1], ease: [0.76, 0, 0.24, 1] }}
+        className="fixed inset-0 z-[100] flex items-center justify-center bg-primary"
+        initial={{ y: "0%" }}
+        animate={{ y: "-100%" }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
       >
         <motion.div
           initial={{ opacity: 1, scale: 1 }}
-          animate={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
+          animate={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.3 }}
         >
-          <Image
-            src="/images/logo.png"
-            alt="Avenir Souriant Logo"
-            width={300}
-            height={100}
+          <Image 
+            src="/images/logo.png" 
+            alt="Avenir Souriant Logo" 
+            width={250} 
+            height={80} 
             className="brightness-0 invert object-contain"
             priority
           />

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { TransitionLink } from '@/components/TransitionLink';
 
 export default function Footer() {
   return (
@@ -63,13 +64,10 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h3 className="text-2xl font-semibold mb-6">Quick Links</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <Link href="/about" className="hover:text-primary-light transition-colors">About Company</Link>
-              <Link href="/services" className="hover:text-primary-light transition-colors">Our Services</Link>
-              <Link href="/blog" className="hover:text-primary-light transition-colors">Blog</Link>
-              <Link href="/team" className="hover:text-primary-light transition-colors">Our Team</Link>
-              <Link href="/contact" className="hover:text-primary-light transition-colors">Testimonials</Link>
-              <Link href="/about" className="hover:text-primary-light transition-colors">Our Vision</Link>
+            <div className="grid grid-cols-2 gap-2 font-heading">
+              <TransitionLink href="/" className="hover:text-primary-light transition-colors">Home</TransitionLink>
+              <TransitionLink href="/programs" className="hover:text-primary-light transition-colors">Programs</TransitionLink>
+              <TransitionLink href="/register" className="hover:text-primary-light transition-colors">Register</TransitionLink>
             </div>
           </div>
         </div>

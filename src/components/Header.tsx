@@ -1,87 +1,94 @@
 'use client';
 
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-
-const NAV_LINKS = [
-  { name: 'Home', href: '/' },
-  { name: 'Programs', href: '/programs' },
-  { name: 'Register', href: '/register' },
-];
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
+import { TransitionLink } from './TransitionLink';
 
 export default function Header() {
+  const [isHidden, setIsHidden] = useState(false);
+  const { scrollY } = useScroll();
   const pathname = usePathname();
-  const [isScrolledDown, setIsScrolledDown] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsScrolledDown(true);
-      } else {
-        setIsScrolledDown(false);
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
+  // Smart Header Logic
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() || 0;
+    if (latest > previous && latest > 150) {
+      setIsHidden(true); // Scrolling down -> hide header
+    } else {
+      setIsHidden(false); // Scrolling up -> show header
+    }
+  });
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Programs', path: '/programs' },
+    { name: 'Register', path: '/register' },
+  ];
 
   return (
-    <motion.header 
-      initial={{ y: 0 }}
-      animate={{ y: isScrolledDown ? '-100%' : '0%' }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="fixed top-0 z-50 bg-white shadow-sm w-full"
+    <motion.header
+      variants={{
+        visible: { y: 0 },
+        hidden: { y: "-100%" },
+      }}
+      animate={isHidden ? "hidden" : "visible"}
+      transition={{ duration: 0.35, ease: "easeInOut" }}
+      className="sticky top-0 z-50 bg-white shadow-sm w-full font-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex justify-start">
-            <Link href="/">
+            <TransitionLink href="/">
               <Image 
                 src="/images/logo.png" 
                 alt="Avenir Souriant Logo" 
                 width={200} 
                 height={50} 
                 className="object-contain"
+                priority
               />
-            </Link>
+            </TransitionLink>
           </div>
-          <nav className="hidden md:flex space-x-8 relative">
-            {NAV_LINKS.map((link) => (
-              <div 
-                key={link.href} 
-                className="relative"
-                onMouseEnter={() => setHoveredPath(link.href)}
-                onMouseLeave={() => setHoveredPath(null)}
-              >
-                <Link 
-                  href={link.href} 
-                  className="relative px-3 py-2 text-gray-900 hover:text-primary font-medium font-heading transition-colors"
+          <nav className="hidden md:flex space-x-12" onMouseLeave={() => setHoveredTab(null)}>
+            {navLinks.map((link) => {
+              const isActive = pathname === link.path;
+              return (
+                <div 
+                  key={link.path} 
+                  className="relative py-2"
+                  onMouseEnter={() => setHoveredTab(link.path)}
                 >
-                  {link.name}
-                </Link>
-                {hoveredPath === link.href && (
-                  <motion.div
-                    layoutId="underline"
-                    className="absolute left-0 bottom-0 w-full h-[2px] bg-primary"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                  />
-                )}
-              </div>
-            ))}
+                  <TransitionLink 
+                    href={link.path} 
+                    className={`text-lg font-medium transition-colors ${isActive ? 'text-primary' : 'text-gray-900 hover:text-primary'}`}
+                  >
+                    {link.name}
+                  </TransitionLink>
+                  
+                  {/* Hover Underline Animation */}
+                  {hoveredTab === link.path && (
+                    <motion.div
+                      layoutId="nav-hover"
+                      className="absolute left-0 right-0 -bottom-1 h-0.5 bg-primary"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                  {/* Active Underline */}
+                  {isActive && hoveredTab !== link.path && (
+                    <div className="absolute left-0 right-0 -bottom-1 h-0.5 bg-primary opacity-50" />
+                  )}
+                </div>
+              );
+            })}
           </nav>
+          
+          {/* Mobile menu button could go here, omitting for brevity as requested */}
         </div>
       </div>
     </motion.header>

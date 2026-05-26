@@ -1,7 +1,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
-import Link from 'next/link';
+import { TransitionLink } from '@/components/TransitionLink';
 
 export default function Home() {
   return (
@@ -14,9 +14,9 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="order-2 lg:order-1 text-center lg:text-left">
                 <h1 className="text-5xl font-bold font-heading text-gray-900 mb-6">Quickly find a Babysitter</h1>
-                <Link href="/contact" className="inline-block px-8 py-3 bg-primary text-white rounded-full font-medium hover:bg-opacity-90 mb-4">
+                <TransitionLink href="/register" className="inline-block px-8 py-3 bg-primary text-white rounded-full font-medium hover:bg-opacity-90 mb-4">
                   Book a Babysitter
-                </Link>
+                </TransitionLink>
                 <p className="text-gray-500 mb-4">or</p>
                 <a href="tel:+18001234567" className="text-2xl font-semibold text-primary hover:text-primary flex items-center justify-center lg:justify-start">
                   <span className="mr-2">📞</span> +1-800-123-4567
@@ -61,9 +61,9 @@ export default function Home() {
                     <span className="text-primary mr-3">✔</span> Learning New Skills and Interests
                   </li>
                 </ul>
-                <Link href="/about" className="inline-block px-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-opacity-90">
+                <TransitionLink href="/programs" className="inline-block px-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-opacity-90">
                   Learn More
-                </Link>
+                </TransitionLink>
               </div>
             </div>
           </div>
@@ -166,9 +166,9 @@ export default function Home() {
                 <p className="text-gray-600 mb-8">
                   Sample text. Click to select the Text Element. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat,
                 </p>
-                <Link href="/about" className="inline-block px-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-opacity-90">
+                <TransitionLink href="/programs" className="inline-block px-8 py-3 bg-primary text-white rounded-md font-medium hover:bg-opacity-90">
                   Learn More
-                </Link>
+                </TransitionLink>
               </div>
               <div className="grid grid-cols-2 gap-6">
                 {[
