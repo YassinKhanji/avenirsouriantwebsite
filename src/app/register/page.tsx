@@ -8,20 +8,21 @@ export default function Register() {
       <Header />
       <main className="flex-1">
         {/* Register Hero Section */}
-        <section className="bg-primary-light py-20 text-center">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-5xl font-bold font-heading mb-6">Register Now</h1>
-            <p className="text-xl text-gray-600">
+        <section 
+          className="relative py-20 text-center bg-cover bg-right md:bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/register-bg.jpg')" }}
+        >
+          <div className="absolute inset-0 bg-white/60 z-0"></div>
+          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-4">
+            <h1 className="text-5xl font-bold font-heading mb-6 text-gray-900 drop-shadow-md">Register Now</h1>
+            <p className="text-xl text-gray-800 font-medium drop-shadow-sm">
               Join Avenir Souriant and give your child the gift of language and adventure.
             </p>
           </div>
         </section>
 
         {/* Register Form */}
-        <section 
-          className="py-24 bg-cover bg-center bg-no-repeat min-h-[80vh] flex items-center"
-          style={{ backgroundImage: "url('/images/register-bg.jpg')" }}
-        >
+        <section className="py-24 bg-gray-50 min-h-[80vh] flex items-center">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white/80 backdrop-blur-md p-8 md:p-12 rounded-3xl shadow-2xl border border-white/50">
               <div className="hidden lg:flex justify-center w-full h-full relative min-h-[400px]">
