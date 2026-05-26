@@ -9,23 +9,27 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="bg-primary-light py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section 
+          className="relative py-32 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
+        >
+          {/* Subtle overlay to ensure text readability against the background */}
+          <div className="absolute inset-0 bg-white/70"></div>
+          
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div className="order-2 lg:order-1 text-center lg:text-left">
                 <h1 className="text-5xl font-bold font-heading text-gray-900 mb-6">Quickly find a Babysitter</h1>
-                <TransitionLink href="/register" className="inline-block px-8 py-3 bg-secondary text-white rounded-full font-medium hover:bg-opacity-90 mb-4">
+                <TransitionLink href="/register" className="inline-block px-8 py-3 bg-secondary text-white rounded-full font-medium hover:bg-opacity-90 mb-4 shadow-lg">
                   Book a Babysitter
                 </TransitionLink>
-                <p className="text-gray-500 mb-4">or</p>
-                <a href="tel:+18001234567" className="text-2xl font-semibold text-primary hover:text-primary flex items-center justify-center lg:justify-start">
+                <p className="text-gray-600 mb-4 font-medium">or</p>
+                <a href="tel:+18001234567" className="text-2xl font-semibold text-primary hover:text-primary-light transition-colors flex items-center justify-center lg:justify-start">
                   <span className="mr-2">📞</span> +1-800-123-4567
                 </a>
-                <p className="mt-6 text-gray-600">Sample text. Click to select the Text Element.</p>
               </div>
-              <div className="order-1 lg:order-2 h-96 bg-gray-200 rounded-lg overflow-hidden relative">
-                {/* Fallback color if image is missing */}
-                <div className="absolute inset-0 flex items-center justify-center text-gray-400">Hero Image Placeholder</div>
+              <div className="order-1 lg:order-2 hidden lg:block">
+                {/* Empty div to keep the grid layout and push text to the left */}
               </div>
             </div>
           </div>
