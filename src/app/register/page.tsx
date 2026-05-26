@@ -1,8 +1,49 @@
+'use client';
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
+import { useState } from 'react';
+import { sendRegistrationEmail } from './actions';
 
 export default function Register() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const comment = ' I am interested in Arabic lessons';
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMsg('');
+
+    try {
+      const response = await sendRegistrationEmail({
+        name,
+        email,
+        phone,
+        comment,
+      });
+
+      if (response.success) {
+        setShowModal(true);
+        setName('');
+        setEmail('');
+        setPhone('');
+      } else {
+        setErrorMsg(response.error || 'Something went wrong. Please try again.');
+      }
+    } catch (err) {
+      setErrorMsg('A network error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -38,21 +79,58 @@ export default function Register() {
               </div>
               <div>
                 <h2 className="text-4xl font-bold font-heading mb-8 text-gray-900">Create an Account</h2>
-                <form className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
-                    <input type="text" placeholder="John Doe" className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90" required />
+                    <input 
+                      type="text" 
+                      placeholder="John Doe" 
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90" 
+                      required 
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                    <input type="email" placeholder="john@example.com" className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90" required />
+                    <input 
+                      type="email" 
+                      placeholder="john@example.com" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90" 
+                      required 
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
-                    <input type="tel" placeholder="+1 (555) 000-0000" className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90" required />
+                    <input 
+                      type="tel" 
+                      placeholder="+1 (555) 000-0000" 
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90" 
+                      required 
+                    />
                   </div>
-                  <button type="button" className="w-full px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md">
-                    Register
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Comment</label>
+                    <textarea 
+                      value={comment} 
+                      readOnly 
+                      className="w-full px-5 py-4 rounded-xl border border-gray-300 bg-gray-100/80 text-gray-500 font-medium outline-none cursor-not-allowed resize-none"
+                      rows={2}
+                    />
+                  </div>
+                  {errorMsg && (
+                    <p className="text-red-500 text-sm font-semibold">{errorMsg}</p>
+                  )}
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="w-full px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? 'Registering...' : 'Register'}
                   </button>
                 </form>
               </div>
@@ -96,6 +174,28 @@ export default function Register() {
           </div>
         </section>
       </main>
+
+      {/* Confirmation Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-gray-100 text-center">
+            <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl font-bold">
+              ✓
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4 font-heading">Registration Received!</h3>
+            <p className="text-gray-600 mb-8 leading-relaxed">
+              Thank you for registering. One of our staff members is going to contact you as soon as possible.
+            </p>
+            <button 
+              onClick={() => setShowModal(false)}
+              className="w-full py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-all shadow-md cursor-pointer"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   );
