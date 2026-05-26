@@ -6,6 +6,68 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
+const AnimatedProgramCard = ({ service, idx }: { service: any, idx: number }) => {
+  const isEven = idx % 2 === 0;
+
+  return (
+    <div className="relative w-full overflow-visible">
+      {/* The trailing effect */}
+      <motion.div
+        initial={{ gap: "2px", opacity: 0, scaleX: 0 }}
+        whileInView={{ 
+          gap: ["2px", "24px", "4px"], 
+          opacity: [0, 1, 0],
+          scaleX: [0.2, 1, 0.2]
+        }}
+        transition={{ duration: 0.9, times: [0, 0.5, 1], ease: "easeInOut" }}
+        viewport={{ once: true, margin: "-50px" }}
+        style={{ originX: isEven ? 1 : 0 }}
+        className={`absolute top-1/2 -translate-y-1/2 flex items-center z-0 hidden md:flex ${
+          isEven ? 'right-[95%] flex-row' : 'left-[95%] flex-row-reverse'
+        }`}
+      >
+        <div className="w-16 h-2 bg-[#1abc9c] rounded-full shadow-[0_0_8px_rgba(26,188,156,0.6)]" />
+        <div className="w-6 h-2 bg-[#1abc9c] rounded-full shadow-[0_0_8px_rgba(26,188,156,0.6)]" />
+        <div className="w-2 h-2 bg-[#1abc9c] rounded-full shadow-[0_0_8px_rgba(26,188,156,0.6)]" />
+      </motion.div>
+
+      {/* The Card */}
+      <motion.div 
+        initial={{ x: isEven ? -200 : 200 }}
+        whileInView={{ x: 0 }}
+        transition={{ type: "spring", stiffness: 50, damping: 12, mass: 1 }}
+        viewport={{ once: true, margin: "-50px" }}
+        className="relative z-10 flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-colors"
+      >
+        <div className="relative w-full md:w-1/3 h-64 bg-primary-light rounded-xl flex items-center justify-center text-4xl text-primary font-bold text-center overflow-hidden">
+          {service.image ? (
+            <Image
+              src={service.image}
+              alt={service.title}
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover"
+            />
+          ) : (
+            <span className="p-4">{service.title.split(' ')[0]}</span>
+          )}
+        </div>
+        <div className="w-full md:w-2/3">
+          <h2 className="text-3xl font-bold font-heading mb-4">{service.title}</h2>
+          <p className="text-gray-600 text-lg mb-6">{service.desc}</p>
+          <div className="flex items-center justify-end">
+            <Link href="/register">
+              <button className="px-6 py-2 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90 transition-colors cursor-pointer">
+                Learn More
+              </button>
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
 export default function Services() {
   return (
     <>
@@ -26,7 +88,7 @@ export default function Services() {
 
         {/* Services List */}
         <section 
-          className="py-20 bg-repeat bg-center"
+          className="py-20 bg-repeat bg-center overflow-x-hidden"
           style={{ backgroundImage: "url('/images/screen.png')", backgroundSize: "688px" }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,39 +125,7 @@ export default function Services() {
                   image: "/images/other_activities.jpg"
                 }
               ].map((service, idx) => (
-                <motion.div 
-                  key={idx} 
-                  initial={{ opacity: 0, x: idx % 2 === 0 ? -100 : 100 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-colors"
-                >
-                  <div className="relative w-full md:w-1/3 h-64 bg-primary-light rounded-xl flex items-center justify-center text-4xl text-primary font-bold text-center overflow-hidden">
-                    {service.image ? (
-                      <Image
-                        src={service.image}
-                        alt={service.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover"
-                      />
-                    ) : (
-                      <span className="p-4">{service.title.split(' ')[0]}</span>
-                    )}
-                  </div>
-                  <div className="w-full md:w-2/3">
-                    <h2 className="text-3xl font-bold font-heading mb-4">{service.title}</h2>
-                    <p className="text-gray-600 text-lg mb-6">{service.desc}</p>
-                    <div className="flex items-center justify-end">
-                      <Link href="/register">
-                        <button className="px-6 py-2 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90 transition-colors cursor-pointer">
-                          Learn More
-                        </button>
-                      </Link>
-                    </div>
-                  </div>
-                </motion.div>
+                <AnimatedProgramCard key={idx} service={service} idx={idx} />
               ))}
             </div>
           </div>
