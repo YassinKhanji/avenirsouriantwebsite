@@ -9,7 +9,7 @@ export default function Register() {
       <main className="flex-1">
         {/* Register Hero Section */}
         <section 
-          className="relative py-20 text-center bg-cover bg-right md:bg-center bg-no-repeat"
+          className="relative py-20 text-center bg-cover bg-left md:bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/images/register-bg.jpg')" }}
         >
           <div className="absolute inset-0 bg-white/60 z-0"></div>
