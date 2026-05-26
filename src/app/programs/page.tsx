@@ -1,7 +1,10 @@
+'use client';
+
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
 export default function Services() {
   return (
@@ -60,7 +63,14 @@ export default function Services() {
                   image: "/images/other_activities.jpg"
                 }
               ].map((service, idx) => (
-                <div key={idx} className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-colors">
+                <motion.div 
+                  key={idx} 
+                  initial={{ opacity: 0, x: idx % 2 === 0 ? -100 : 100 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-colors"
+                >
                   <div className="relative w-full md:w-1/3 h-64 bg-primary-light rounded-xl flex items-center justify-center text-4xl text-primary font-bold text-center overflow-hidden">
                     {service.image ? (
                       <Image
@@ -85,7 +95,7 @@ export default function Services() {
                       </Link>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
