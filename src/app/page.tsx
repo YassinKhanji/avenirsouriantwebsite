@@ -125,8 +125,8 @@ export default function Home() {
 
         {/* What Clients Say */}
         <section 
-          className="relative py-20 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/geometric-pattern-bg.png')" }}
+          className="relative py-20 bg-repeat bg-center"
+          style={{ backgroundImage: "url('/images/geometric-pattern-bg.png')", backgroundSize: "350px" }}
         >
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl font-bold font-heading mb-12">What Clients Say</h2>

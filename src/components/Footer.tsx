@@ -5,8 +5,8 @@ import { TransitionLink } from '@/components/TransitionLink';
 export default function Footer() {
   return (
     <footer 
-      className="relative text-white pt-16 pb-8 bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/images/sky_blue_girih_star_background.png')" }}
+      className="relative text-white pt-16 pb-8 bg-repeat bg-center"
+      style={{ backgroundImage: "url('/images/sky_blue_girih_star_background.png')", backgroundSize: "350px" }}
     >
       {/* Overlay to ensure text legibility */}
       <div className="absolute inset-0 bg-primary/60"></div>
