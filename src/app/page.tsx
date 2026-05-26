@@ -10,28 +10,18 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero Section */}
         <section 
-          className="relative py-32 bg-cover bg-center bg-no-repeat"
+          className="relative py-32 bg-cover bg-center bg-no-repeat flex items-center justify-center min-h-[80vh]"
           style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
         >
-          {/* Subtle overlay to ensure text readability against the background */}
-          <div className="absolute inset-0 bg-white/70"></div>
-          
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="order-2 lg:order-1 text-center lg:text-left">
-                <h1 className="text-5xl font-bold font-heading text-gray-900 mb-6">Quickly find a Babysitter</h1>
-                <TransitionLink href="/register" className="inline-block px-8 py-3 bg-secondary text-white rounded-full font-medium hover:bg-opacity-90 mb-4 shadow-lg">
-                  Book a Babysitter
-                </TransitionLink>
-                <p className="text-gray-600 mb-4 font-medium">or</p>
-                <a href="tel:+18001234567" className="text-2xl font-semibold text-primary hover:text-primary-light transition-colors flex items-center justify-center lg:justify-start">
-                  <span className="mr-2">📞</span> +1-800-123-4567
-                </a>
-              </div>
-              <div className="order-1 lg:order-2 hidden lg:block">
-                {/* Empty div to keep the grid layout and push text to the left */}
-              </div>
-            </div>
+          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center p-8">
+            <h1 className="text-5xl md:text-6xl font-bold font-heading text-gray-900 mb-8 leading-tight">Quickly find a Babysitter</h1>
+            <TransitionLink href="/register" className="inline-block px-10 py-4 bg-secondary text-white rounded-full font-bold text-xl hover:bg-opacity-90 mb-6 shadow-lg transition-transform hover:scale-105">
+              Book a Babysitter
+            </TransitionLink>
+            <p className="text-gray-600 mb-6 font-medium text-lg">or</p>
+            <a href="tel:+18001234567" className="text-3xl font-semibold text-primary hover:text-primary-light transition-colors flex items-center justify-center">
+              <span className="mr-3">📞</span> +1-800-123-4567
+            </a>
           </div>
         </section>
 
