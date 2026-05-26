@@ -10,13 +10,12 @@ export default function Register() {
     name: '',
     email: '',
     phone: '',
+    comment: '',
   });
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
 
-  const comment = 'My child is eager to begin their Arabic learning journey with Avenir Souriant!';
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -37,7 +36,7 @@ export default function Register() {
       `Name: ${formData.name}\n` +
       `Email: ${formData.email}\n` +
       `Phone: ${formData.phone}\n` +
-      `Comment: ${comment}\n\n` +
+      `Comment: ${formData.comment || 'My child is eager to begin their Arabic learning journey with Avenir Souriant!'}\n\n` +
       `---\n` +
       `Sent from Avenir Souriant Website`
     );
@@ -47,7 +46,7 @@ export default function Register() {
 
     // Show confirmation modal
     setShowModal(true);
-    setFormData({ name: '', email: '', phone: '' });
+    setFormData({ name: '', email: '', phone: '', comment: '' });
   };
 
   return (
@@ -84,7 +83,7 @@ export default function Register() {
                 />
               </div>
               <div>
-                <h2 className="text-4xl font-bold font-heading mb-8 text-gray-900">Create an Account</h2>
+                <h2 className="text-4xl font-bold font-heading mb-8 text-gray-900">Want to register or have questions?</h2>
                 <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
@@ -123,12 +122,17 @@ export default function Register() {
                     />
                   </div>
 
-                  {/* Comment section - read-only with gray sample text */}
+                  {/* Comment section */}
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">Comment</label>
-                    <div className="w-full px-5 py-4 rounded-xl border border-gray-200 bg-gray-100 text-gray-400 italic select-none">
-                      {comment}
-                    </div>
+                    <textarea
+                      name="comment"
+                      value={formData.comment}
+                      onChange={handleChange}
+                      placeholder="My child is eager to begin their Arabic learning journey with Avenir Souriant!"
+                      className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90 resize-none"
+                      rows={3}
+                    />
                   </div>
 
                   {error && (
