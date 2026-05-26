@@ -92,7 +92,7 @@ export default function Home() {
 
         {/* What We Offer */}
         <section 
-          className="py-20 bg-cover bg-center bg-no-repeat"
+          className="py-20 bg-cover bg-center bg-no-repeat bg-fixed"
           style={{ backgroundImage: "url('/images/section3-bg.jpg')" }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -147,7 +147,7 @@ export default function Home() {
 
         {/* What Clients Say */}
         <section 
-          className="relative py-20 bg-repeat bg-center"
+          className="relative py-20 bg-repeat bg-center bg-fixed"
           style={{ backgroundImage: "url('/images/geometric-pattern-bg.png')", backgroundSize: "350px" }}
         >
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
