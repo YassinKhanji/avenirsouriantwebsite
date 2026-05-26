@@ -8,6 +8,9 @@ export default function Footer() {
       className="relative text-white pt-16 pb-8 bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: "url('/images/footer-bg.jpg')" }}
     >
+      {/* Overlay to ensure text legibility */}
+      <div className="absolute inset-0 bg-primary/85"></div>
+      
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Logo and Info */}
