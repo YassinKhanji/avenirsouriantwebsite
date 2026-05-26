@@ -1,5 +1,6 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Image from 'next/image';
 
 export default function Register() {
   return (
@@ -17,27 +18,41 @@ export default function Register() {
         </section>
 
         {/* Register Form */}
-        <section className="py-20">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white p-8 md:p-10 rounded-2xl shadow-lg border border-gray-100">
-              <h2 className="text-3xl font-bold font-heading mb-8">Create an Account</h2>
-              <form className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                  <input type="text" placeholder="John Doe" className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                  <input type="email" placeholder="john@example.com" className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                  <input type="tel" placeholder="+1 (555) 000-0000" className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow" required />
-                </div>
-                <button type="button" className="w-full px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-colors shadow-md">
-                  Register
-                </button>
-              </form>
+        <section 
+          className="py-24 bg-cover bg-center bg-no-repeat min-h-[80vh] flex items-center"
+          style={{ backgroundImage: "url('/images/register-bg.jpg')" }}
+        >
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white/80 backdrop-blur-md p-8 md:p-12 rounded-3xl shadow-2xl border border-white/50">
+              <div className="flex justify-center hidden lg:flex">
+                <Image 
+                  src="/images/register-illustration.png" 
+                  alt="Registration illustration" 
+                  width={450}
+                  height={450}
+                  className="object-contain"
+                />
+              </div>
+              <div>
+                <h2 className="text-4xl font-bold font-heading mb-8 text-gray-900">Create an Account</h2>
+                <form className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                    <input type="text" placeholder="John Doe" className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90" required />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                    <input type="email" placeholder="john@example.com" className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90" required />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                    <input type="tel" placeholder="+1 (555) 000-0000" className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90" required />
+                  </div>
+                  <button type="button" className="w-full px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md">
+                    Register
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </section>
