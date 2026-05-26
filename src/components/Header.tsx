@@ -8,6 +8,7 @@ import { TransitionLink } from './TransitionLink';
 
 export default function Header() {
   const [isHidden, setIsHidden] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { scrollY } = useScroll();
   const pathname = usePathname();
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
@@ -41,7 +42,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-2">
           <div className="flex justify-start">
-            <TransitionLink href="/">
+            <TransitionLink href="/" onClick={() => setIsMobileMenuOpen(false)}>
               <Image 
                 src="/images/logo.png" 
                 alt="Avenir Souriant Logo" 
@@ -88,9 +89,52 @@ export default function Header() {
             })}
           </nav>
           
-          {/* Mobile menu button could go here, omitting for brevity as requested */}
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-gray-900 hover:text-primary focus:outline-none p-2"
+              aria-label="Toggle mobile menu"
+            >
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                {isMobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Navigation Menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white border-t border-gray-100 overflow-hidden"
+          >
+            <div className="px-6 pt-4 pb-6 space-y-6 shadow-inner">
+              {navLinks.map((link) => {
+                const isActive = pathname === link.path;
+                return (
+                  <div key={link.path} className="block" onClick={() => setIsMobileMenuOpen(false)}>
+                    <TransitionLink 
+                      href={link.path} 
+                      className={`block text-2xl font-medium py-2 transition-colors ${isActive ? 'text-primary font-bold' : 'text-gray-900 hover:text-primary'}`}
+                    >
+                      {link.name}
+                    </TransitionLink>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 }
