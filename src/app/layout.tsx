@@ -13,8 +13,8 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "Avenir Souriant Babysitting",
-  description: "Quickly find a Babysitter. Every baby with love & safety.",
+  title: "Avenir Souriant | Arabic Learning Center",
+  description: "Avenir Souriant is the Arabic learning center that flipped the script. Building the next generation of confident Arabic speakers.",
 };
 
 import { TransitionProvider } from '@/contexts/TransitionContext';

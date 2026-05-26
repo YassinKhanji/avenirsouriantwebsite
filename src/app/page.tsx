@@ -25,13 +25,13 @@ export default function Home() {
           <div className="absolute inset-0 bg-white/40 z-0"></div>
 
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center p-8">
-            <h1 className="text-5xl md:text-6xl font-bold font-heading text-gray-900 mb-8 leading-tight drop-shadow-sm">Quickly find a Babysitter</h1>
+            <h1 className="text-5xl md:text-6xl font-bold font-heading text-gray-900 mb-8 leading-tight drop-shadow-sm">Discover the Joy of Learning Arabic</h1>
             <TransitionLink href="/register" className="inline-block px-10 py-4 bg-secondary text-white rounded-full font-bold text-xl hover:bg-opacity-90 mb-6 shadow-lg transition-transform hover:scale-105">
-              Book a Babysitter
+              Enroll Now
             </TransitionLink>
             <p className="text-gray-800 mb-6 font-semibold text-xl drop-shadow-sm">or</p>
-            <a href="tel:+18001234567" className="text-4xl font-bold text-primary hover:text-primary-light transition-colors flex items-center justify-center drop-shadow-sm">
-              <span className="mr-3">📞</span> +1-800-123-4567
+            <a href="tel:+15145154492" className="text-4xl font-bold text-primary hover:text-primary-light transition-colors flex items-center justify-center drop-shadow-sm">
+              <span className="mr-3">📞</span> (514) 515-4492
             </a>
           </div>
         </section>
@@ -41,7 +41,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-4xl font-bold font-heading mb-8">Welcome to Babysitting Agency</h2>
+                <h2 className="text-4xl font-bold font-heading mb-8">Welcome to Avenir Souriant</h2>
                 <div className="relative h-96 w-full flex justify-center items-center">
                   <Image 
                     src="/images/welcome-illustration.png"
@@ -52,22 +52,22 @@ export default function Home() {
                 </div>
               </div>
               <div>
-                <p className="text-gray-600 mb-8 text-lg">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                <p className="text-gray-600 mb-8 text-lg leading-relaxed">
+                  Avenir Souriant is the Arabic learning center that flipped the script. No more boring drills, no more dreading class. We made Arabic their favorite subject — and the kids will tell you themselves. Based in Montréal, we're building the next generation of confident Arabic speakers, one smiling face at a time.
                 </p>
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center text-gray-700">
-                    <span className="text-primary mr-3">✔</span> Social and Emotional Development for Children
+                    <span className="text-primary mr-3">✔</span> Innovative & Interactive Learning
                   </li>
                   <li className="flex items-center text-gray-700">
-                    <span className="text-primary mr-3">✔</span> Enhancing Communication Skills
+                    <span className="text-primary mr-3">✔</span> Arabic for Speakers and Non-Speakers
                   </li>
                   <li className="flex items-center text-gray-700">
-                    <span className="text-primary mr-3">✔</span> Learning New Skills and Interests
+                    <span className="text-primary mr-3">✔</span> Diverse Activities: Robotics, Soccer, & Stitching
                   </li>
                 </ul>
                 <TransitionLink href="/programs" className="inline-block px-8 py-3 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90">
-                  Learn More
+                  View Programs
                 </TransitionLink>
               </div>
             </div>
@@ -81,17 +81,17 @@ export default function Home() {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl font-bold font-heading mb-4">What We Offer</h2>
-            <p className="text-gray-600 mb-12 max-w-2xl mx-auto">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip</p>
+            <p className="text-gray-600 mb-12 max-w-2xl mx-auto">Explore our comprehensive array of educational programs and engaging extracurricular activities tailored to inspire your child.</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
-                { title: "Babysitting", desc: "Ut enim ad minim veniam" },
-                { title: "Child Care", desc: "Ut enim ad minim veniam" },
-                { title: "After School Care", desc: "Ut enim ad minim veniam" },
-                { title: "Emergency Care", desc: "Ut enim ad minim veniam" }
+                { title: "Arabic Mastery", desc: "Advanced curriculum to perfect reading, writing, and speaking skills." },
+                { title: "STEM & Robotics", desc: "Hands-on projects to build critical thinking and technical skills." },
+                { title: "Sports & Soccer", desc: "Active programs focused on teamwork, health, and having fun." },
+                { title: "Creative Arts", desc: "Expressive activities including stitching, crafting, and creative design." }
               ].map((service, index) => (
-                <div key={index} className="bg-white p-6 rounded-lg shadow-sm border-2 border-primary border-opacity-20 flex flex-col items-center justify-center min-h-[250px]">
-                  <h3 className="text-2xl font-bold mb-2">{service.title}</h3>
+                <div key={index} className="bg-white p-6 rounded-lg shadow-sm border-2 border-primary border-opacity-20 flex flex-col items-center justify-center min-h-[250px] transition-transform hover:-translate-y-1">
+                  <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
                   <p className="text-gray-600">{service.desc}</p>
                 </div>
               ))}
@@ -106,7 +106,7 @@ export default function Home() {
         >
           <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
             <div className="p-8">
-              <h2 className="text-3xl font-bold font-heading mb-8 text-center text-gray-900">Need a Babysitter?</h2>
+              <h2 className="text-3xl font-bold font-heading mb-8 text-center text-gray-900">Got Questions?</h2>
               <form className="space-y-5">
                 <div>
                   <input type="text" placeholder="Enter your Name" className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white/90 shadow-sm" required />
@@ -118,7 +118,7 @@ export default function Home() {
                   <textarea placeholder="Enter your message" rows={4} className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white/90 shadow-sm" required></textarea>
                 </div>
                 <button type="button" className="px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 w-full shadow-md transition-transform hover:scale-105">
-                  Request For Call
+                  Send Message
                 </button>
               </form>
             </div>
@@ -131,9 +131,9 @@ export default function Home() {
             <h2 className="text-4xl font-bold font-heading mb-12">What Clients Say</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
-                { name: "Celia Almeda", quote: "Proin sed libero enim sed faucibus turpis. At imperdiet dui accumsan sit amet nulla facilisi morbi tempus." },
-                { name: "Frank Kinney", quote: "Proin sed libero enim sed faucibus turpis. At imperdiet dui accumsan sit amet nulla facilisi morbi tempus." },
-                { name: "Marry Larson", quote: "Proin sed libero enim sed faucibus turpis. At imperdiet dui accumsan sit amet nulla facilisi morbi tempus." }
+                { name: "Nour Al-Sabah", quote: "My kids used to dread Arabic classes, but Avenir Souriant completely flipped the script. They come home excited to learn!" },
+                { name: "Kareem Hassan", quote: "The blend of language learning with robotics and soccer is incredible. It keeps my son engaged and active all weekend." },
+                { name: "Layla M.", quote: "An amazing center! The teachers are passionate, the environment is safe, and my daughter's confidence has skyrocketed." }
               ].map((client, idx) => (
                 <div key={idx} className="bg-white p-8 rounded-xl shadow-sm border-2 border-primary border-opacity-20 flex flex-col items-center">
                   <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mb-6">
@@ -161,24 +161,24 @@ export default function Home() {
                 />
               </div>
               <div>
-                <h2 className="text-4xl font-bold font-heading mb-6">Every Baby with Love & Safety</h2>
+                <h2 className="text-4xl font-bold font-heading mb-6">A New Era of Education</h2>
                 <p className="text-gray-600 mb-8">
-                  Sample text. Click to select the Text Element. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat,
+                  We believe that learning should be an adventure. Our certified instructors combine language immersion with fun activities like sports and robotics to ensure every child loves coming to class.
                 </p>
                 <TransitionLink href="/programs" className="inline-block px-8 py-3 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90">
-                  Learn More
+                  View Programs
                 </TransitionLink>
               </div>
               <div className="grid grid-cols-2 gap-4 lg:gap-6">
                 {[
-                  { val: "15", label: "Location Service" },
-                  { val: "24/7", label: "Customer care" },
-                  { val: "8", label: "Years Experience" },
-                  { val: "1.8 M+", label: "Happy Clients" }
+                  { val: "50+", label: "Interactive Programs" },
+                  { val: "100%", label: "Engagement" },
+                  { val: "10", label: "Expert Instructors" },
+                  { val: "1K+", label: "Happy Students" }
                 ].map((stat, idx) => (
-                  <div key={idx} className="bg-white p-4 lg:p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                  <div key={idx} className="bg-white p-4 lg:p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center text-center hover:border-primary transition-colors">
                     <p className="text-3xl font-bold text-primary mb-2">{stat.val}</p>
-                    <h6 className="font-semibold text-sm">{stat.label}</h6>
+                    <h6 className="font-semibold text-sm text-gray-700">{stat.label}</h6>
                   </div>
                 ))}
               </div>
@@ -186,6 +186,41 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Location & Map Section */}
+        <section className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-4xl font-bold font-heading mb-12 text-center">Visit Our Center</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+              <div className="order-2 lg:order-1 h-96 w-full rounded-xl overflow-hidden shadow-inner">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2795.3614050226385!2d-73.68453472314545!3d45.52291242952877!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cc9185a536066db%3A0xc665dc9b32c3f847!2s1325%20Rue%20Cartier%2C%20Saint-Laurent%2C%20QC%20H4L%202N6%2C%20Canada!5e0!3m2!1sen!2sus!4v1716688530000!5m2!1sen!2sus" 
+                  width="100%" 
+                  height="100%" 
+                  style={{ border: 0 }} 
+                  allowFullScreen={false} 
+                  loading="lazy" 
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
+              <div className="order-1 lg:order-2">
+                <h3 className="text-3xl font-bold font-heading mb-6 text-gray-900">Avenir Souriant</h3>
+                <p className="text-lg text-gray-600 mb-6">
+                  Come see our modern facilities where we inspire the next generation of confident Arabic speakers. 
+                </p>
+                <div className="space-y-4">
+                  <p className="flex items-start text-lg">
+                    <span className="text-2xl mr-4">📍</span>
+                    <span className="font-medium text-gray-800">1325 Rue Cartier<br/>Saint-Laurent, QC H4L 2N6</span>
+                  </p>
+                  <p className="flex items-center text-lg">
+                    <span className="text-2xl mr-4">📞</span>
+                    <a href="tel:+15145154492" className="font-bold text-primary hover:text-primary-light transition-colors">(514) 515-4492</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </>

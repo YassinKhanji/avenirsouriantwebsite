@@ -25,12 +25,12 @@ export default function Footer() {
               />
             </Link>
             <p className="mb-4">
-              We offer child care services for families in need of a short-term babysitter, a nanny, or a childminder.
+              Building the next generation of confident Arabic speakers, one smiling face at a time.
             </p>
             <p className="flex items-center mb-2">
-              <span className="mr-2">📍</span> 7507 Dewey Route, East Darrylville, ME 36932, United States
+              <span className="mr-2">📍</span> 1325 Rue Cartier, Saint-Laurent, QC H4L 2N6
             </p>
-            <a href="#" className="text-primary-light hover:text-white underline text-sm mb-6 inline-block">show on map</a>
+            <a href="https://maps.google.com/?q=1325+Rue+Cartier,+Saint-Laurent,+QC+H4L+2N6" target="_blank" rel="noopener noreferrer" className="text-primary-light hover:text-white underline text-sm mb-6 inline-block">show on map</a>
             
             <div className="flex space-x-4">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-primary-light">
@@ -50,16 +50,15 @@ export default function Footer() {
 
           {/* Contact Details */}
           <div>
-            <h3 className="text-2xl font-semibold mb-6">Need a Babysitter?</h3>
+            <h3 className="text-2xl font-semibold mb-6">Have Questions?</h3>
             <p className="flex items-center text-xl font-bold mb-6">
               <span className="mr-2">📞</span>
-              <a href="tel:+18001234567" className="hover:text-primary-light">+1-800-123-4567</a>
+              <a href="tel:+15145154492" className="hover:text-primary-light">(514) 515-4492</a>
             </p>
             <div className="border-t border-primary-light opacity-50 mb-6"></div>
             <p className="mb-4">
               Mon-Fri: 9 AM - 6 PM<br />
-              Saturday: 9 AM - 4 PM<br />
-              <strong>Emergency Available!</strong>
+              Sat-Sun: Closed
             </p>
             <p className="flex items-center">
               <span className="mr-2">✉️</span>

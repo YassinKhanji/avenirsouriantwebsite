@@ -1,5 +1,6 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 export default function Services() {
   return (
@@ -14,7 +15,7 @@ export default function Services() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-8">
             <h1 className="text-5xl md:text-6xl font-bold font-heading mb-6 text-gray-900 drop-shadow-md">Our Programs</h1>
             <p className="text-xl text-gray-800 font-medium max-w-2xl mx-auto drop-shadow-sm">
-              Comprehensive child care solutions tailored to your family's unique needs.
+              Discover a world of engaging educational and extracurricular activities designed to build confidence, creativity, and language mastery.
             </p>
           </div>
         </section>
@@ -24,13 +25,13 @@ export default function Services() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-16">
               {[
-                { title: "Standard Babysitting", desc: "Reliable and engaging care for your children while you are away. Perfect for date nights, appointments, or simply when you need a break.", price: "From $20/hr" },
-                { title: "After School Care", desc: "We provide transportation from school, homework assistance, and structured activities until you finish your workday.", price: "From $25/hr" },
-                { title: "Emergency Care", desc: "Unexpected schedule change? We offer on-call, last-minute babysitting services to handle life's surprises.", price: "From $35/hr" },
-                { title: "Overnight Care", desc: "Rest easy knowing your child is in safe hands through the night. Ideal for business trips or weekend getaways.", price: "From $150/night" }
+                { title: "Arabic for Native Speakers", desc: "An advanced curriculum designed to help native speakers master reading, writing, and speaking in a fun and interactive environment.", price: "Learn More" },
+                { title: "Arabic for Non-Speakers", desc: "A welcoming, immersive introductory class that makes learning Arabic accessible and exciting for completely new speakers.", price: "Learn More" },
+                { title: "STEM & Robotics", desc: "Hands-on building, coding, and problem-solving to prepare kids for the future while having a blast.", price: "Learn More" },
+                { title: "Sports & Extracurriculars", desc: "Keep kids active and creative with our diverse offerings including soccer, stitching, arts, and crafts.", price: "Learn More" }
               ].map((service, idx) => (
-                <div key={idx} className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                  <div className="w-full md:w-1/3 h-64 bg-primary-light rounded-xl flex items-center justify-center text-4xl text-primary font-bold">
+                <div key={idx} className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-colors">
+                  <div className="w-full md:w-1/3 h-64 bg-primary-light rounded-xl flex items-center justify-center text-4xl text-primary font-bold text-center p-4">
                     {service.title.split(' ')[0]}
                   </div>
                   <div className="w-full md:w-2/3">
@@ -38,9 +39,11 @@ export default function Services() {
                     <p className="text-gray-600 text-lg mb-6">{service.desc}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-semibold text-primary">{service.price}</span>
-                      <button className="px-6 py-2 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90 transition-colors">
-                        Book Now
-                      </button>
+                      <Link href="/register">
+                        <button className="px-6 py-2 bg-secondary text-white rounded-md font-medium hover:bg-opacity-90 transition-colors">
+                          Enroll Now
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
