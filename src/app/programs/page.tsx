@@ -1,6 +1,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Services() {
   return (
@@ -25,15 +26,48 @@ export default function Services() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-16">
               {[
-                { title: "Arabic for Native Speakers", desc: "An advanced curriculum designed to help native speakers master reading, writing, and speaking in a fun and interactive environment.", price: "Learn More" },
-                { title: "Arabic for Non-Speakers", desc: "A welcoming, immersive introductory class that makes learning Arabic accessible and exciting for completely new speakers.", price: "Learn More" },
-                { title: "STEM & Robotics", desc: "Hands-on building, coding, and problem-solving to prepare kids for the future while having a blast.", price: "Learn More" },
-                { title: "Sports & Extracurriculars", desc: "Keep kids active and creative with our diverse offerings including soccer, stitching, arts, and crafts.", price: "Learn More" },
-                { title: "Other Activities", desc: "We offer a variety of other engaging activities tailored to your child's interests and developmental needs. Contact us to learn more!", price: "Learn More" }
+                { 
+                  title: "Arabic for Native Speakers", 
+                  desc: "An advanced curriculum designed to help native speakers master reading, writing, and speaking in a fun and interactive environment.", 
+                  price: "Learn More" 
+                },
+                { 
+                  title: "Arabic for Non-Speakers", 
+                  desc: "A welcoming, immersive introductory class that makes learning Arabic accessible and exciting for completely new speakers.", 
+                  price: "Learn More",
+                  image: "/images/Gemini_Generated_Image_vwzmmxvwzmmxvwzm.png"
+                },
+                { 
+                  title: "STEM & Robotics", 
+                  desc: "Hands-on building, coding, and problem-solving to prepare kids for the future while having a blast.", 
+                  price: "Learn More",
+                  image: "/images/096d4575-d688-4721-ab44-ff480a7199d5.jpg"
+                },
+                { 
+                  title: "Sports & Extracurriculars", 
+                  desc: "Keep kids active and creative with our diverse offerings including soccer, stitching, arts, and crafts.", 
+                  price: "Learn More",
+                  image: "/images/835a7955-18e1-459e-a20f-bc61263f3705.jpg"
+                },
+                { 
+                  title: "Other Activities", 
+                  desc: "We offer a variety of other engaging activities tailored to your child's interests and developmental needs. Contact us to learn more!", 
+                  price: "Learn More" 
+                }
               ].map((service, idx) => (
                 <div key={idx} className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-colors">
-                  <div className="w-full md:w-1/3 h-64 bg-primary-light rounded-xl flex items-center justify-center text-4xl text-primary font-bold text-center p-4">
-                    {service.title.split(' ')[0]}
+                  <div className="relative w-full md:w-1/3 h-64 bg-primary-light rounded-xl flex items-center justify-center text-4xl text-primary font-bold text-center overflow-hidden">
+                    {service.image ? (
+                      <Image
+                        src={service.image}
+                        alt={service.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <span className="p-4">{service.title.split(' ')[0]}</span>
+                    )}
                   </div>
                   <div className="w-full md:w-2/3">
                     <h2 className="text-3xl font-bold font-heading mb-4">{service.title}</h2>
