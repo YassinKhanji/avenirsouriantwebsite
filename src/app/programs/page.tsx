@@ -28,7 +28,8 @@ export default function Services() {
                 { title: "Arabic for Native Speakers", desc: "An advanced curriculum designed to help native speakers master reading, writing, and speaking in a fun and interactive environment.", price: "Learn More" },
                 { title: "Arabic for Non-Speakers", desc: "A welcoming, immersive introductory class that makes learning Arabic accessible and exciting for completely new speakers.", price: "Learn More" },
                 { title: "STEM & Robotics", desc: "Hands-on building, coding, and problem-solving to prepare kids for the future while having a blast.", price: "Learn More" },
-                { title: "Sports & Extracurriculars", desc: "Keep kids active and creative with our diverse offerings including soccer, stitching, arts, and crafts.", price: "Learn More" }
+                { title: "Sports & Extracurriculars", desc: "Keep kids active and creative with our diverse offerings including soccer, stitching, arts, and crafts.", price: "Learn More" },
+                { title: "Other Activities", desc: "We offer a variety of other engaging activities tailored to your child's interests and developmental needs. Contact us to learn more!", price: "Learn More" }
               ].map((service, idx) => (
                 <div key={idx} className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-colors">
                   <div className="w-full md:w-1/3 h-64 bg-primary-light rounded-xl flex items-center justify-center text-4xl text-primary font-bold text-center p-4">
