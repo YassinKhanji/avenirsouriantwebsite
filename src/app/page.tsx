@@ -123,8 +123,11 @@ export default function Home() {
         </section>
 
         {/* What Clients Say */}
-        <section className="py-20 bg-primary-light">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <section 
+          className="relative py-20 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/images/geometric-pattern-bg.png')" }}
+        >
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl font-bold font-heading mb-12">What Clients Say</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
@@ -145,11 +148,8 @@ export default function Home() {
         </section>
 
         {/* Stats Section */}
-        <section 
-          className="relative py-20 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/images/geometric-pattern-bg.png')" }}
-        >
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-20 bg-primary-light">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-center">
               <div className="flex justify-center">
                 <Image 
