@@ -89,45 +89,27 @@ export default function Home() {
         </section>
 
         {/* Need a Babysitter & Solutions */}
-        <section className="py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              <div className="bg-gray-50 p-8 rounded-3xl">
-                <h2 className="text-3xl font-bold font-heading mb-6">Need a Babysitter?</h2>
-                <form className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input type="text" placeholder="Enter your Name" className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-primary focus:border-primary outline-none" required />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                    <input type="tel" placeholder="Enter your phone" className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-primary focus:border-primary outline-none" required />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                    <textarea placeholder="Enter your message" rows={4} className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-primary focus:border-primary outline-none" required></textarea>
-                  </div>
-                  <button type="button" className="px-8 py-3 bg-primary text-white rounded-full font-medium hover:bg-opacity-90 w-full md:w-auto">
-                    Request For Call
-                  </button>
-                </form>
-              </div>
-              
-              <div className="flex flex-col justify-center">
-                <div className="space-y-8">
-                  {[
-                    { num: "01", text: "Baby Care Solutions" },
-                    { num: "02", text: "Child Care Professionals" },
-                    { num: "03", text: "We give children a big boost on learning" },
-                    { num: "04", text: "For children 5 months to 6 years of age" }
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-start">
-                      <span className="text-4xl font-bold text-primary mr-6">{item.num}</span>
-                      <h5 className="text-xl font-semibold mt-1">{item.text}</h5>
-                    </div>
-                  ))}
+        <section 
+          className="py-24 bg-cover bg-center bg-no-repeat flex items-center justify-center min-h-[700px]"
+          style={{ backgroundImage: "url('/images/section4-bg.jpg')" }}
+        >
+          <div className="w-full max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="p-8">
+              <h2 className="text-3xl font-bold font-heading mb-8 text-center text-gray-900">Need a Babysitter?</h2>
+              <form className="space-y-5">
+                <div>
+                  <input type="text" placeholder="Enter your Name" className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white/90 shadow-sm" required />
                 </div>
-              </div>
+                <div>
+                  <input type="tel" placeholder="Enter your phone" className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white/90 shadow-sm" required />
+                </div>
+                <div>
+                  <textarea placeholder="Enter your message" rows={4} className="w-full px-5 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white/90 shadow-sm" required></textarea>
+                </div>
+                <button type="button" className="px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 w-full shadow-md transition-transform hover:scale-105">
+                  Request For Call
+                </button>
+              </form>
             </div>
           </div>
         </section>
