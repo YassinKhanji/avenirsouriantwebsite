@@ -9,17 +9,28 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         {/* Hero Section */}
-        <section 
-          className="relative py-32 bg-cover bg-center bg-no-repeat flex items-center justify-center min-h-[80vh]"
-          style={{ backgroundImage: "url('/images/hero-bg.jpg')" }}
-        >
+        {/* Hero Section */}
+        <section className="relative py-32 flex items-center justify-center min-h-[80vh] overflow-hidden">
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className="absolute top-0 left-0 w-full h-full object-cover z-0"
+          >
+            <source src="/videos/hero-video.mp4" type="video/mp4" />
+          </video>
+          
+          {/* Subtle overlay to ensure text legibility against video */}
+          <div className="absolute inset-0 bg-white/40 z-0"></div>
+
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center p-8">
-            <h1 className="text-5xl md:text-6xl font-bold font-heading text-gray-900 mb-8 leading-tight">Quickly find a Babysitter</h1>
+            <h1 className="text-5xl md:text-6xl font-bold font-heading text-gray-900 mb-8 leading-tight drop-shadow-sm">Quickly find a Babysitter</h1>
             <TransitionLink href="/register" className="inline-block px-10 py-4 bg-secondary text-white rounded-full font-bold text-xl hover:bg-opacity-90 mb-6 shadow-lg transition-transform hover:scale-105">
               Book a Babysitter
             </TransitionLink>
-            <p className="text-gray-600 mb-6 font-medium text-lg">or</p>
-            <a href="tel:+18001234567" className="text-3xl font-semibold text-primary hover:text-primary-light transition-colors flex items-center justify-center">
+            <p className="text-gray-800 mb-6 font-semibold text-xl drop-shadow-sm">or</p>
+            <a href="tel:+18001234567" className="text-4xl font-bold text-primary hover:text-primary-light transition-colors flex items-center justify-center drop-shadow-sm">
               <span className="mr-3">📞</span> +1-800-123-4567
             </a>
           </div>
