@@ -32,7 +32,8 @@ export default function Services() {
                 { 
                   title: "Arabic for Native Speakers", 
                   desc: "An advanced curriculum designed to help native speakers master reading, writing, and speaking in a fun and interactive environment.", 
-                  price: "Learn More" 
+                  price: "Learn More",
+                  image: "/images/native_arabic_speakers.jpg"
                 },
                 { 
                   title: "Arabic for Non-Speakers", 
@@ -55,8 +56,7 @@ export default function Services() {
                 { 
                   title: "Other Activities", 
                   desc: "We offer a variety of other engaging activities tailored to your child's interests and developmental needs. Contact us to learn more!", 
-                  price: "Learn More",
-                  image: "/images/classroom.jpg"
+                  price: "Learn More" 
                 }
               ].map((service, idx) => (
                 <div key={idx} className="flex flex-col md:flex-row gap-8 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-colors">
