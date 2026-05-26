@@ -139,7 +139,16 @@ export default function Home() {
         {/* Stats Section */}
         <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-center">
+              <div className="flex justify-center">
+                <Image 
+                  src="/images/every-baby-illustration.png" 
+                  alt="Every Baby with Love illustration" 
+                  width={350}
+                  height={350}
+                  className="object-contain"
+                />
+              </div>
               <div>
                 <h2 className="text-4xl font-bold font-heading mb-6">Every Baby with Love & Safety</h2>
                 <p className="text-gray-600 mb-8">
@@ -149,14 +158,14 @@ export default function Home() {
                   Learn More
                 </TransitionLink>
               </div>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4 lg:gap-6">
                 {[
                   { val: "15", label: "Location Service" },
                   { val: "24/7", label: "Customer care" },
                   { val: "8", label: "Years Experience" },
                   { val: "1.8 M+", label: "Happy Clients" }
                 ].map((stat, idx) => (
-                  <div key={idx} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                  <div key={idx} className="bg-white p-4 lg:p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center text-center">
                     <p className="text-3xl font-bold text-primary mb-2">{stat.val}</p>
                     <h6 className="font-semibold text-sm">{stat.label}</h6>
                   </div>
