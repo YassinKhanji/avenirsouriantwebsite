@@ -45,25 +45,31 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-4xl font-bold font-heading mb-8">Welcome to Avenir Souriant</h2>
-                <div className="relative h-[350px] sm:h-[400px] md:h-[450px] w-full max-w-[500px] mx-auto">
-                  {/* Top Right Image (Second Image) */}
-                  <div className="absolute top-0 right-0 w-[65%] aspect-[4/3] rounded-2xl overflow-hidden shadow-md border-4 border-white transition-all duration-300 hover:scale-105 hover:shadow-xl hover:z-20 z-0">
+                <div className="relative h-[480px] w-full">
+                  {/* Top Right Image */}
+                  <div className="absolute top-0 right-0 w-[50%] h-[50%] z-0 rounded-2xl overflow-hidden border-4 border-white">
                     <Image 
-                      src="/images/welcome-right.png"
-                      alt="Arabic class learning"
+                      src="/images/Gemini_Generated_Image_n8ygbrn8ygbrn8yg.png"
+                      alt="Avenir Souriant Learning"
                       fill
-                      sizes="(max-width: 768px) 50vw, 30vw"
                       className="object-cover"
                     />
                   </div>
-
-                  {/* Bottom Left Image (First Image) */}
-                  <div className="absolute bottom-0 left-0 w-[65%] aspect-[4/3] rounded-2xl overflow-hidden shadow-lg border-4 border-white transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:z-20 z-10">
+                  {/* Middle Image (Current Image) */}
+                  <div className="absolute top-[15%] left-[15%] w-[70%] h-[70%] z-10 rounded-2xl overflow-hidden border-4 border-white">
                     <Image 
-                      src="/images/welcome-left.png"
-                      alt="Children learning Arabic alphabet"
+                      src="/images/welcome-illustration.png"
+                      alt="Welcome Illustration"
                       fill
-                      sizes="(max-width: 768px) 50vw, 30vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  {/* Bottom Left Image */}
+                  <div className="absolute bottom-0 left-0 w-[50%] h-[50%] z-20 rounded-2xl overflow-hidden border-4 border-white">
+                    <Image 
+                      src="/images/Gemini_Generated_Image_n8ygbrn8ygbrn8yg_1.png"
+                      alt="Avenir Souriant Classroom"
+                      fill
                       className="object-cover"
                     />
                   </div>
