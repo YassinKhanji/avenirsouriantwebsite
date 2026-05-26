@@ -42,12 +42,12 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h2 className="text-4xl font-bold font-heading mb-8">Welcome to Babysitting Agency</h2>
-                <div className="relative h-96 w-full rounded-lg overflow-hidden shadow-lg">
+                <div className="relative h-96 w-full flex justify-center items-center">
                   <Image 
-                    src="/images/mother-playing-with-little-daughter-home_1157-26185.jpg"
-                    alt="Mother playing with daughter"
+                    src="/images/welcome-illustration.png"
+                    alt="Welcome Illustration"
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </div>
               </div>
