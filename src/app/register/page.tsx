@@ -144,7 +144,7 @@ export default function Register() {
                     onClick={handleSubmit}
                     className="w-full px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md"
                   >
-                    Register
+                    Send
                   </button>
                 </form>
               </div>
