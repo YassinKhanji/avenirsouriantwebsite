@@ -7,10 +7,13 @@ export default function Services() {
       <Header />
       <main className="flex-1">
         {/* Services Hero Section */}
-        <section className="bg-primary-light py-20 text-center">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-5xl font-bold font-heading mb-6">Our Services</h1>
-            <p className="text-xl text-gray-600">
+        <section 
+          className="py-32 bg-cover bg-center bg-no-repeat text-center flex items-center justify-center min-h-[50vh]"
+          style={{ backgroundImage: "url('/images/programs-hero-bg.jpg')" }}
+        >
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-8">
+            <h1 className="text-5xl md:text-6xl font-bold font-heading mb-6 text-gray-900 drop-shadow-md">Our Programs</h1>
+            <p className="text-xl text-gray-800 font-medium max-w-2xl mx-auto drop-shadow-sm">
               Comprehensive child care solutions tailored to your family's unique needs.
             </p>
           </div>
