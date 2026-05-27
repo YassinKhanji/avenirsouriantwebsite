@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import { TransitionLink } from '@/components/TransitionLink';
+import { NumberCounter } from '@/components/NumberCounter';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 
@@ -38,7 +39,7 @@ export default function Home() {
 
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center p-8">
             <h1 className="text-5xl md:text-6xl font-bold font-heading text-gray-900 mb-8 leading-tight drop-shadow-sm">
-              Discover the <span className="text-secondary" style={{ WebkitTextStroke: '1.5px black' }}>Joy</span> <br className="hidden sm:inline" /> of Learning <span className="text-primary" style={{ WebkitTextStroke: '1.5px black' }}>Arabic</span>
+              Discover the <span className="text-secondary" style={{ textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black, -2px 0 0 black, 2px 0 0 black, 0 -2px 0 black, 0 2px 0 black' }}>Joy</span> <br className="hidden sm:inline" /> of Learning <span className="text-primary" style={{ textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black, -2px 0 0 black, 2px 0 0 black, 0 -2px 0 black, 0 2px 0 black' }}>Arabic</span>
             </h1>
             <TransitionLink href="/register" className="inline-block px-10 py-4 bg-secondary text-white rounded-full font-bold text-xl hover:bg-opacity-90 mb-6 shadow-lg transition-transform hover:scale-105">
               Learn More
@@ -202,7 +203,7 @@ export default function Home() {
                   { val: "100", label: "Happy Students" }
                 ].map((stat, idx) => (
                   <div key={idx} className="bg-white p-4 lg:p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center text-center hover:border-primary transition-colors">
-                    <p className="text-3xl font-bold text-primary mb-2">{stat.val}</p>
+                    <p className="text-3xl font-bold text-primary mb-2"><NumberCounter value={stat.val} /></p>
                     <h6 className="font-semibold text-sm text-gray-700">{stat.label}</h6>
                   </div>
                 ))}
