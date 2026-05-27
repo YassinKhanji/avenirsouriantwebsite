@@ -27,6 +27,11 @@ export function TransitionLink({ children, href, className, onClick, ...props }:
       return;
     }
 
+    // Check if it's an external link or special protocol
+    if (href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+      return;
+    }
+
     e.preventDefault();
     
     // Trigger transition overlay
@@ -42,3 +47,4 @@ export function TransitionLink({ children, href, className, onClick, ...props }:
     </Link>
   );
 }
+

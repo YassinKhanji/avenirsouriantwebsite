@@ -69,6 +69,34 @@ const AnimatedProgramCard = ({ service, idx }: { service: any, idx: number }) =>
 };
 
 export default function Services() {
+  const services = [
+    { 
+      title: "Arabic for Native Speakers", 
+      desc: "An advanced curriculum designed to help native speakers master reading, writing, and speaking in a fun and interactive environment.", 
+      image: "/images/native_arabic_speakers.jpg"
+    },
+    { 
+      title: "Arabic for Non-Speakers", 
+      desc: "A welcoming, immersive introductory class that makes learning Arabic accessible and exciting for completely new speakers.", 
+      image: "/images/Gemini_Generated_Image_vwzmmxvwzmmxvwzm.png"
+    },
+    { 
+      title: "STEM & Robotics", 
+      desc: "Hands-on building, coding, and problem-solving to prepare kids for the future while having a blast.", 
+      image: "/images/096d4575-d688-4721-ab44-ff480a7199d5.jpg"
+    },
+    { 
+      title: "Sports & Extracurriculars", 
+      desc: "Keep kids active and creative with our diverse offerings including soccer, stitching, arts, and crafts.", 
+      image: "/images/835a7955-18e1-459e-a20f-bc61263f3705.jpg"
+    },
+    { 
+      title: "Other Activities", 
+      desc: "We offer a variety of other engaging activities tailored to your child's interests and developmental needs. Contact us to learn more!", 
+      image: "/images/other_activities.jpg"
+    }
+  ];
+
   return (
     <>
       <Header />
@@ -93,38 +121,7 @@ export default function Services() {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-16">
-              {[
-                { 
-                  title: "Arabic for Native Speakers", 
-                  desc: "An advanced curriculum designed to help native speakers master reading, writing, and speaking in a fun and interactive environment.", 
-                  price: "Learn More",
-                  image: "/images/native_arabic_speakers.jpg"
-                },
-                { 
-                  title: "Arabic for Non-Speakers", 
-                  desc: "A welcoming, immersive introductory class that makes learning Arabic accessible and exciting for completely new speakers.", 
-                  price: "Learn More",
-                  image: "/images/Gemini_Generated_Image_vwzmmxvwzmmxvwzm.png"
-                },
-                { 
-                  title: "STEM & Robotics", 
-                  desc: "Hands-on building, coding, and problem-solving to prepare kids for the future while having a blast.", 
-                  price: "Learn More",
-                  image: "/images/096d4575-d688-4721-ab44-ff480a7199d5.jpg"
-                },
-                { 
-                  title: "Sports & Extracurriculars", 
-                  desc: "Keep kids active and creative with our diverse offerings including soccer, stitching, arts, and crafts.", 
-                  price: "Learn More",
-                  image: "/images/835a7955-18e1-459e-a20f-bc61263f3705.jpg"
-                },
-                { 
-                  title: "Other Activities", 
-                  desc: "We offer a variety of other engaging activities tailored to your child's interests and developmental needs. Contact us to learn more!", 
-                  price: "Learn More", 
-                  image: "/images/other_activities.jpg"
-                }
-              ].map((service, idx) => (
+              {services.map((service, idx) => (
                 <AnimatedProgramCard key={idx} service={service} idx={idx} />
               ))}
             </div>
@@ -135,4 +132,3 @@ export default function Services() {
     </>
   );
 }
-

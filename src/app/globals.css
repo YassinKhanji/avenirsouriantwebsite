@@ -20,3 +20,45 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* ==========================================================================
+   Google Translate Custom Styling & Hiding default UI
+   ========================================================================== */
+
+/* Hide Google Translate top bar and banners */
+.goog-te-banner-frame,
+.goog-te-banner,
+iframe.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-te-menu2,
+.goog-te-menu-frame {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Hide standard Google Translate widget container, keeping custom switcher */
+.goog-logo-link,
+.goog-te-gadget span,
+.goog-te-gadget a {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  color: transparent !important;
+  font-size: 0 !important;
+}
+
+/* Disable highlighted text on hover over translated words */
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Reset top offset that Google Translate injects on HTML/body */
+html, body {
+  top: 0px !important;
+  position: static !important;
+}
+

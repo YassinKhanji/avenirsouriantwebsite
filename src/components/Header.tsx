@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { TransitionLink } from './TransitionLink';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function Header() {
   const [isHidden, setIsHidden] = useState(false);
@@ -26,9 +27,9 @@ export default function Header() {
   });
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Programs', path: '/programs' },
-    { name: 'Register', path: '/register' },
+    { label: 'Home', path: '/' },
+    { label: 'Programs', path: '/programs' },
+    { label: 'Register Now', path: '/register' },
   ];
 
   return (
@@ -53,47 +54,54 @@ export default function Header() {
                 className="w-20 md:w-28 object-contain"
                 priority
               />
-              <span className="font-heading font-bold text-2xl text-primary hidden sm:block mt-1">Avenir Souriant</span>
+              <span className="font-heading font-bold text-2xl text-primary hidden sm:block mt-1">
+                Avenir Souriant
+              </span>
             </TransitionLink>
           </div>
-          <nav className="hidden md:flex space-x-12" onMouseLeave={() => setHoveredTab(null)}>
-            {navLinks.map((link) => {
-              const isActive = normalizePath(pathname) === normalizePath(link.path);
-              return (
-                <div 
-                  key={link.path} 
-                  className="relative py-2"
-                  onMouseEnter={() => setHoveredTab(link.path)}
-                >
-                  <TransitionLink 
-                    href={link.path} 
-                    className={`text-lg font-medium transition-colors ${isActive ? 'text-primary' : 'text-gray-900 hover:text-primary'}`}
+          
+          <div className="hidden md:flex items-center gap-8">
+            <nav className="flex space-x-12" onMouseLeave={() => setHoveredTab(null)}>
+              {navLinks.map((link) => {
+                const isActive = normalizePath(pathname) === normalizePath(link.path);
+                return (
+                  <div 
+                    key={link.path} 
+                    className="relative py-2"
+                    onMouseEnter={() => setHoveredTab(link.path)}
                   >
-                    {link.name}
-                  </TransitionLink>
-                  
-                  {/* Hover Underline Animation */}
-                  {hoveredTab === link.path && (
-                    <motion.div
-                      layoutId="nav-hover"
-                      className="absolute left-0 right-0 -bottom-1 h-0.5 bg-primary"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                  {/* Active Underline */}
-                  {isActive && hoveredTab !== link.path && (
-                    <div className="absolute left-0 right-0 -bottom-1 h-0.5 bg-primary opacity-50" />
-                  )}
-                </div>
-              );
-            })}
-          </nav>
+                    <TransitionLink 
+                      href={link.path} 
+                      className={`text-lg font-medium transition-colors ${isActive ? 'text-primary' : 'text-gray-900 hover:text-primary'}`}
+                    >
+                      {link.label}
+                    </TransitionLink>
+                    
+                    {/* Hover Underline Animation */}
+                    {hoveredTab === link.path && (
+                      <motion.div
+                        layoutId="nav-hover"
+                        className="absolute left-0 right-0 -bottom-1 h-0.5 bg-primary"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    {/* Active Underline */}
+                    {isActive && hoveredTab !== link.path && (
+                      <div className="absolute left-0 right-0 -bottom-1 h-0.5 bg-primary opacity-50" />
+                    )}
+                  </div>
+                );
+              })}
+            </nav>
+            <LanguageSwitcher />
+          </div>
           
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center gap-4">
+            <LanguageSwitcher />
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-gray-900 hover:text-primary focus:outline-none p-2"
@@ -120,20 +128,26 @@ export default function Header() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white border-t border-gray-100 overflow-hidden"
           >
-            <div className="px-6 pt-4 pb-6 space-y-6 shadow-inner">
+            <div className="px-6 pt-4 pb-6 space-y-6 shadow-inner flex flex-col items-center">
               {navLinks.map((link) => {
                 const isActive = normalizePath(pathname) === normalizePath(link.path);
                 return (
-                  <div key={link.path} className="block" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div key={link.path} className="block w-full text-center" onClick={() => setIsMobileMenuOpen(false)}>
                     <TransitionLink 
                       href={link.path} 
                       className={`block text-2xl font-medium py-2 transition-colors ${isActive ? 'text-primary font-bold' : 'text-gray-900 hover:text-primary'}`}
                     >
-                      {link.name}
+                      {link.label}
                     </TransitionLink>
                   </div>
                 );
               })}
+              
+              {/* Accessible LanguageSwitcher in the dropdown menu side panel too */}
+              <div className="pt-4 border-t border-gray-100 w-full flex flex-col items-center gap-2">
+                <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Select Language</span>
+                <LanguageSwitcher />
+              </div>
             </div>
           </motion.div>
         )}

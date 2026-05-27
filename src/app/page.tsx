@@ -16,11 +16,31 @@ export default function Home() {
   });
   
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.3]);
+  
+  const services = [
+    { title: "Arabic Mastery", desc: "Advanced curriculum to perfect reading, writing, and speaking skills." },
+    { title: "STEM & Robotics", desc: "Hands-on projects to build critical thinking and technical skills." },
+    { title: "Sports & Soccer", desc: "Active programs focused on teamwork, health, and having fun." },
+    { title: "Creative Arts", desc: "Expressive activities including stitching, crafting, and creative design." }
+  ];
+
+  const clients = [
+    { name: "Nour Al-Sabah", quote: "My kids used to dread Arabic classes, but Avenir Souriant completely flipped the script. They come home excited to learn!" },
+    { name: "Kareem Hassan", quote: "The blend of language learning with robotics and soccer is incredible. It keeps my son engaged and active all weekend." },
+    { name: "Layla M.", quote: "An amazing center! The teachers are passionate, the environment is safe, and my daughter's confidence has skyrocketed." }
+  ];
+
+  const stats = [
+    { val: "5", label: "Interactive Programs" },
+    { val: "100%", label: "Engagement" },
+    { val: "7", label: "Expert Instructors" },
+    { val: "100", label: "Happy Students" }
+  ];
+
   return (
     <>
       <Header />
       <main className="flex-1 overflow-x-hidden">
-        {/* Hero Section */}
         {/* Hero Section */}
         <section className="relative py-32 flex items-center justify-center min-h-[80vh] overflow-hidden">
           <video 
@@ -102,12 +122,7 @@ export default function Home() {
             <p className="text-gray-600 mb-12 max-w-2xl mx-auto">Explore our comprehensive array of educational programs and engaging extracurricular activities tailored to inspire your child.</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { title: "Arabic Mastery", desc: "Advanced curriculum to perfect reading, writing, and speaking skills." },
-                { title: "STEM & Robotics", desc: "Hands-on projects to build critical thinking and technical skills." },
-                { title: "Sports & Soccer", desc: "Active programs focused on teamwork, health, and having fun." },
-                { title: "Creative Arts", desc: "Expressive activities including stitching, crafting, and creative design." }
-              ].map((service, index) => (
+              {services.map((service, index) => (
                 <div key={index} className="bg-white p-6 rounded-lg shadow-sm border-2 border-primary border-opacity-20 flex flex-col items-center justify-center min-h-[250px] transition-transform hover:-translate-y-1">
                   <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
                   <p className="text-gray-600">{service.desc}</p>
@@ -124,7 +139,7 @@ export default function Home() {
               <div className="relative h-96 w-full rounded-2xl overflow-hidden">
                 <Image 
                   src="/images/register_callout.png"
-                  alt="Register at Avenir Souriant"
+                  alt="Ready to Join Avenir Souriant?"
                   fill
                   className="object-cover"
                 />
@@ -155,11 +170,7 @@ export default function Home() {
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl font-bold font-heading mb-12">What Clients Say</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                { name: "Nour Al-Sabah", quote: "My kids used to dread Arabic classes, but Avenir Souriant completely flipped the script. They come home excited to learn!" },
-                { name: "Kareem Hassan", quote: "The blend of language learning with robotics and soccer is incredible. It keeps my son engaged and active all weekend." },
-                { name: "Layla M.", quote: "An amazing center! The teachers are passionate, the environment is safe, and my daughter's confidence has skyrocketed." }
-              ].map((client, idx) => (
+              {clients.map((client, idx) => (
                 <div key={idx} className="bg-white p-8 rounded-xl shadow-sm border-2 border-primary border-opacity-20 flex flex-col items-center">
                   <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mb-6">
                     <span className="text-2xl">❝</span>
@@ -180,7 +191,7 @@ export default function Home() {
               <div className="flex justify-center">
                 <Image 
                   src="/images/every-baby-illustration.png" 
-                  alt="Every Baby with Love illustration" 
+                  alt="A New Era of Education" 
                   width={350}
                   height={350}
                   className="object-contain"
@@ -196,12 +207,7 @@ export default function Home() {
                 </TransitionLink>
               </div>
               <div className="grid grid-cols-2 gap-4 lg:gap-6">
-                {[
-                  { val: "5", label: "Interactive Programs" },
-                  { val: "100%", label: "Engagement" },
-                  { val: "7", label: "Expert Instructors" },
-                  { val: "100", label: "Happy Students" }
-                ].map((stat, idx) => (
+                {stats.map((stat, idx) => (
                   <div key={idx} className="bg-white p-4 lg:p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center text-center hover:border-primary transition-colors">
                     <p className="text-3xl font-bold text-primary mb-2"><NumberCounter value={stat.val} /></p>
                     <h6 className="font-semibold text-sm text-gray-700">{stat.label}</h6>
