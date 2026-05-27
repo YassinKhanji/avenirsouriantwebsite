@@ -27,17 +27,18 @@ export default function Home() {
             loop 
             muted 
             playsInline 
-            className="absolute top-0 left-0 w-full h-full object-cover z-0"
+            className="absolute top-0 left-0 w-full h-full object-cover z-0 will-change-auto"
+            style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
           >
             <source src="/videos/hero-video.mp4" type="video/mp4" />
           </video>
           
           {/* Subtle overlay to ensure text legibility against video */}
-          <div className="absolute inset-0 bg-white/40 z-0"></div>
+          <div className="absolute inset-0 bg-white/40 z-0 pointer-events-none will-change-auto" style={{ WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden' }}></div>
 
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center p-8">
             <h1 className="text-5xl md:text-6xl font-bold font-heading text-gray-900 mb-8 leading-tight drop-shadow-sm">
-              Discover the <span className="text-secondary">Joy</span> <br className="hidden sm:inline" /> of Learning <span className="text-primary">Arabic</span>
+              Discover the <span className="text-secondary" style={{ WebkitTextStroke: '1.5px black' }}>Joy</span> <br className="hidden sm:inline" /> of Learning <span className="text-primary" style={{ WebkitTextStroke: '1.5px black' }}>Arabic</span>
             </h1>
             <TransitionLink href="/register" className="inline-block px-10 py-4 bg-secondary text-white rounded-full font-bold text-xl hover:bg-opacity-90 mb-6 shadow-lg transition-transform hover:scale-105">
               Learn More
@@ -173,6 +174,7 @@ export default function Home() {
         {/* Stats Section */}
         <section className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl lg:hidden font-bold font-heading mb-8 text-center text-primary">Avenir Souriant</h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-center">
               <div className="flex justify-center">
                 <Image 
@@ -194,10 +196,10 @@ export default function Home() {
               </div>
               <div className="grid grid-cols-2 gap-4 lg:gap-6">
                 {[
-                  { val: "50+", label: "Interactive Programs" },
+                  { val: "5", label: "Interactive Programs" },
                   { val: "100%", label: "Engagement" },
-                  { val: "10", label: "Expert Instructors" },
-                  { val: "1K+", label: "Happy Students" }
+                  { val: "7", label: "Expert Instructors" },
+                  { val: "100", label: "Happy Students" }
                 ].map((stat, idx) => (
                   <div key={idx} className="bg-white p-4 lg:p-6 rounded-lg shadow-sm border border-gray-100 flex flex-col items-center text-center hover:border-primary transition-colors">
                     <p className="text-3xl font-bold text-primary mb-2">{stat.val}</p>
