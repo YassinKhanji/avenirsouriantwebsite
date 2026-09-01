@@ -1,15 +1,17 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useInView } from 'framer-motion';
 
 interface NumberCounterProps {
   value: string | number;
   duration?: number;
 }
 
-export function NumberCounter({ value, duration = 2000 }: NumberCounterProps) {
+export function NumberCounter({ value, duration = 5500 }: NumberCounterProps) {
   const [displayValue, setDisplayValue] = useState(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
   const hasAnimated = useRef(false);
 
   // Extract numeric value from strings like "100%" or "100"
@@ -20,31 +22,34 @@ export function NumberCounter({ value, duration = 2000 }: NumberCounterProps) {
   const suffix = typeof value === 'string' && value.includes('%') ? '%' : '';
 
   useEffect(() => {
-    if (hasAnimated.current) return;
+    if (!isInView || hasAnimated.current) return;
     hasAnimated.current = true;
 
-    let current = 0;
-    const increment = numericValue / (duration / 16); // 16ms ≈ 60fps
+    let startTimestamp: number | null = null;
 
-    intervalRef.current = setInterval(() => {
-      current += increment;
-      if (current >= numericValue) {
-        setDisplayValue(numericValue);
-        if (intervalRef.current) clearInterval(intervalRef.current);
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      
+      // Smooth ease-out quad curve for natural deceleration
+      const easeProgress = 1 - (1 - progress) * (1 - progress);
+      
+      setDisplayValue(Math.floor(easeProgress * numericValue));
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
       } else {
-        setDisplayValue(Math.floor(current));
+        setDisplayValue(numericValue);
       }
-    }, 16);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [numericValue, duration]);
+
+    requestAnimationFrame(step);
+  }, [isInView, numericValue, duration]);
 
   return (
-    <>
+    <span ref={ref}>
       {displayValue}
       {suffix}
-    </>
+    </span>
   );
 }

@@ -68,12 +68,9 @@ export default function Register() {
         </section>
 
         {/* Register Form */}
-        <section 
-          className="py-24 bg-repeat bg-center min-h-[80vh] flex items-center"
-          style={{ backgroundImage: "url('/images/register_bg_pattern.png')", backgroundSize: "512px" }}
-        >
+        <section className="py-24 bg-primary-light min-h-[80vh] flex items-center">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white/80 backdrop-blur-md p-8 md:p-12 rounded-3xl shadow-2xl border border-white/50">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-gray-200">
               <div className="hidden lg:flex justify-center w-full h-full relative min-h-[400px]">
                 <Image 
                   src="/images/register-photo.png" 
@@ -156,7 +153,7 @@ export default function Register() {
         <section className="py-20 bg-primary-light">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-4xl font-bold font-heading mb-12 text-center">Visit Our Center</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
               <div className="order-2 lg:order-1 h-96 w-full rounded-xl overflow-hidden shadow-inner">
                 <iframe 
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2795.3614050226385!2d-73.68453472314545!3d45.52291242952877!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4cc9185a536066db%3A0xc665dc9b32c3f847!2s1325%20Rue%20Cartier%2C%20Saint-Laurent%2C%20QC%20H4L%202N6%2C%20Canada!5e0!3m2!1sen!2sus!4v1716688530000!5m2!1sen!2sus" 

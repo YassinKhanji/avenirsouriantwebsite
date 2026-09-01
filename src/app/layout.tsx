@@ -3,6 +3,7 @@ import { Raleway, Fredoka } from "next/font/google";
 import "./globals.css";
 import { TransitionProvider } from '@/contexts/TransitionContext';
 import Script from 'next/script';
+import { ContactPopup } from '@/components/ContactPopup';
 
 const raleway = Raleway({
   variable: "--font-raleway",
@@ -123,6 +124,8 @@ export default function RootLayout({
         <TransitionProvider>
           {children}
         </TransitionProvider>
+
+        <ContactPopup />
 
         {/* Load Google Translate Script after page interactive */}
         <Script 

@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'export',
   distDir: 'dist',
   trailingSlash: true,
   images: {
@@ -10,6 +9,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+
 };
 
 export default nextConfig;

@@ -126,7 +126,7 @@ export default function Header() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-gray-100 overflow-hidden"
+            className="md:hidden bg-white border-t border-gray-200 overflow-hidden"
           >
             <div className="px-6 pt-4 pb-6 space-y-6 shadow-inner flex flex-col items-center">
               {navLinks.map((link) => {
@@ -144,7 +144,7 @@ export default function Header() {
               })}
               
               {/* Accessible LanguageSwitcher in the dropdown menu side panel too */}
-              <div className="pt-4 border-t border-gray-100 w-full flex flex-col items-center gap-2">
+              <div className="pt-4 border-t border-gray-200 w-full flex flex-col items-center gap-2">
                 <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Select Language</span>
                 <LanguageSwitcher />
               </div>
