@@ -26,6 +26,18 @@ export const metadata: Metadata = {
   description: "Avenir Souriant is a premier Arabic learning center in Montreal offering interactive Arabic courses, robotics, sports, and creative activities for children. Build confidence in Arabic speakers with innovative, engaging programs.",
   keywords: ["Arabic learning", "Arabic courses", "Montreal", "children education", "language learning", "robotics", "STEM", "Arabic for non-speakers", "Saint-Laurent"],
   robots: "index, follow",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
   openGraph: {
     title: "Avenir Souriant | Arabic Learning Center",
     description: "Premier learning center for Arabic courses and enriching activities. Build confident Arabic speakers through innovative, interactive programs.",
@@ -62,6 +74,7 @@ export default function RootLayout({
     "name": "Avenir Souriant",
     "description": "Premier Arabic learning center in Montreal offering interactive courses and enriching activities like STEM, soccer, and creative arts.",
     "url": "https://avenirsouriant.com",
+    "logo": "https://avenirsouriant.com/icon.png",
     "telephone": "+15145815305",
     "address": {
       "@type": "PostalAddress",
@@ -94,9 +107,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/images/Avenir_Souriant_Logo_2-removebg-preview.png" type="image/png" />
-        <link rel="shortcut icon" href="/images/Avenir_Souriant_Logo_2-removebg-preview.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/images/Avenir_Souriant_Logo_2-removebg-preview.png" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon-48.png" type="image/png" sizes="48x48" />
+        <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
         <script 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSchema) }}
