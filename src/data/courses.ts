@@ -107,52 +107,53 @@ export interface CourseData {
 export const courses: CourseData[] = [
   {
     slug: "arabic-for-non-speakers",
-    title: "Arabic for Non-Speakers",
-    category: "Foundations & Immersion",
-    price: "FREE",
-    desc: "Finally read Arabic by yourself without depending on anyone else. Master the alphabet, phonetics, and reading Quran and Arabic books.",
+    title: "Arabic for Non-Speakers (Ages 16+)",
+    category: "Foundations & Immersion (16+)",
+    price: "$15/session",
+    desc: "Finally read and speak Arabic independently. Master the alphabet, phonetics, grammar, and Quran/text reading with dedicated sessions: Sundays for Men & Thursdays for Women.",
     image: "/images/pexels-ahmetkurt-35745594.jpg",
     active: true,
-    subtitle: "Sept 6 to Oct 25 | 8 Sessions | Sundays @ 6PM",
-    tagline: "FINALLY, READ ARABIC BY YOURSELF.",
-    subTagline: "Finally read Arabic, without depending on anyone else.",
+    subtitle: "Ages 16+ • Sundays for Men & Thursdays for Women",
+    tagline: "FINALLY, READ & SPEAK ARABIC BY YOURSELF.",
+    subTagline: "Finally read Arabic independently without relying on anyone else.",
     teacher: {
-      name: "Bashar Mashnouk",
-      title: "Professional Teacher",
-      bio: "Professional teacher known for a simple, straightforward, and non-ambiguous teaching style that makes learning Arabic intuitive and enjoyable."
+      name: "Bashar Mashnouk & Specialized Faculty",
+      title: "Senior Arabic Language Educators",
+      bio: "Professional educators known for a simple, straightforward, and accessible pedagogical style that makes learning Arabic intuitive, empowering, and enjoyable."
     },
-    objectiveHeadline: "Read & Understand",
-    objective: "Finally read & understand Quran and Arabic books with ease, accuracy, and independent confidence.",
-    scheduleHeadline: "Sundays @ 6:00 PM",
-    scheduleDetails: "Sept 6 to Oct 25 • 8 Sessions held in-person at our Saint-Laurent center.",
-    targetAudienceHeadline: "Men, 17+",
-    targetAudience: "Men, 17+ (1-on-1 Arabic teaching is also available for all ages).",
-    contactPhones: ["(514) 570-4573", "(514) 562-2723"],
+    objectiveHeadline: "Read, Understand & Speak",
+    objective: "Finally read and understand Quranic script, Arabic books, and conversational basics with ease, accuracy, and independent confidence.",
+    scheduleHeadline: "Sundays (Men) & Thursdays (Women)",
+    scheduleDetails: "Sundays for Men (6:00 PM – 8:00 PM) & Thursdays for Women (6:00 PM – 8:00 PM) held in-person at our Saint-Laurent center.",
+    targetAudienceHeadline: "Men & Women (16+)",
+    targetAudience: "Adults and mature youth (ages 16+). Dedicated separate cohorts: Sundays for Men and Thursdays for Women. 1-on-1 private instruction is also available.",
+    contactPhones: ["(514) 581-5305", "(514) 808-5216", "(514) 570-4573"],
     address: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6",
-    introHeadline: "Become fluent in reading Arabic independently!",
+    introHeadline: "Become fluent in reading and understanding Arabic independently!",
     registerSubtext: "Ready to start reading Arabic on your own? Register online or contact us directly by phone:",
-    enrollmentNotice: "Spaces are limited for the upcoming Sunday sessions. Secure your spot today!",
+    enrollmentNotice: "Pay per session ($15/session) — you only pay for the sessions you attend! If absent, you don't pay. 10% sibling & family discount.",
     longDescription: [
-      "Have you always wanted to read Arabic on your own without having to rely on someone else? Avenir Souriant's Arabic for Non-Speakers program is specifically designed to take you from absolute zero to independently reading Arabic texts, Quranic verses, and books with clarity and ease.",
-      "Led by professional instructor Bashar Mashnouk — widely celebrated for his clear, straightforward, and accessible pedagogical style — this 8-session course eliminates ambiguity and breaks down the Arabic alphabet, pronunciation, and reading rules into simple, actionable steps.",
-      "This program takes place every Sunday at 6:00 PM from September 6 to October 25 at our Saint-Laurent center (1325 Rue Cartier, Saint-Laurent, QC). The course is open to men (ages 17+), and personalized 1-on-1 sessions are also available for learners of all ages. This course is completely free — no cost to register!"
+      "Have you always wanted to read and understand Arabic on your own without having to rely on someone else? Avenir Souriant's Arabic for Non-Speakers program is specifically designed to take adult and teen learners (ages 16+) from absolute zero to independently reading Arabic texts, Quranic verses, and publications with clarity and confidence.",
+      "Led by experienced Arabic language instructors including Bashar Mashnouk — celebrated for a clear, structured, and accessible pedagogical style — this course eliminates ambiguity and breaks down Arabic phonetics, alphabet shapes, vowel markings (Harakat), and word structure into simple, actionable steps.",
+      "Classes are organized into dedicated cohorts: Sundays for Men and Thursdays for Women at our Saint-Laurent center (1325 Rue Cartier, Montreal). Tuition is set at a flexible $15 per session (or $150 for 10 sessions), operating on a true pay-as-you-go model: you only pay for sessions you attend, with no charge for missed classes! 10% discount applies for family members."
     ],
     programDescription: [
-      "In this intensive 8-session journey, you will systematically master letter shapes, vowel markings (Harakat), phonetic transitions, and word assembly in Modern Standard Arabic and classical script.",
-      "The curriculum is specifically calibrated to empower you to read directly from the Quran and standard Arabic publications with confidence, proper pronunciation, and self-reliance."
+      "Through systematic instruction, you will master letter shapes in isolated and connected forms, vowel markings (Fat-ha, Damma, Kasra, Sukoon, Shaddah, Tanween), phonetic transitions, and smooth word blending in Modern Standard Arabic and classical script.",
+      "The curriculum empowers you to read directly with confidence, proper articulation, and self-reliance, with specialized practice tailored for adult learners."
     ],
     programDetails: [
-      { label: "Dates", value: "Sept 6 to Oct 25" },
-      { label: "Duration", value: "8 Sessions" },
-      { label: "Schedule", value: "Sundays @ 6:00 PM" },
-      { label: "Teacher", value: "Bashar Mashnouk" },
-      { label: "Audience", value: "Men, 17+ (1-on-1 for all ages)" },
-      { label: "Objective", value: "Read Quran & Arabic Books" },
-      { label: "Tuition", value: "FREE" },
-      { label: "Location", value: "1325 Rue Cartier, Saint-Laurent" }
+      { label: "Tuition", value: "$15 / session ($150 for 10 sessions)" },
+      { label: "Payment Model", value: "Pay per session — only pay when attending (absent = no charge)" },
+      { label: "Family Discount", value: "10% OFF for family members" },
+      { label: "Schedule (Men)", value: "Sundays @ 6:00 PM – 8:00 PM" },
+      { label: "Schedule (Women)", value: "Thursdays @ 6:00 PM – 8:00 PM" },
+      { label: "Audience", value: "Adults & Teens (Ages 16+) — Men & Women cohorts" },
+      { label: "Teacher", value: "Bashar Mashnouk & Faculty" },
+      { label: "Location", value: "1325 Rue Cartier, Saint-Laurent, QC" }
     ],
     schedule: [
-      { day: "Sundays (Sept 6 to Oct 25 — 8 Sessions)", time: "6:00 PM" }
+      { day: "Sundays (Men 16+)", time: "6:00 PM – 8:00 PM" },
+      { day: "Thursdays (Women 16+)", time: "6:00 PM – 8:00 PM" }
     ],
     highlights: [
       "Complete mastery of Arabic letters, isolated and joined forms",
@@ -160,11 +161,97 @@ export const courses: CourseData[] = [
       "Phonetic accuracy and authentic pronunciation techniques",
       "Smooth word blending and practical reading exercises",
       "Direct application to reading Quranic script and Arabic books",
-      "Personalized feedback from instructor Bashar Mashnouk",
-      "1-on-1 teaching options available for all ages upon request"
+      "Dedicated schedules: Sundays for Men, Thursdays for Women",
+      "Pay-per-session flexibility ($15/session) — no charge if absent",
+      "10% family discount and 1-on-1 private instruction options available"
     ],
-    metaTitle: "Finally, Read Arabic By Yourself | Arabic for Non-Speakers Montreal | Avenir Souriant",
-    metaDescription: "Learn to read Arabic independently without relying on anyone else. 8-session course led by Bashar Mashnouk in Saint-Laurent, Montreal. Completely free — register now or call (514) 570-4573."
+    metaTitle: "Arabic for Non-Speakers (Ages 16+) Montreal | Avenir Souriant",
+    metaDescription: "Learn to read Arabic independently. Classes for non-native adults & teens (16+): Sundays for Men, Thursdays for Women in Saint-Laurent, Montreal. $15/session pay-as-you-go."
+  },
+  {
+    slug: "arabic-youth-program",
+    title: "Arabic Language & Skills Program (Ages 6–14)",
+    category: "Youth Arabic Immersion (6–14)",
+    price: "$15/session",
+    desc: "Dynamic Arabic language immersion for children & youth ages 6–14. 4 tailored cohorts: Beginner, Intermediate, and Skills Development.",
+    image: "/images/classroom.jpg",
+    active: true,
+    subtitle: "Ages 6 to 14 • 4 Tailored Cohorts • Weekday & Friday Options",
+    tagline: "MASTER ARABIC WITH CONFIDENCE, EXCITEMENT & FUN",
+    subTagline: "Inspiring courses for non-native youth: Beginner, Intermediate, and Skills Development cohorts in Saint-Laurent, Montreal.",
+    teacher: {
+      name: "Certified Native Arabic Educators",
+      title: "Youth Pedagogical Specialists",
+      bio: "Passionate bilingual educators specializing in child-centered pedagogy, active language acquisition, phonetics, and interactive storytelling for young non-native learners."
+    },
+    objectiveHeadline: "Fluency, Literacy & Cultural Joy",
+    objective: "Empower young learners to read, speak, write, and understand Arabic with authentic joy, natural fluency, and self-confidence.",
+    scheduleHeadline: "Flexible Weekday & Friday Schedules",
+    scheduleDetails: "Monday–Friday cohorts (8:00 AM – 4:00 PM / 6:00 PM) and Friday intensive tracks. Flexible pay-per-session plan!",
+    targetAudienceHeadline: "Children & Youth Ages 6–14",
+    targetAudience: "Tailored for non-native Arabic learners divided into 4 age-appropriate skill levels (Beginner, Intermediate, Skills Development).",
+    contactPhones: ["(514) 581-5305", "(514) 808-5216"],
+    address: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6",
+    introHeadline: "Transform Your Child's Learning with Interactive Arabic",
+    registerSubtext: "Ready to reserve your child's spot or have questions about our flexible pay-per-session model? Contact us today:",
+    enrollmentNotice: "10% discount for siblings! Pay per session attended ($15/session) — absent sessions are never charged.",
+    levelPrograms: [
+      {
+        level: "Ages 6–8",
+        title: "Beginner Class (Level 1)",
+        desc: "Monday to Friday | 8:00 AM – 4:00 PM (up to 6:00 PM). Fun, engaging introduction to Arabic letterforms, phonetics, numbers, colors, and everyday conversational phrases through songs, interactive games, and guided exercises."
+      },
+      {
+        level: "Ages 8–12",
+        title: "Intermediate Class (Level 2)",
+        desc: "Monday to Friday | 8:00 AM – 4:00 PM (up to 6:00 PM). Vocabulary expansion, vowel markings (Harakat), sentence construction, reading short stories, active dialogue, and building conversational confidence."
+      },
+      {
+        level: "Ages 8–14",
+        title: "Skills Development Intensive — Fridays",
+        desc: "Fridays | 7:30 AM – 6:00 PM. A full-day weekly immersion focused on public speaking, reading comprehension, expressive writing, cultural appreciation, and collaborative language projects."
+      },
+      {
+        level: "Ages 12–14",
+        title: "Skills Development & Advanced Cohort",
+        desc: "Monday to Friday | 8:00 AM – 4:00 PM (up to 6:00 PM). Advanced vocabulary, formal Modern Standard Arabic (Fusha), grammatical structure, text analysis, and preparing students for independent literacy."
+      }
+    ],
+    longDescription: [
+      "Looking for an enriching, engaging, and joyful Arabic language program for your child in Montreal? The Academy of Knowledge (Académie de l'Avenir Souriant) is thrilled to offer our Arabic Language Courses for Non-Native Speakers at our modern center located at 1325 Rue Cartier in Saint-Laurent.",
+      "Our program is designed specifically to help young learners connect with the Arabic language in a motivating, welcoming, and pressure-free environment. Rather than dry rote memorization, our curriculum combines phonetics, interactive storytelling, hands-on activities, and dialogue to make Arabic your child's favorite subject.",
+      "We believe in total flexibility for families: tuition is just $15 per session (or $150 for a 10-session package). You can choose to pay per session, meaning you only pay for the days your child attends — if absent, you are never charged! Furthermore, we offer an additional 10% discount for siblings."
+    ],
+    programDescription: [
+      "Our program is divided into four targeted age and skill cohorts to ensure every student learns at the pace and depth that suits them best. Whether your child is discovering the alphabet for the very first time or looking to sharpen intermediate reading and speaking skills, our certified teachers provide dedicated, individualized support.",
+      "Each day integrates language drills with engaging group challenges, creative arts, and practical conversational scenarios that instill genuine pride and cultural connection."
+    ],
+    programDetails: [
+      { label: "Tuition", value: "$15 / session ($150 for 10 sessions)" },
+      { label: "Payment Model", value: "Pay per session — only pay when attending (absent = no charge)" },
+      { label: "Family Discount", value: "10% OFF for siblings (brothers & sisters)" },
+      { label: "Age Groups", value: "Ages 6–8, 8–12, 8–14, and 12–14" },
+      { label: "Schedule Options", value: "Mon–Fri 8:00 AM – 4:00 PM / Fridays 7:30 AM – 6:00 PM" },
+      { label: "Location", value: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6" },
+      { label: "Language", value: "Modern Standard Arabic (for non-native speakers)" }
+    ],
+    schedule: [
+      { day: "Beginner Class (Ages 6–8)", time: "Monday – Friday | 8:00 AM – 4:00 PM (up to 6:00 PM)" },
+      { day: "Intermediate Class (Ages 8–12)", time: "Monday – Friday | 8:00 AM – 4:00 PM (up to 6:00 PM)" },
+      { day: "Skills Development Friday (Ages 8–14)", time: "Fridays | 7:30 AM – 6:00 PM" },
+      { day: "Skills Development Weekday (Ages 12–14)", time: "Monday – Friday | 8:00 AM – 4:00 PM (up to 6:00 PM)" }
+    ],
+    highlights: [
+      "Mastery of Arabic letter forms, pronunciation, and Harakat (vowels)",
+      "Practical everyday vocabulary and conversational speaking drills",
+      "Interactive reading comprehension and short story analysis",
+      "Child-friendly, game-based learning and creative storytelling",
+      "Small group cohorts categorized by age (6–8, 8–12, 8–14, 12–14)",
+      "Completely flexible pay-per-session pricing ($15/session) — no fee for absences",
+      "10% sibling discount for brothers and sisters"
+    ],
+    metaTitle: "Arabic Language & Skills Program for Kids & Youth (Ages 6–14) Montreal | Avenir Souriant",
+    metaDescription: "Engaging Arabic classes for non-native children and youth (ages 6–14) in Saint-Laurent, Montreal. Beginner to advanced tracks. $15/session pay-as-you-go. Call (514) 581-5305."
   },
   {
     slug: "homeschooling-support",

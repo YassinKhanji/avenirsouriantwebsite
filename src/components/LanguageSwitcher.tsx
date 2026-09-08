@@ -106,7 +106,7 @@ export function LanguageSwitcher({ className = '' }: { className?: string }) {
   const currentLang = languages.find(l => l.code === selectedLang) || languages[0];
 
   return (
-    <div className={`relative ${className}`} ref={dropdownRef}>
+    <div className={`relative notranslate ${className}`} ref={dropdownRef} translate="no">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl hover:bg-gray-100 transition-colors text-xs sm:text-sm font-semibold border border-gray-200 bg-white text-gray-900 cursor-pointer shadow-sm min-w-[78px] sm:min-w-[90px] justify-center"

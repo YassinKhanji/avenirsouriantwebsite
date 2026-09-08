@@ -8,8 +8,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-raleway), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-fredoka), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-raleway), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Geeza Pro", Tahoma, sans-serif;
+  --font-heading: var(--font-fredoka), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Geeza Pro", Tahoma, sans-serif;
   --color-primary: #1abc9c; /* Turquoise */
   --color-primary-light: #e8f8f5;
   --color-secondary: #ff9f43; /* Orange */
@@ -19,6 +19,13 @@
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* Ensure Google Translate font elements inherit naturally without styling artifacts */
+font {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  vertical-align: inherit !important;
 }
 
 /* ==========================================================================
@@ -81,7 +88,17 @@ a[href^="mailto:"],
 .force-ltr {
   direction: ltr !important;
   unicode-bidi: isolate;
-  display: inline-block;
+}
+
+/* Ensure flex buttons with tel links strictly maintain horizontal row alignment */
+a[href^="tel:"].flex,
+a[href^="tel:"].inline-flex,
+a[href^="tel:"][class*="flex"] {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: nowrap !important;
 }
 
 /* Ensure nice word breaking and line clamping across small screens */
