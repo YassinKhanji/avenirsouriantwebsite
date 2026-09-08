@@ -45,23 +45,23 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-2">
           <div className="flex justify-start">
-            <TransitionLink href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3">
+            <TransitionLink href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 sm:gap-3">
               <Image 
                 src="/images/logo.png" 
                 alt="Avenir Souriant Logo" 
                 width={100} 
                 height={28} 
-                className="w-20 md:w-28 object-contain"
+                className="w-16 sm:w-20 md:w-28 object-contain"
                 priority
               />
-              <span className="font-heading font-bold text-2xl text-primary hidden sm:block mt-1">
+              <span className="font-heading font-bold text-xl sm:text-2xl text-primary hidden sm:block mt-1">
                 Avenir Souriant
               </span>
             </TransitionLink>
           </div>
           
-          <div className="hidden md:flex items-center gap-8">
-            <nav className="flex space-x-12" onMouseLeave={() => setHoveredTab(null)}>
+          <div className="hidden md:flex items-center gap-6 lg:gap-8">
+            <nav className="flex items-center gap-8 lg:gap-12" onMouseLeave={() => setHoveredTab(null)}>
               {navLinks.map((link) => {
                 const isActive = normalizePath(pathname) === normalizePath(link.path);
                 return (
@@ -100,14 +100,14 @@ export default function Header() {
           </div>
           
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center gap-4">
+          <div className="md:hidden flex items-center gap-2 sm:gap-3">
             <LanguageSwitcher />
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-900 hover:text-primary focus:outline-none p-2"
+              className="text-gray-900 hover:text-primary focus:outline-none p-1.5 sm:p-2 rounded-lg"
               aria-label="Toggle mobile menu"
             >
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 {isMobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (

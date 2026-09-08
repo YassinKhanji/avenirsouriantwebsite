@@ -55,22 +55,22 @@ export default function Register() {
       <main className="flex-1">
         {/* Register Hero Section */}
         <section 
-          className="relative py-20 text-center bg-cover bg-left md:bg-center bg-no-repeat"
+          className="relative py-14 sm:py-20 text-center bg-cover bg-left md:bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/images/register_hero_bg.png')" }}
         >
           <div className="absolute inset-0 bg-white/60 z-0"></div>
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-4">
-            <h1 className="text-5xl font-bold font-heading mb-6 text-gray-900 drop-shadow-md">Register Now</h1>
-            <p className="text-xl text-gray-800 font-medium drop-shadow-sm">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading mb-4 sm:mb-6 text-gray-900 drop-shadow-md">Register Now</h1>
+            <p className="text-base sm:text-lg md:text-xl text-gray-800 font-medium drop-shadow-sm">
               Join Avenir Souriant and give your child the gift of language and adventure.
             </p>
           </div>
         </section>
 
         {/* Register Form */}
-        <section className="py-24 bg-primary-light min-h-[80vh] flex items-center">
+        <section className="py-14 sm:py-20 bg-primary-light min-h-[70vh] flex items-center">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white p-8 md:p-12 rounded-3xl shadow-sm border border-gray-200">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center bg-white p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-200 text-start">
               <div className="hidden lg:flex justify-center w-full h-full relative min-h-[400px]">
                 <Image 
                   src="/images/register-photo.png" 
@@ -80,54 +80,55 @@ export default function Register() {
                 />
               </div>
               <div>
-                <h2 className="text-4xl font-bold font-heading mb-8 text-gray-900">Want to register or have questions?</h2>
-                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-heading mb-6 sm:mb-8 text-gray-900">Want to register or have questions?</h2>
+                <form className="space-y-4 sm:space-y-6" onSubmit={(e) => e.preventDefault()}>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Full Name</label>
                     <input
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="John Doe"
-                      className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90"
+                      className="w-full text-base px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Email Address</label>
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="john@example.com"
-                      className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90"
+                      className="w-full text-base px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Phone Number</label>
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="+1 (555) 000-0000"
-                      className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90"
+                      className="w-full text-base px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90 force-ltr"
+                      dir="ltr"
                       required
                     />
                   </div>
 
                   {/* Comment section */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Comment</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Comment</label>
                     <textarea
                       name="comment"
                       value={formData.comment}
                       onChange={handleChange}
                       placeholder="My child is eager to begin their Arabic learning journey with Avenir Souriant!"
-                      className="w-full px-5 py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90 resize-none"
+                      className="w-full text-base px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90 resize-none"
                       rows={3}
                     />
                   </div>
@@ -139,7 +140,7 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={handleSubmit}
-                    className="w-full px-8 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md"
+                    className="w-full px-6 py-3.5 sm:px-8 sm:py-4 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md cursor-pointer"
                   >
                     Send
                   </button>

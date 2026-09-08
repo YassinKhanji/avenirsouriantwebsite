@@ -25,16 +25,24 @@ body {
    Google Translate Custom Styling & Hiding default UI
    ========================================================================== */
 
-/* Hide Google Translate top bar and banners */
+/* Hide Google Translate top bar, banners, and tooltip popups */
+body > .skiptranslate,
 .goog-te-banner-frame,
 .goog-te-banner,
 iframe.goog-te-banner-frame,
+iframe.skiptranslate,
+iframe[class*="skiptranslate"],
+iframe[class*="VIpgJd"],
+iframe[id*=":1."],
+iframe[id*=":2."],
 #goog-gt-tt,
 .goog-te-balloon-frame,
 .goog-te-menu2,
 .goog-te-menu-frame {
   display: none !important;
   visibility: hidden !important;
+  height: 0 !important;
+  opacity: 0 !important;
 }
 
 /* Hide standard Google Translate widget container, keeping custom switcher */
@@ -56,9 +64,38 @@ iframe.goog-te-banner-frame,
   box-sizing: border-box !important;
 }
 
-/* Reset top offset that Google Translate injects on HTML/body */
+/* Reset top offset that Google Translate injects on HTML/body and prevent horizontal overflow */
 html, body {
   top: 0px !important;
   position: static !important;
+  overflow-x: hidden;
+  max-width: 100vw;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Ensure phone numbers, emails, and numeric strings maintain LTR format in Arabic/RTL mode */
+a[href^="tel:"], 
+a[href^="mailto:"],
+.force-ltr {
+  direction: ltr !important;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+/* Ensure nice word breaking and line clamping across small screens */
+h1, h2, h3, h4, h5, h6, p, span, a, button {
+  overflow-wrap: break-word;
+}
+
+/* Hide scrollbar utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 

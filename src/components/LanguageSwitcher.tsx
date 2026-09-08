@@ -109,12 +109,12 @@ export function LanguageSwitcher({ className = '' }: { className?: string }) {
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-100 transition-colors text-sm font-semibold border border-gray-200 bg-white text-gray-900 cursor-pointer shadow-sm min-w-[90px] justify-center"
+        className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl hover:bg-gray-100 transition-colors text-xs sm:text-sm font-semibold border border-gray-200 bg-white text-gray-900 cursor-pointer shadow-sm min-w-[78px] sm:min-w-[90px] justify-center"
       >
-        <span className="text-lg">{currentLang.flag}</span>
+        <span className="text-base sm:text-lg">{currentLang.flag}</span>
         <span>{currentLang.code.toUpperCase()}</span>
         <svg 
-          className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
+          className={`w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
@@ -130,13 +130,13 @@ export function LanguageSwitcher({ className = '' }: { className?: string }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-200 z-50 overflow-hidden py-1"
+            className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-44 sm:w-48 bg-white rounded-2xl shadow-xl border border-gray-200 z-50 overflow-hidden py-1"
           >
             {languages.map((lang) => (
               <button
                 key={lang.code}
                 onClick={() => handleLanguageChange(lang.code)}
-                className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-center justify-between cursor-pointer ${
+                className={`w-full text-left rtl:text-right px-4 py-2.5 sm:py-3 hover:bg-gray-50 transition-colors flex items-center justify-between cursor-pointer ${
                   selectedLang === lang.code ? 'bg-primary-light text-primary font-bold' : 'text-gray-700'
                 }`}
               >

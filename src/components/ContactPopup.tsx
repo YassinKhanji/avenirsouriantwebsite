@@ -115,12 +115,12 @@ export function ContactPopup() {
       onClick={handleClose}
     >
       <div 
-        className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 relative animate-in zoom-in-95 duration-300"
+        className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-lg w-full p-5 sm:p-8 relative animate-in zoom-in-95 duration-300 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <button 
           onClick={handleClose}
-          className="absolute top-4 right-4 w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors cursor-pointer"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 rtl:right-auto rtl:left-3 rtl:sm:left-4 w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors cursor-pointer z-10"
           aria-label="Close"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,14 +130,14 @@ export function ContactPopup() {
 
         {!isSubmitted ? (
           <>
-            <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold font-heading text-gray-900 mb-2">Want to register?</h2>
-              <p className="text-gray-600">Leave your details and our team will get in touch with you!</p>
+            <div className="text-center mb-5 sm:mb-6 pt-2">
+              <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900 mb-2">Want to register?</h2>
+              <p className="text-gray-600 text-sm sm:text-base">Leave your details and our team will get in touch with you!</p>
             </div>
 
-            <form className="space-y-4" onSubmit={handleSubmit}>
+            <form className="space-y-3 sm:space-y-4 text-start" onSubmit={handleSubmit}>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Full Name *</label>
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Full Name *</label>
                 <input
                   type="text"
                   name="name"

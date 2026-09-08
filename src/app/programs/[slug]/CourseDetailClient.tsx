@@ -71,34 +71,35 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
           </div>
 
           {/* Hero Content */}
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-12 pt-32">
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-8 pt-24 sm:pb-12 sm:pt-32">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
+              className="text-start"
             >
               {/* Category & Status Badge */}
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <span className="bg-primary/95 text-white text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full backdrop-blur-sm shadow-sm">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                <span className="bg-primary/95 text-white text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 sm:px-4 py-1 sm:py-1.5 rounded-full backdrop-blur-sm shadow-sm">
                   {course.category}
                 </span>
                 {course.active && (
-                  <span className="bg-secondary text-white text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-sm animate-pulse">
+                  <span className="bg-secondary text-white text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 sm:px-4 py-1 sm:py-1.5 rounded-full shadow-sm animate-pulse">
                     Enrolling Now
                   </span>
                 )}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-heading text-white mb-3 drop-shadow-lg">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold font-heading text-white mb-2 sm:mb-3 drop-shadow-lg leading-tight">
                 {course.tagline || course.title}
               </h1>
               
-              <p className="text-white/90 text-lg md:text-2xl font-medium max-w-3xl mb-4 drop-shadow-md">
+              <p className="text-white/90 text-sm sm:text-base md:text-xl font-medium max-w-3xl mb-3 sm:mb-4 drop-shadow-md leading-relaxed">
                 {course.subTagline || course.subtitle}
               </p>
 
               {/* Quick Details Bar */}
-              <p className="text-white/75 text-sm md:text-base font-semibold uppercase tracking-wider mb-8 flex flex-wrap items-center gap-2">
+              <p className="text-white/75 text-xs sm:text-sm md:text-base font-semibold uppercase tracking-wider mb-6 sm:mb-8 flex flex-wrap items-center gap-2">
                 <span>{course.subtitle}</span>
                 {course.address && (
                   <>
@@ -108,11 +109,11 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                 )}
               </p>
 
-              <div className="flex flex-wrap items-center gap-4">
-                <TransitionLink href="/register">
-                  <button className="inline-flex items-center gap-2 px-8 py-4 bg-secondary hover:bg-secondary/90 text-white font-bold text-base md:text-lg rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.03] active:scale-[0.98] cursor-pointer">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                <TransitionLink href="/register" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-secondary hover:bg-secondary/90 text-white font-bold text-base md:text-lg rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.03] active:scale-[0.98] cursor-pointer text-center">
                     Register Here
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 rtl:rotate-180">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                     </svg>
                   </button>
@@ -121,12 +122,13 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                 {course.contactPhones && course.contactPhones.length > 0 && (
                   <a
                     href={`tel:${course.contactPhones[0].replace(/[^0-9]/g, '')}`}
-                    className="inline-flex items-center gap-2 px-6 py-4 bg-white/90 hover:bg-white text-gray-900 font-bold text-base rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.03] active:scale-[0.98]"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3.5 sm:py-4 bg-white/90 hover:bg-white text-gray-900 font-bold text-sm sm:text-base rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] force-ltr"
+                    dir="ltr"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-primary shrink-0">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
                     </svg>
-                    Call: {course.contactPhones[0]}
+                    <span>Call: {course.contactPhones[0]}</span>
                   </a>
                 )}
               </div>
