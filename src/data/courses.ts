@@ -109,8 +109,7 @@ export const courses: CourseData[] = [
     slug: "arabic-for-non-speakers",
     title: "Arabic for Non-Speakers",
     category: "Foundations & Immersion",
-    price: "$99",
-    originalPrice: "$200",
+    price: "FREE",
     desc: "Finally read Arabic by yourself without depending on anyone else. Master the alphabet, phonetics, and reading Quran and Arabic books.",
     image: "/images/pexels-ahmetkurt-35745594.jpg",
     active: true,
@@ -136,7 +135,7 @@ export const courses: CourseData[] = [
     longDescription: [
       "Have you always wanted to read Arabic on your own without having to rely on someone else? Avenir Souriant's Arabic for Non-Speakers program is specifically designed to take you from absolute zero to independently reading Arabic texts, Quranic verses, and books with clarity and ease.",
       "Led by professional instructor Bashar Mashnouk — widely celebrated for his clear, straightforward, and accessible pedagogical style — this 8-session course eliminates ambiguity and breaks down the Arabic alphabet, pronunciation, and reading rules into simple, actionable steps.",
-      "This program takes place every Sunday at 6:00 PM from September 6 to October 25 at our Saint-Laurent center (1325 Rue Cartier, Saint-Laurent, QC). The course is open to men (ages 17+), and personalized 1-on-1 sessions are also available for learners of all ages. Take advantage of our special limited-time promotional rate of $99 (regularly $200)."
+      "This program takes place every Sunday at 6:00 PM from September 6 to October 25 at our Saint-Laurent center (1325 Rue Cartier, Saint-Laurent, QC). The course is open to men (ages 17+), and personalized 1-on-1 sessions are also available for learners of all ages. This course is completely free — no cost to register!"
     ],
     programDescription: [
       "In this intensive 8-session journey, you will systematically master letter shapes, vowel markings (Harakat), phonetic transitions, and word assembly in Modern Standard Arabic and classical script.",
@@ -149,7 +148,7 @@ export const courses: CourseData[] = [
       { label: "Teacher", value: "Bashar Mashnouk" },
       { label: "Audience", value: "Men, 17+ (1-on-1 for all ages)" },
       { label: "Objective", value: "Read Quran & Arabic Books" },
-      { label: "Tuition", value: "$99 (Regular $200)" },
+      { label: "Tuition", value: "FREE" },
       { label: "Location", value: "1325 Rue Cartier, Saint-Laurent" }
     ],
     schedule: [
@@ -165,7 +164,7 @@ export const courses: CourseData[] = [
       "1-on-1 teaching options available for all ages upon request"
     ],
     metaTitle: "Finally, Read Arabic By Yourself | Arabic for Non-Speakers Montreal | Avenir Souriant",
-    metaDescription: "Learn to read Arabic independently without relying on anyone else. 8-session course led by Bashar Mashnouk in Saint-Laurent, Montreal. Special offer $99 (regular $200). Call (514) 570-4573 to register."
+    metaDescription: "Learn to read Arabic independently without relying on anyone else. 8-session course led by Bashar Mashnouk in Saint-Laurent, Montreal. Completely free — register now or call (514) 570-4573."
   },
   {
     slug: "homeschooling-support",
