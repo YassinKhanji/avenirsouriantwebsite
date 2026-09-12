@@ -29,8 +29,12 @@ export default function Header() {
   const navLinks = [
     { label: 'Home', path: '/' },
     { label: 'Programs', path: '/programs' },
-    { label: 'Register Now', path: '/register' },
+    { label: 'Contact', path: '/register' },
+    { label: 'Register Now', path: '/register-now', isRegister: true },
   ];
+
+  // Helper to determine if a link uses orange (secondary) styling
+  const isOrangeTab = (link: { isRegister?: boolean }) => !!link.isRegister;
 
   return (
     <motion.header
@@ -64,6 +68,11 @@ export default function Header() {
             <nav className="flex items-center gap-8 lg:gap-12" onMouseLeave={() => setHoveredTab(null)}>
               {navLinks.map((link) => {
                 const isActive = normalizePath(pathname) === normalizePath(link.path);
+                const orange = isOrangeTab(link);
+                const activeColorClass = orange ? 'text-secondary' : 'text-primary';
+                const hoverColorClass = orange ? 'hover:text-secondary' : 'hover:text-primary';
+                const underlineColorClass = orange ? 'bg-secondary' : 'bg-primary';
+
                 return (
                   <div 
                     key={link.path} 
@@ -72,7 +81,7 @@ export default function Header() {
                   >
                     <TransitionLink 
                       href={link.path} 
-                      className={`text-lg font-medium transition-colors ${isActive ? 'text-primary' : 'text-gray-900 hover:text-primary'}`}
+                      className={`text-lg font-medium transition-colors ${isActive ? activeColorClass : `text-gray-900 ${hoverColorClass}`}`}
                     >
                       {link.label}
                     </TransitionLink>
@@ -81,7 +90,7 @@ export default function Header() {
                     {hoveredTab === link.path && (
                       <motion.div
                         layoutId="nav-hover"
-                        className="absolute left-0 right-0 -bottom-1 h-0.5 bg-primary"
+                        className={`absolute left-0 right-0 -bottom-1 h-0.5 ${underlineColorClass}`}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -90,7 +99,7 @@ export default function Header() {
                     )}
                     {/* Active Underline */}
                     {isActive && hoveredTab !== link.path && (
-                      <div className="absolute left-0 right-0 -bottom-1 h-0.5 bg-primary opacity-50" />
+                      <div className={`absolute left-0 right-0 -bottom-1 h-0.5 ${underlineColorClass} opacity-50`} />
                     )}
                   </div>
                 );
@@ -131,11 +140,15 @@ export default function Header() {
             <div className="px-6 pt-4 pb-6 space-y-6 shadow-inner flex flex-col items-center">
               {navLinks.map((link) => {
                 const isActive = normalizePath(pathname) === normalizePath(link.path);
+                const orange = isOrangeTab(link);
+                const activeColorClass = orange ? 'text-secondary font-bold' : 'text-primary font-bold';
+                const hoverColorClass = orange ? 'hover:text-secondary' : 'hover:text-primary';
+
                 return (
                   <div key={link.path} className="block w-full text-center" onClick={() => setIsMobileMenuOpen(false)}>
                     <TransitionLink 
                       href={link.path} 
-                      className={`block text-2xl font-medium py-2 transition-colors ${isActive ? 'text-primary font-bold' : 'text-gray-900 hover:text-primary'}`}
+                      className={`block text-2xl font-medium py-2 transition-colors ${isActive ? activeColorClass : `text-gray-900 ${hoverColorClass}`}`}
                     >
                       {link.label}
                     </TransitionLink>

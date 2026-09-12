@@ -14,12 +14,13 @@ export default function Register() {
   });
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Basic validation
     if (!formData.name || !formData.email || !formData.phone) {
       setError('Please fill in all required fields.');
@@ -27,26 +28,37 @@ export default function Register() {
     }
 
     setError('');
+    setIsSubmitting(true);
 
-    // Build mailto link with prefilled info
-    const subject = encodeURIComponent(`New Registration - ${formData.name}`);
-    const body = encodeURIComponent(
-      `New Registration Request\n` +
-      `========================\n\n` +
-      `Name: ${formData.name}\n` +
-      `Email: ${formData.email}\n` +
-      `Phone: ${formData.phone}\n` +
-      `Comment: ${formData.comment || 'My child is eager to begin their Arabic learning journey with Avenir Souriant!'}\n\n` +
-      `---\n` +
-      `Sent from Avenir Souriant Website`
-    );
+    try {
+      const res = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'contact',
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          comment: formData.comment,
+        }),
+      });
 
-    // Open mailto
-    window.location.href = `mailto:administration@avenirsouriant.com?subject=${subject}&body=${body}`;
+      const data = await res.json();
 
-    // Show confirmation modal
-    setShowModal(true);
-    setFormData({ name: '', email: '', phone: '', comment: '' });
+      if (!res.ok) {
+        setError(data.error || 'Failed to send message. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Show confirmation modal
+      setShowModal(true);
+      setFormData({ name: '', email: '', phone: '', comment: '' });
+    } catch {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -60,9 +72,9 @@ export default function Register() {
         >
           <div className="absolute inset-0 bg-white/60 z-0"></div>
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-4">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading mb-4 sm:mb-6 text-gray-900 drop-shadow-md">Register Now</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading mb-4 sm:mb-6 text-gray-900 drop-shadow-md">Contact Us</h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-800 font-medium drop-shadow-sm">
-              Join Avenir Souriant and give your child the gift of language and adventure.
+              Just say مرحبا — we&apos;ll take it from there.
             </p>
           </div>
         </section>
@@ -80,7 +92,7 @@ export default function Register() {
                 />
               </div>
               <div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-heading mb-6 sm:mb-8 text-gray-900">Want to register or have questions?</h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-heading mb-6 sm:mb-8 text-gray-900">We&apos;d love to hear from you!</h2>
                 <form className="space-y-4 sm:space-y-6" onSubmit={(e) => e.preventDefault()}>
                   <div>
                     <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Full Name</label>
@@ -127,7 +139,7 @@ export default function Register() {
                       name="comment"
                       value={formData.comment}
                       onChange={handleChange}
-                      placeholder="My child is eager to begin their Arabic learning journey with Avenir Souriant!"
+                      placeholder="My student is eager to begin their Arabic learning journey with Avenir Souriant!"
                       className="w-full text-base px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90 resize-none"
                       rows={3}
                     />
@@ -140,9 +152,20 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={handleSubmit}
-                    className="w-full px-6 py-3.5 sm:px-8 sm:py-4 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md cursor-pointer"
+                    disabled={isSubmitting}
+                    className="w-full px-6 py-3.5 sm:px-8 sm:py-4 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
                   >
-                    Send
+                    {isSubmitting ? (
+                      <>
+                        <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Sending...
+                      </>
+                    ) : (
+                      'Send'
+                    )}
                   </button>
                 </form>
               </div>
@@ -207,7 +230,7 @@ export default function Register() {
               Thank You!
             </h3>
             <p className="text-gray-600 text-lg mb-6 leading-relaxed">
-              One of our staff members will contact you <strong>as soon as possible</strong> to help you get started.
+              Your message has been sent successfully. One of our staff members will contact you <strong>in the next 24 hours</strong>.
             </p>
             <button
               onClick={() => setShowModal(false)}

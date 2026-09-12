@@ -93,7 +93,8 @@ export default function RootLayout({
     "sameAs": [
       "https://www.facebook.com/profile.php?id=61573071398618",
       "https://www.linkedin.com/company/avenir-souriant/",
-      "https://www.instagram.com/avenir.souriant/"
+      "https://www.instagram.com/avenir.souriant/",
+      "https://www.tiktok.com/@avenirsouriant"
     ],
     "priceRange": "$$",
     "openingHoursSpecification": {

@@ -52,7 +52,7 @@ const heroSlides = [
     overlayClass: 'bg-black/60',
     heading: <>Join the Avenir Souriant <br className="hidden sm:inline" /> Family Today</>,
     subtitle: 'Enroll your child in Montréal\'s most exciting Arabic learning center. Limited spots available — register now!',
-    cta: { label: 'Register Now', href: '/register' },
+    cta: { label: 'Register Now', href: '/register-now' },
     showPhone: false,
     textColor: 'text-white',
   },
@@ -523,7 +523,7 @@ export default function Home() {
                   Give your child the gift of language, creativity, and coding. Join the Avenir Souriant family and watch them build confidence, make friends, and discover the joy of learning Arabic through hands-on activities, robotics, and sports.
                 </p>
                 <TransitionLink 
-                  href="/register" 
+                  href="/register-now" 
                   className="inline-block w-full sm:w-auto text-center px-8 sm:px-10 py-3.5 sm:py-4 bg-secondary text-white rounded-full font-bold text-base sm:text-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md cursor-pointer"
                 >
                   Register Now

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 export function ContactPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -73,33 +74,44 @@ export function ContactPopup() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone) {
       setError('Please fill in all required fields.');
       return;
     }
     setError('');
+    setIsSubmitting(true);
 
-    // Build mailto link with prefilled info (same as contact/register page)
-    const subject = encodeURIComponent(`New Registration - ${formData.name}`);
-    const body = encodeURIComponent(
-      `New Registration Request\n` +
-      `========================\n\n` +
-      `Name: ${formData.name}\n` +
-      `Email: ${formData.email}\n` +
-      `Phone: ${formData.phone}\n` +
-      `Comment: ${formData.comment || 'My child is eager to begin their Arabic learning journey with Avenir Souriant!'}\n\n` +
-      `---\n` +
-      `Sent from Avenir Souriant Website Popup`
-    );
+    try {
+      const res = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'contact',
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          comment: formData.comment,
+        }),
+      });
 
-    // Open mail client to send email to administration@avenirsouriant.com
-    window.location.href = `mailto:administration@avenirsouriant.com?subject=${subject}&body=${body}`;
-    
-    // Show confirmation modal state
-    setIsSubmitted(true);
-    setFormData({ name: '', email: '', phone: '', comment: '' });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || 'Failed to send message. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Show confirmation modal state
+      setIsSubmitted(true);
+      setFormData({ name: '', email: '', phone: '', comment: '' });
+    } catch {
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
@@ -178,7 +190,7 @@ export function ContactPopup() {
                   name="comment"
                   value={formData.comment}
                   onChange={handleChange}
-                  placeholder="My child is eager to begin their Arabic learning journey with Avenir Souriant!"
+                  placeholder="My student is eager to begin their Arabic learning journey with Avenir Souriant!"
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-gray-50 text-gray-900 resize-none"
                   rows={3}
                 />
@@ -188,9 +200,20 @@ export function ContactPopup() {
 
               <button
                 type="submit"
-                className="w-full px-6 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md cursor-pointer"
+                disabled={isSubmitting}
+                className="w-full px-6 py-4 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-transform hover:scale-[1.02] shadow-md cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
               >
-                Send Request
+                {isSubmitting ? (
+                  <>
+                    <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Sending...
+                  </>
+                ) : (
+                  'Send Request'
+                )}
               </button>
             </form>
           </>
@@ -205,7 +228,7 @@ export function ContactPopup() {
               Thank You!
             </h3>
             <p className="text-gray-600 text-lg mb-6 leading-relaxed">
-              One of our staff members will contact you <strong>as soon as possible</strong> to help you get started.
+              Your message has been sent successfully. One of our staff members will contact you <strong>in the next 24 hours</strong>.
             </p>
             <button
               onClick={handleClose}
