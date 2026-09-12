@@ -334,37 +334,41 @@ export default function Home() {
                     className="w-[82vw] max-w-[320px] sm:w-[340px] md:w-[370px] shrink-0 snap-center sm:snap-start bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-300 hover:border-primary/50 transition-all duration-300 flex flex-col group/card relative"
                   >
                     {/* Card Media */}
-                    <div className="relative w-full aspect-[16/10] overflow-hidden bg-gray-100">
-                      <Image 
-                        src={program.image}
-                        alt={program.title}
-                        fill
-                        sizes="(max-width: 768px) 85vw, 370px"
-                        className="object-cover group-hover/card:scale-105 transition-transform duration-500"
-                      />
-                      {/* Floating Badges Bar */}
-                      <div className="absolute top-3 inset-x-3 sm:top-3.5 sm:inset-x-3.5 flex items-center justify-between gap-2 z-10">
-                        <span className="bg-white/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold text-primary uppercase tracking-wider shadow-sm truncate max-w-[62%]">
-                          {program.category}
-                        </span>
+                    <TransitionLink href={program.active ? `/programs/${program.slug}` : '/register'} className="block">
+                      <div className="relative w-full aspect-[16/10] overflow-hidden bg-gray-100">
+                        <Image
+                          src={program.image}
+                          alt={program.title}
+                          fill
+                          sizes="(max-width: 768px) 85vw, 370px"
+                          className="object-cover group-hover/card:scale-105 transition-transform duration-500"
+                        />
+                        {/* Floating Badges Bar */}
+                        <div className="absolute top-3 inset-x-3 sm:top-3.5 sm:inset-x-3.5 flex items-center justify-between gap-2 z-10">
+                          <span className="bg-white/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold text-primary uppercase tracking-wider shadow-sm truncate max-w-[62%]">
+                            {program.category}
+                          </span>
 
-                        {program.active ? (
-                          <span className="shrink-0 bg-emerald-500/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm animate-pulse">
-                            Enrolling Now
-                          </span>
-                        ) : (
-                          <span className="shrink-0 bg-gray-900/85 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm">
-                            Coming Soon
-                          </span>
-                        )}
+                          {program.active ? (
+                            <span className="shrink-0 bg-emerald-500/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm animate-pulse">
+                              Enrolling Now
+                            </span>
+                          ) : (
+                            <span className="shrink-0 bg-gray-900/85 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm">
+                              Coming Soon
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    </TransitionLink>
 
                     {/* Card Body */}
                     <div className="p-5 sm:p-6 md:p-7 flex flex-col flex-1">
-                      <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-heading text-gray-900 group-hover/card:text-primary transition-colors mb-2 sm:mb-3">
-                        {program.title}
-                      </h3>
+                      <TransitionLink href={program.active ? `/programs/${program.slug}` : '/register'} className="block">
+                        <h3 className="text-lg sm:text-xl md:text-2xl font-bold font-heading text-gray-900 group-hover/card:text-primary transition-colors mb-2 sm:mb-3">
+                          {program.title}
+                        </h3>
+                      </TransitionLink>
                       <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-4 sm:mb-6 flex-1 line-clamp-3">
                         {program.desc}
                       </p>
@@ -386,7 +390,7 @@ export default function Home() {
 
                       {/* Action Button */}
                       <TransitionLink
-                        href={program.active ? `/programs/${program.slug}` : '/register'}
+                        href="/register"
                         className="w-full"
                       >
                         <button className="w-full py-3 px-4 sm:px-6 rounded-2xl border-2 border-gray-200 text-gray-800 font-bold text-sm md:text-base hover:border-secondary hover:bg-secondary hover:text-white transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center">

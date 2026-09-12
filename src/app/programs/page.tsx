@@ -41,37 +41,41 @@ export default function Services() {
                   className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-300 hover:border-primary/50 transition-all duration-300 flex flex-col group relative"
                 >
                   {/* Card Media */}
-                  <div className="relative w-full aspect-[16/10] overflow-hidden bg-gray-100">
-                    <Image
-                      src={service.image}
-                      alt={service.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {/* Floating Badges Bar */}
-                    <div className="absolute top-3 inset-x-3 sm:top-3.5 sm:inset-x-3.5 flex items-center justify-between gap-2 z-10">
-                      <span className="bg-white/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold text-primary uppercase tracking-wider shadow-sm truncate max-w-[62%]">
-                        {service.category}
-                      </span>
+                  <TransitionLink href={service.active ? `/programs/${service.slug}` : '/register'} className="block">
+                    <div className="relative w-full aspect-[16/10] overflow-hidden bg-gray-100">
+                      <Image
+                        src={service.image}
+                        alt={service.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {/* Floating Badges Bar */}
+                      <div className="absolute top-3 inset-x-3 sm:top-3.5 sm:inset-x-3.5 flex items-center justify-between gap-2 z-10">
+                        <span className="bg-white/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-semibold text-primary uppercase tracking-wider shadow-sm truncate max-w-[62%]">
+                          {service.category}
+                        </span>
 
-                      {service.active ? (
-                        <span className="shrink-0 bg-emerald-500/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm animate-pulse">
-                          Enrolling Now
-                        </span>
-                      ) : (
-                        <span className="shrink-0 bg-gray-900/85 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm">
-                          Coming Soon
-                        </span>
-                      )}
+                        {service.active ? (
+                          <span className="shrink-0 bg-emerald-500/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm animate-pulse">
+                            Enrolling Now
+                          </span>
+                        ) : (
+                          <span className="shrink-0 bg-gray-900/85 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm">
+                            Coming Soon
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  </TransitionLink>
 
                   {/* Card Body */}
                   <div className="p-5 sm:p-6 md:p-8 flex flex-col flex-1 text-start">
-                    <h2 className="text-xl sm:text-2xl font-bold font-heading text-gray-900 group-hover:text-primary transition-colors mb-2 sm:mb-3">
-                      {service.title}
-                    </h2>
+                    <TransitionLink href={service.active ? `/programs/${service.slug}` : '/register'} className="block">
+                      <h2 className="text-xl sm:text-2xl font-bold font-heading text-gray-900 group-hover:text-primary transition-colors mb-2 sm:mb-3">
+                        {service.title}
+                      </h2>
+                    </TransitionLink>
                     
                     <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4 sm:mb-6 flex-1">
                       {service.desc}
@@ -94,7 +98,7 @@ export default function Services() {
 
                     {/* Action Button */}
                     <TransitionLink
-                      href={service.active ? `/programs/${service.slug}` : '/register'}
+                      href="/register"
                       className="w-full"
                     >
                       <button className="w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-2xl border-2 border-gray-200 text-gray-800 font-bold text-sm sm:text-base hover:border-secondary hover:bg-secondary hover:text-white transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center">
