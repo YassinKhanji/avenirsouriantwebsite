@@ -25,53 +25,9 @@ export interface ContactBody {
   comment: string;
 }
 
-// Common styles & reset
-const emailStyles = `
-  body, table, td, p, a, li, blockquote {
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-  }
-  table, td {
-    mso-table-lspace: 0pt;
-    mso-table-rspace: 0pt;
-    border-collapse: collapse !important;
-  }
-  img {
-    -ms-interpolation-mode: bicubic;
-    border: 0;
-    height: auto;
-    line-height: 100%;
-    outline: none;
-    text-decoration: none;
-  }
-  body {
-    height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    background-color: #f4f6f8;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  }
-  @media screen and (max-width: 620px) {
-    .template-container {
-      width: 100% !important;
-      max-width: 100% !important;
-      margin: 0 auto !important;
-    }
-    .content-padding {
-      padding-left: 20px !important;
-      padding-right: 20px !important;
-    }
-    .mobile-col {
-      display: block !important;
-      width: 100% !important;
-      box-sizing: border-box !important;
-    }
-  }
-`;
-
 /**
- * 1. Confirmation Email sent to the Registrant (Parent or Adult Student)
+ * 1. Confirmation Email sent to the Registrant
+ * Designed strictly following free-html-email-template
  */
 export function generateConfirmationEmail(body: RegistrationBody): string {
   const isAdultSelf = body.relationship === 'Does not apply';
@@ -85,283 +41,255 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
     ? body.relationshipOther
     : body.relationship;
 
-  const studentsCards = body.students.map((student, index) => `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 16px; overflow: hidden;">
-      <tr>
-        <td style="background-color: #0f172a; padding: 12px 18px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-              <td style="font-size: 14px; font-weight: 700; color: #ffffff; letter-spacing: 0.2px;">
-                🎓 Student ${index + 1}: ${student.fullName}
-              </td>
-              <td align="right">
-                <span style="background-color: #1abc9c; color: #ffffff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-                  Enrolled
-                </span>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 16px 18px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px;">
-            <tr>
-              <td style="padding: 8px 0; color: #64748b; font-weight: 600; width: 130px; border-bottom: 1px solid #f1f5f9;">Selected Course:</td>
-              <td style="padding: 8px 0; color: #1abc9c; font-weight: 700; border-bottom: 1px solid #f1f5f9;">${student.course}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Date of Birth:</td>
-              <td style="padding: 8px 0; color: #1e293b; border-bottom: 1px solid #f1f5f9;">${student.dateOfBirth}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Gender:</td>
-              <td style="padding: 8px 0; color: #1e293b; border-bottom: 1px solid #f1f5f9;">${student.gender}</td>
-            </tr>
-            ${student.currentGrade ? `
-            <tr>
-              <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Grade Level:</td>
-              <td style="padding: 8px 0; color: #1e293b;">${student.currentGrade}</td>
-            </tr>
-            ` : ''}
-          </table>
-        </td>
-      </tr>
+  const studentsHtml = body.students.map((student, index) => `
+    <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 16px; border: 1px solid #e5e5e5; background-color: #ffffff;">
+      <tbody>
+        <tr style="background-color: #f8f9fa;">
+          <td colspan="2" style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #e5e5e5; font-size: 15px;">
+            Student ${index + 1}: ${student.fullName}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Course</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #eeeeee;">${student.course}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Date of Birth</td>
+          <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${student.dateOfBirth}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Gender</td>
+          <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${student.gender}</td>
+        </tr>
+        ${student.currentGrade ? `
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px;">Current Grade</td>
+          <td style="padding: 10px 14px; color: #000000;">${student.currentGrade}</td>
+        </tr>
+        ` : ''}
+      </tbody>
     </table>
   `).join('');
 
-  return `
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  return `<!-- Free to use, HTML email template designed & built by FullSphere. Learn more about us at www.fullsphere.co.uk -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="x-apple-disable-message-reformatting" />
-  <!--[if !mso]><!-->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!--<![endif]-->
-  <title>Registration Confirmation — Avenir Souriant</title>
+
+  <!--[if gte mso 9]>
+  <xml>
+    <o:OfficeDocumentSettings>
+      <o:AllowPNG/>
+      <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+  </xml>
+  <![endif]-->
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <!--[if !mso]><!--><meta http-equiv="X-UA-Compatible" content="IE=edge"><!--<![endif]-->
+
+  <title>Course Registration Confirmation — Avenir Souriant</title>
+
+  <!-- Start stylesheet -->
   <style type="text/css">
-    ${emailStyles}
+    a,a[href],a:hover, a:link, a:visited {
+      text-decoration: none!important;
+      color: #0000EE;
+    }
+    .link {
+      text-decoration: underline!important;
+    }
+    p, p:visited {
+      font-size:15px;
+      line-height:24px;
+      font-family:'Helvetica', Arial, sans-serif;
+      font-weight:300;
+      text-decoration:none;
+      color: #000000;
+    }
+    h1 {
+      font-size:22px;
+      line-height:28px;
+      font-family:'Helvetica', Arial, sans-serif;
+      font-weight:normal;
+      text-decoration:none;
+      color: #000000;
+    }
+    .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td {line-height: 100%;}
+    .ExternalClass {width: 100%;}
   </style>
+  <!-- End stylesheet -->
+
 </head>
-<body style="margin: 0; padding: 0; background-color: #f4f6f8; -webkit-text-size-adjust: 100%;">
-  <!-- Preheader preview text -->
-  <span style="color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;">
-    Thank you for registering with Avenir Souriant! We have received your submission and our team will contact you within the next 24 hours.
-  </span>
 
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f6f8; padding: 35px 10px;">
-    <tr>
-      <td align="center" valign="top">
-        
-        <!-- Main Card Container (600px) -->
-        <table role="presentation" class="template-container" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); margin: 0 auto;">
-          
-          <!-- Logo Brand Header -->
-          <tr>
-            <td align="center" style="padding: 30px 24px 22px; background-color: #ffffff; border-bottom: 1px solid #f1f5f9;">
-              <a href="https://avenirsouriant.com" target="_blank" style="text-decoration: none; display: inline-block;">
-                <img src="cid:as-logo" alt="Avenir Souriant" width="150" style="display: block; width: 150px; max-width: 150px; height: auto; margin: 0 auto; border: 0;" />
-              </a>
-            </td>
-          </tr>
+  <body style="text-align: center; margin: 0; padding-top: 10px; padding-bottom: 10px; padding-left: 0; padding-right: 0; -webkit-text-size-adjust: 100%;background-color: #f2f4f6; color: #000000" align="center">
+  
+  <div style="text-align: center;">
 
-          <!-- Hero Banner -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); padding: 32px 28px; text-align: center;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 12px;">
+    <!-- Start container for logo -->
+    <table align="center" style="text-align: center; vertical-align: top; width: 600px; max-width: 600px; background-color: #ffffff;" width="600">
+      <tbody>
+        <tr>
+          <td style="width: 596px; vertical-align: top; padding-left: 0; padding-right: 0; padding-top: 25px; padding-bottom: 20px;" width="596">
+            <a href="https://avenirsouriant.com" target="_blank" style="text-decoration: none;">
+              <img style="width: 180px; max-width: 180px; height: auto; text-align: center;" alt="Avenir Souriant" src="cid:as-logo" align="center" width="180">
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- End container for logo -->
+
+    <!-- Start single column section -->
+    <table align="center" style="text-align: center; vertical-align: top; width: 600px; max-width: 600px; background-color: #ffffff;" width="600">
+      <tbody>
+        <tr>
+          <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 10px; padding-bottom: 40px;" width="596">
+
+            <h1 style="font-size: 22px; line-height: 28px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #000000; margin: 0 0 16px; text-align: left;">
+              Registration Confirmation
+            </h1>
+
+            <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #000000; text-align: left; margin: 0 0 12px;">
+              Dear ${recipientGreetingName},
+            </p>
+
+            <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #555555; text-align: left; margin: 0 0 20px;">
+              Thank you for registering with <strong>Avenir Souriant</strong>! We have successfully received your registration details.
+            </p>
+
+            <!-- 24-HOUR NOTICE BOX -->
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; margin: 0 0 24px;">
+              <tbody>
                 <tr>
-                  <td style="background-color: rgba(255, 255, 255, 0.2); padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; color: #ffffff; letter-spacing: 0.8px; text-transform: uppercase;">
-                    Registration Receipt
-                  </td>
-                </tr>
-              </table>
-              <h1 style="color: #ffffff; margin: 0 0 6px; font-size: 24px; font-weight: 700; line-height: 32px; letter-spacing: -0.3px;">
-                Course Registration Received
-              </h1>
-              <p style="color: #e6fffa; margin: 0; font-size: 14px; font-weight: 500;">
-                Empowering Youth & Building Futures • Fall 2026
-              </p>
-            </td>
-          </tr>
-
-          <!-- Main Content Body -->
-          <tr>
-            <td class="content-padding" style="padding: 32px 28px; background-color: #ffffff;">
-              
-              <p style="margin: 0 0 14px; font-size: 16px; font-weight: 600; color: #1e293b;">
-                Dear ${recipientGreetingName},
-              </p>
-              <p style="margin: 0 0 24px; font-size: 15px; color: #475569; line-height: 24px;">
-                Thank you for registering with <strong>Avenir Souriant</strong>! We are excited to welcome your student to our upcoming Fall 2026 courses. We have securely received your registration details.
-              </p>
-
-              <!-- 24-HOUR NOTICE CALLOUT BOX -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f0fdf4; border-left: 4px solid #1abc9c; border-top: 1px solid #bbf7d0; border-right: 1px solid #bbf7d0; border-bottom: 1px solid #bbf7d0; border-radius: 8px; margin-bottom: 30px;">
-                <tr>
-                  <td style="padding: 18px 20px;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td width="28" valign="top" style="padding-top: 2px;">
-                          <span style="display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; background-color: #1abc9c; color: #ffffff; border-radius: 50%; font-size: 12px; font-weight: bold;">✓</span>
-                        </td>
-                        <td valign="top">
-                          <p style="margin: 0 0 6px; font-size: 13px; font-weight: 700; color: #166534; text-transform: uppercase; letter-spacing: 0.6px;">
-                            Application Under Review — Response within 24 Hours
-                          </p>
-                          <p style="margin: 0; font-size: 14px; color: #15803d; line-height: 22px;">
-                            Our administrative and admissions team is currently reviewing your application and checking cohort availability. <strong>You should expect to hear from our team within the next 24 hours</strong> to finalize your schedule, confirm placement, and guide you through the remaining enrollment steps.
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Student Details Section -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 14px;">
-                <tr>
-                  <td style="border-bottom: 2px solid #ff9f43; padding-bottom: 8px;">
-                    <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">
-                      📚 Registered Student(s) — ${body.students.length} ${body.students.length > 1 ? 'Students' : 'Student'}
-                    </h2>
-                  </td>
-                </tr>
-              </table>
-
-              ${studentsCards}
-
-              <!-- Registrant / Guardian Details Section -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 28px 0 14px;">
-                <tr>
-                  <td style="border-bottom: 2px solid #1abc9c; padding-bottom: 8px;">
-                    <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">
-                      👤 ${isAdultSelf ? 'Registrant Information' : 'Guardian Information'}
-                    </h2>
-                  </td>
-                </tr>
-              </table>
-
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 28px;">
-                <tr>
-                  <td style="padding: 16px 18px;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px;">
-                      ${!isAdultSelf ? `
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600; width: 130px; border-bottom: 1px solid #f1f5f9;">Full Name:</td>
-                        <td style="padding: 8px 0; color: #1e293b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">${body.guardianName || ''}</td>
-                      </tr>
-                      ` : ''}
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600; width: 130px; border-bottom: 1px solid #f1f5f9;">Email Address:</td>
-                        <td style="padding: 8px 0; color: #1abc9c; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
-                          <a href="mailto:${body.email}" style="color: #1abc9c; text-decoration: none;">${body.email}</a>
-                        </td>
-                      </tr>
-                      ${!isAdultSelf && body.phone ? `
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Phone Number:</td>
-                        <td style="padding: 8px 0; color: #1e293b; border-bottom: 1px solid #f1f5f9;">
-                          <a href="tel:${body.phone}" style="color: #1e293b; text-decoration: none;">${body.phone}</a>
-                        </td>
-                      </tr>
-                      ` : ''}
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Relationship:</td>
-                        <td style="padding: 8px 0; color: #1e293b;">${relationshipDisplay}</td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- What Happens Next? (3 Steps Roadmap) -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 28px;">
-                <tr>
-                  <td style="padding: 20px 22px;">
-                    <p style="margin: 0 0 14px; font-size: 15px; font-weight: 700; color: #1e293b;">
-                      What happens next?
+                  <td style="background-color: #f8f9fa; border-left: 4px solid #000000; padding: 16px 20px;">
+                    <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #000000; margin: 0;">
+                      Our administrative team is currently reviewing your registration details. <strong>You should hear from us within the next 24 hours</strong> to finalize your schedule, confirm class placement, and complete enrollment.
                     </p>
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px; color: #475569;">
-                      <tr>
-                        <td width="28" valign="top" style="padding-bottom: 10px; color: #1abc9c; font-weight: bold;">1.</td>
-                        <td valign="top" style="padding-bottom: 10px; line-height: 20px;">
-                          <strong>Application Review:</strong> We verify course prerequisites and cohort availability for your chosen program.
-                        </td>
-                      </tr>
-                      <tr>
-                        <td width="28" valign="top" style="padding-bottom: 10px; color: #1abc9c; font-weight: bold;">2.</td>
-                        <td valign="top" style="padding-bottom: 10px; line-height: 20px;">
-                          <strong>Contact Within 24 Hours:</strong> Our admissions team will reach out to confirm your timing, answer questions, and finalize placement.
-                        </td>
-                      </tr>
-                      <tr>
-                        <td width="28" valign="top" style="color: #1abc9c; font-weight: bold;">3.</td>
-                        <td valign="top" style="line-height: 20px;">
-                          <strong>Orientation & Start:</strong> You will receive class orientation details and start dates ready for day one!
-                        </td>
-                      </tr>
-                    </table>
                   </td>
                 </tr>
-              </table>
+              </tbody>
+            </table>
 
-              <!-- Support & CTA -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="text-align: center; padding-top: 6px;">
+            <!-- Student(s) Heading -->
+            <h2 style="font-size: 17px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #000000; text-align: left; margin: 24px 0 12px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px;">
+              Student Information (${body.students.length})
+            </h2>
+
+            ${studentsHtml}
+
+            <!-- Guardian Details Heading -->
+            <h2 style="font-size: 17px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #000000; text-align: left; margin: 28px 0 12px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px;">
+              ${isAdultSelf ? 'Registrant Information' : 'Guardian Information'}
+            </h2>
+
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 24px; border: 1px solid #e5e5e5; background-color: #ffffff;">
+              <tbody>
+                ${!isAdultSelf ? `
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Full Name</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${body.guardianName || ''}</td>
+                </tr>
+                ` : ''}
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Email</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">
+                    <a href="mailto:${body.email}" style="color: #0000EE; text-decoration: underline;">${body.email}</a>
+                  </td>
+                </tr>
+                ${!isAdultSelf && body.phone ? `
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Phone</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${body.phone}</td>
+                </tr>
+                ` : ''}
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px;">Relationship</td>
+                  <td style="padding: 10px 14px; color: #000000;">${relationshipDisplay}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Button -->
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: center; margin: 30px 0 10px;">
+              <tbody>
                 <tr>
                   <td align="center">
-                    <p style="margin: 0 0 16px; font-size: 14px; color: #64748b; line-height: 22px;">
-                      Have questions or need to make adjustments to your submission?<br />
-                      Simply reply to this email or reach us at <a href="mailto:administration@avenirsouriant.com" style="color: #1abc9c; font-weight: 600; text-decoration: none;">administration@avenirsouriant.com</a>.
-                    </p>
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto;">
-                      <tr>
-                        <td align="center" style="background-color: #1abc9c; border-radius: 8px;">
-                          <a href="https://avenirsouriant.com" target="_blank" style="display: inline-block; padding: 12px 28px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none; letter-spacing: 0.3px;">
-                            Visit Avenir Souriant Website →
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
+                    <a href="https://avenirsouriant.com" target="_blank" style="background-color: #000000; font-size: 15px; line-height: 22px; font-family: 'Helvetica', Arial, sans-serif; font-weight: normal; text-decoration: none; padding: 12px 25px; color: #ffffff; border-radius: 4px; display: inline-block; mso-padding-alt: 0;">
+                      <!--[if mso]>
+                      <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+                      <![endif]-->
+                      <span style="mso-text-raise: 15pt; color: #ffffff;">Visit Website</span>
+                      <!--[if mso]>
+                      <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+                      <![endif]-->
+                    </a>
                   </td>
                 </tr>
-              </table>
+              </tbody>
+            </table>
 
-            </td>
-          </tr>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- End single column section -->
 
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 24px 28px; text-align: center;">
-              <p style="margin: 0 0 8px; font-size: 13px; font-weight: 700; color: #334155;">
-                Avenir Souriant • Empowering Youth & Building Futures
-              </p>
-              <p style="margin: 0 0 12px; font-size: 12px; color: #64748b; line-height: 18px;">
-                <a href="https://avenirsouriant.com" style="color: #1abc9c; text-decoration: none;">Home</a> &nbsp;•&nbsp; 
-                <a href="https://avenirsouriant.com/programs" style="color: #1abc9c; text-decoration: none;">Programs</a> &nbsp;•&nbsp; 
-                <a href="https://avenirsouriant.com/register" style="color: #1abc9c; text-decoration: none;">Contact Us</a>
-              </p>
-              <p style="margin: 0; font-size: 11px; color: #94a3b8; line-height: 16px;">
-                This automated confirmation was sent to <strong style="color: #64748b;">${body.email}</strong>.<br />
-                © 2026 Avenir Souriant. All rights reserved.
-              </p>
-            </td>
-          </tr>
+    <!-- Start footer -->
+    <table align="center" style="text-align: center; vertical-align: top; width: 600px; max-width: 600px; background-color: #000000;" width="600">
+      <tbody>
+        <tr>
+          <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 30px; padding-bottom: 30px;" width="596">
 
-        </table>
+            <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #ffffff; margin: 0 0 6px;">
+              Avenir Souriant
+            </p>
 
-      </td>
-    </tr>
-  </table>
-</body>
+            <p style="font-size: 13px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #cccccc; margin: 0 0 6px;">
+              Empowering Youth & Building Futures
+            </p>
+
+            <p style="margin-bottom: 0; font-size: 13px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #ffffff;">
+              <a target="_blank" style="text-decoration: underline; color: #ffffff;" href="https://avenirsouriant.com">
+                www.avenirsouriant.com
+              </a>
+            </p>
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- End footer -->
+
+    <!-- Start sub-footer section -->
+    <table align="center" style="text-align: center; vertical-align: top; width: 600px; max-width: 600px;" width="600">
+      <tbody>
+        <tr>
+          <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 20px; padding-bottom: 30px;" width="596">
+            <p style="font-size: 12px; line-height: 18px; font-family: 'Helvetica', Arial, sans-serif; font-weight: normal; text-decoration: none; color: #919293; margin: 0;">
+              This is an automated confirmation of your course registration sent to ${body.email}.<br />
+              Have questions? Contact us at <a style="text-decoration: underline; color: #000000;" href="mailto:administration@avenirsouriant.com"><u>administration@avenirsouriant.com</u></a>
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- End sub-footer section -->
+
+  </div>
+
+  </body>
 </html>
   `;
 }
 
 /**
  * 2. Notification Email sent to Administration
+ * Designed strictly following free-html-email-template
  */
 export function generateAdminRegistrationEmail(body: RegistrationBody): string {
   const isAdultSelf = body.relationship === 'Does not apply';
@@ -375,318 +303,371 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
     ? body.relationshipOther
     : body.relationship;
 
-  const studentsCards = body.students.map((student, index) => `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 16px; overflow: hidden;">
-      <tr>
-        <td style="background-color: #1e293b; padding: 12px 18px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-            <tr>
-              <td style="font-size: 14px; font-weight: 700; color: #ffffff;">
-                🎓 Student ${index + 1}: ${student.fullName}
-              </td>
-              <td align="right">
-                <span style="background-color: #ff9f43; color: #ffffff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 12px; text-transform: uppercase;">
-                  Registration
-                </span>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td style="padding: 16px 18px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px;">
-            <tr>
-              <td style="padding: 8px 0; color: #64748b; font-weight: 600; width: 130px; border-bottom: 1px solid #f1f5f9;">Course:</td>
-              <td style="padding: 8px 0; color: #1e293b; font-weight: 700; border-bottom: 1px solid #f1f5f9;">${student.course}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Date of Birth:</td>
-              <td style="padding: 8px 0; color: #1e293b; border-bottom: 1px solid #f1f5f9;">${student.dateOfBirth}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Gender:</td>
-              <td style="padding: 8px 0; color: #1e293b; border-bottom: 1px solid #f1f5f9;">${student.gender}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Current Grade:</td>
-              <td style="padding: 8px 0; color: #1e293b;">${student.currentGrade || 'Not provided'}</td>
-            </tr>
-          </table>
-        </td>
-      </tr>
+  const studentsHtml = body.students.map((student, index) => `
+    <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 16px; border: 1px solid #e5e5e5; background-color: #ffffff;">
+      <tbody>
+        <tr style="background-color: #f8f9fa;">
+          <td colspan="2" style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #e5e5e5; font-size: 15px;">
+            Student ${index + 1}: ${student.fullName}
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Course</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #eeeeee;">${student.course}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Date of Birth</td>
+          <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${student.dateOfBirth}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Gender</td>
+          <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${student.gender}</td>
+        </tr>
+        ${student.currentGrade ? `
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px;">Current Grade</td>
+          <td style="padding: 10px 14px; color: #000000;">${student.currentGrade}</td>
+        </tr>
+        ` : ''}
+      </tbody>
     </table>
   `).join('');
 
-  return `
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  return `<!-- Free to use, HTML email template designed & built by FullSphere. Learn more about us at www.fullsphere.co.uk -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--[if gte mso 9]>
+  <xml>
+    <o:OfficeDocumentSettings>
+      <o:AllowPNG/>
+      <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+  </xml>
+  <![endif]-->
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <!--[if !mso]><!--><meta http-equiv="X-UA-Compatible" content="IE=edge"><!--<![endif]-->
+
   <title>New Course Registration — ${subjectName}</title>
+
+  <!-- Start stylesheet -->
   <style type="text/css">
-    ${emailStyles}
+    a,a[href],a:hover, a:link, a:visited {
+      text-decoration: none!important;
+      color: #0000EE;
+    }
+    .link {
+      text-decoration: underline!important;
+    }
+    p, p:visited {
+      font-size:15px;
+      line-height:24px;
+      font-family:'Helvetica', Arial, sans-serif;
+      font-weight:300;
+      text-decoration:none;
+      color: #000000;
+    }
+    h1 {
+      font-size:22px;
+      line-height:28px;
+      font-family:'Helvetica', Arial, sans-serif;
+      font-weight:normal;
+      text-decoration:none;
+      color: #000000;
+    }
+    .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td {line-height: 100%;}
+    .ExternalClass {width: 100%;}
   </style>
+  <!-- End stylesheet -->
+
 </head>
-<body style="margin: 0; padding: 0; background-color: #f4f6f8; -webkit-text-size-adjust: 100%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f6f8; padding: 35px 10px;">
-    <tr>
-      <td align="center" valign="top">
-        
-        <!-- Main Card Container -->
-        <table role="presentation" class="template-container" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); margin: 0 auto;">
-          
-          <!-- Logo Brand Header -->
-          <tr>
-            <td align="center" style="padding: 28px 24px 20px; background-color: #ffffff; border-bottom: 1px solid #f1f5f9;">
-              <a href="https://avenirsouriant.com" target="_blank" style="text-decoration: none; display: inline-block;">
-                <img src="cid:as-logo" alt="Avenir Souriant" width="150" style="display: block; width: 150px; max-width: 150px; height: auto; margin: 0 auto; border: 0;" />
-              </a>
-            </td>
-          </tr>
 
-          <!-- Hero Banner -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #ff9f43 0%, #e67e22 100%); padding: 32px 28px; text-align: center;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 12px;">
+  <body style="text-align: center; margin: 0; padding-top: 10px; padding-bottom: 10px; padding-left: 0; padding-right: 0; -webkit-text-size-adjust: 100%;background-color: #f2f4f6; color: #000000" align="center">
+  
+  <div style="text-align: center;">
+
+    <!-- Start container for logo -->
+    <table align="center" style="text-align: center; vertical-align: top; width: 600px; max-width: 600px; background-color: #ffffff;" width="600">
+      <tbody>
+        <tr>
+          <td style="width: 596px; vertical-align: top; padding-left: 0; padding-right: 0; padding-top: 25px; padding-bottom: 20px;" width="596">
+            <a href="https://avenirsouriant.com" target="_blank" style="text-decoration: none;">
+              <img style="width: 180px; max-width: 180px; height: auto; text-align: center;" alt="Avenir Souriant" src="cid:as-logo" align="center" width="180">
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- End container for logo -->
+
+    <!-- Start single column section -->
+    <table align="center" style="text-align: center; vertical-align: top; width: 600px; max-width: 600px; background-color: #ffffff;" width="600">
+      <tbody>
+        <tr>
+          <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 10px; padding-bottom: 40px;" width="596">
+
+            <h1 style="font-size: 22px; line-height: 28px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #000000; margin: 0 0 16px; text-align: left;">
+              New Course Registration
+            </h1>
+
+            <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #555555; text-align: left; margin: 0 0 24px;">
+              A new registration has been submitted through the Avenir Souriant website.
+            </p>
+
+            <!-- Registrant Details Heading -->
+            <h2 style="font-size: 17px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #000000; text-align: left; margin: 0 0 12px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px;">
+              ${isAdultSelf ? 'Registrant Details' : 'Guardian Details'}
+            </h2>
+
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 24px; border: 1px solid #e5e5e5; background-color: #ffffff;">
+              <tbody>
+                ${!isAdultSelf ? `
                 <tr>
-                  <td style="background-color: rgba(255, 255, 255, 0.25); padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; color: #ffffff; letter-spacing: 0.8px; text-transform: uppercase;">
-                    Incoming Registration
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Full Name</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${body.guardianName || ''}</td>
+                </tr>
+                ` : ''}
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Email</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">
+                    <a href="mailto:${body.email}" style="color: #0000EE; text-decoration: underline;">${body.email}</a>
                   </td>
                 </tr>
-              </table>
-              <h1 style="color: #ffffff; margin: 0 0 6px; font-size: 24px; font-weight: 700; line-height: 32px; letter-spacing: -0.3px;">
-                New Course Registration
-              </h1>
-              <p style="color: #fff4e6; margin: 0; font-size: 14px; font-weight: 500;">
-                Submitted via Avenir Souriant Website
-              </p>
-            </td>
-          </tr>
-
-          <!-- Content Body -->
-          <tr>
-            <td class="content-padding" style="padding: 32px 28px; background-color: #ffffff;">
-
-              <!-- Registrant / Guardian Card -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 14px;">
+                ${!isAdultSelf && body.phone ? `
                 <tr>
-                  <td style="border-bottom: 2px solid #1abc9c; padding-bottom: 8px;">
-                    <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">
-                      👤 ${isAdultSelf ? 'Registrant Details' : 'Parent / Guardian Details'}
-                    </h2>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Phone</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">
+                    <a href="tel:${body.phone}" style="color: #000000; text-decoration: none;">${body.phone}</a>
                   </td>
                 </tr>
-              </table>
-
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 28px;">
+                ` : ''}
                 <tr>
-                  <td style="padding: 16px 18px;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px;">
-                      ${!isAdultSelf ? `
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600; width: 130px; border-bottom: 1px solid #f1f5f9;">Full Name:</td>
-                        <td style="padding: 8px 0; color: #1e293b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">${body.guardianName || ''}</td>
-                      </tr>
-                      ` : ''}
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600; width: 130px; border-bottom: 1px solid #f1f5f9;">Email Address:</td>
-                        <td style="padding: 8px 0; color: #1abc9c; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
-                          <a href="mailto:${body.email}" style="color: #1abc9c; text-decoration: none;">${body.email}</a>
-                        </td>
-                      </tr>
-                      ${!isAdultSelf && body.phone ? `
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Phone Number:</td>
-                        <td style="padding: 8px 0; color: #1e293b; border-bottom: 1px solid #f1f5f9;">
-                          <a href="tel:${body.phone}" style="color: #1e293b; text-decoration: none;">${body.phone}</a>
-                        </td>
-                      </tr>
-                      ` : ''}
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600;">Relationship:</td>
-                        <td style="padding: 8px 0; color: #1e293b;">${relationshipDisplay}</td>
-                      </tr>
-                    </table>
-                  </td>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px;">Relationship</td>
+                  <td style="padding: 10px 14px; color: #000000;">${relationshipDisplay}</td>
                 </tr>
-              </table>
+              </tbody>
+            </table>
 
-              <!-- Student(s) -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 14px;">
-                <tr>
-                  <td style="border-bottom: 2px solid #ff9f43; padding-bottom: 8px;">
-                    <h2 style="margin: 0; font-size: 15px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px;">
-                      📚 Student(s) — ${body.students.length} Registered
-                    </h2>
-                  </td>
-                </tr>
-              </table>
+            <!-- Student(s) Heading -->
+            <h2 style="font-size: 17px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #000000; text-align: left; margin: 28px 0 12px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px;">
+              Registered Student(s) — ${body.students.length}
+            </h2>
 
-              ${studentsCards}
+            ${studentsHtml}
 
-              <!-- Direct Reply Action -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="text-align: center; padding-top: 10px;">
+            <!-- Button to reply -->
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: center; margin: 30px 0 10px;">
+              <tbody>
                 <tr>
                   <td align="center">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
-                      <tr>
-                        <td align="center" style="background-color: #ff9f43; border-radius: 8px;">
-                          <a href="mailto:${body.email}?subject=Regarding%20your%20Avenir%20Souriant%20Course%20Registration" style="display: inline-block; padding: 12px 28px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none; letter-spacing: 0.3px;">
-                            Reply to Registrant (${body.email}) →
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
+                    <a href="mailto:${body.email}?subject=Regarding%20your%20Avenir%20Souriant%20Course%20Registration" target="_blank" style="background-color: #000000; font-size: 15px; line-height: 22px; font-family: 'Helvetica', Arial, sans-serif; font-weight: normal; text-decoration: none; padding: 12px 25px; color: #ffffff; border-radius: 4px; display: inline-block; mso-padding-alt: 0;">
+                      <!--[if mso]>
+                      <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+                      <![endif]-->
+                      <span style="mso-text-raise: 15pt; color: #ffffff;">Reply to ${body.email}</span>
+                      <!--[if mso]>
+                      <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+                      <![endif]-->
+                    </a>
                   </td>
                 </tr>
-              </table>
+              </tbody>
+            </table>
 
-            </td>
-          </tr>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- End single column section -->
 
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px 28px; text-align: center;">
-              <p style="margin: 0; font-size: 12px; color: #64748b;">
-                Avenir Souriant Website Administration System
-              </p>
-            </td>
-          </tr>
+    <!-- Start footer -->
+    <table align="center" style="text-align: center; vertical-align: top; width: 600px; max-width: 600px; background-color: #000000;" width="600">
+      <tbody>
+        <tr>
+          <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 25px; padding-bottom: 25px;" width="596">
+            <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #ffffff; margin: 0;">
+              Avenir Souriant Website Administration System
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- End footer -->
 
-        </table>
+  </div>
 
-      </td>
-    </tr>
-  </table>
-</body>
+  </body>
 </html>
   `;
 }
 
 /**
  * 3. Notification Email for General Contact Form Submissions
+ * Designed strictly following free-html-email-template
  */
 export function generateAdminContactEmail(body: ContactBody): string {
-  return `
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  return `<!-- Free to use, HTML email template designed & built by FullSphere. Learn more about us at www.fullsphere.co.uk -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!--[if gte mso 9]>
+  <xml>
+    <o:OfficeDocumentSettings>
+      <o:AllowPNG/>
+      <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+  </xml>
+  <![endif]-->
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <!--[if !mso]><!--><meta http-equiv="X-UA-Compatible" content="IE=edge"><!--<![endif]-->
+
   <title>New Contact Message — ${body.name}</title>
+
+  <!-- Start stylesheet -->
   <style type="text/css">
-    ${emailStyles}
+    a,a[href],a:hover, a:link, a:visited {
+      text-decoration: none!important;
+      color: #0000EE;
+    }
+    .link {
+      text-decoration: underline!important;
+    }
+    p, p:visited {
+      font-size:15px;
+      line-height:24px;
+      font-family:'Helvetica', Arial, sans-serif;
+      font-weight:300;
+      text-decoration:none;
+      color: #000000;
+    }
+    h1 {
+      font-size:22px;
+      line-height:28px;
+      font-family:'Helvetica', Arial, sans-serif;
+      font-weight:normal;
+      text-decoration:none;
+      color: #000000;
+    }
+    .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td {line-height: 100%;}
+    .ExternalClass {width: 100%;}
   </style>
+  <!-- End stylesheet -->
+
 </head>
-<body style="margin: 0; padding: 0; background-color: #f4f6f8; -webkit-text-size-adjust: 100%;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f6f8; padding: 35px 10px;">
-    <tr>
-      <td align="center" valign="top">
-        
-        <table role="presentation" class="template-container" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); margin: 0 auto;">
-          
-          <!-- Logo Brand Header -->
-          <tr>
-            <td align="center" style="padding: 28px 24px 20px; background-color: #ffffff; border-bottom: 1px solid #f1f5f9;">
-              <a href="https://avenirsouriant.com" target="_blank" style="text-decoration: none; display: inline-block;">
-                <img src="cid:as-logo" alt="Avenir Souriant" width="150" style="display: block; width: 150px; max-width: 150px; height: auto; margin: 0 auto; border: 0;" />
-              </a>
-            </td>
-          </tr>
 
-          <!-- Hero Banner -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); padding: 32px 28px; text-align: center;">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin: 0 auto 12px;">
+  <body style="text-align: center; margin: 0; padding-top: 10px; padding-bottom: 10px; padding-left: 0; padding-right: 0; -webkit-text-size-adjust: 100%;background-color: #f2f4f6; color: #000000" align="center">
+  
+  <div style="text-align: center;">
+
+    <!-- Start container for logo -->
+    <table align="center" style="text-align: center; vertical-align: top; width: 600px; max-width: 600px; background-color: #ffffff;" width="600">
+      <tbody>
+        <tr>
+          <td style="width: 596px; vertical-align: top; padding-left: 0; padding-right: 0; padding-top: 25px; padding-bottom: 20px;" width="596">
+            <a href="https://avenirsouriant.com" target="_blank" style="text-decoration: none;">
+              <img style="width: 180px; max-width: 180px; height: auto; text-align: center;" alt="Avenir Souriant" src="cid:as-logo" align="center" width="180">
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- End container for logo -->
+
+    <!-- Start single column section -->
+    <table align="center" style="text-align: center; vertical-align: top; width: 600px; max-width: 600px; background-color: #ffffff;" width="600">
+      <tbody>
+        <tr>
+          <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 10px; padding-bottom: 40px;" width="596">
+
+            <h1 style="font-size: 22px; line-height: 28px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #000000; margin: 0 0 16px; text-align: left;">
+              New Contact Message
+            </h1>
+
+            <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #555555; text-align: left; margin: 0 0 24px;">
+              You have received a new contact inquiry through the website.
+            </p>
+
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 24px; border: 1px solid #e5e5e5; background-color: #ffffff;">
+              <tbody>
                 <tr>
-                  <td style="background-color: rgba(255, 255, 255, 0.25); padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; color: #ffffff; letter-spacing: 0.8px; text-transform: uppercase;">
-                    Inquiry Received
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Name</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${body.name}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Email</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">
+                    <a href="mailto:${body.email}" style="color: #0000EE; text-decoration: underline;">${body.email}</a>
                   </td>
                 </tr>
-              </table>
-              <h1 style="color: #ffffff; margin: 0 0 6px; font-size: 24px; font-weight: 700; line-height: 32px; letter-spacing: -0.3px;">
-                New Contact Message
-              </h1>
-              <p style="color: #e6fffa; margin: 0; font-size: 14px; font-weight: 500;">
-                Submitted via Avenir Souriant Website
-              </p>
-            </td>
-          </tr>
-
-          <!-- Content Body -->
-          <tr>
-            <td class="content-padding" style="padding: 32px 28px; background-color: #ffffff;">
-
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 24px;">
                 <tr>
-                  <td style="padding: 16px 18px;">
-                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px;">
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600; width: 130px; border-bottom: 1px solid #f1f5f9;">Name:</td>
-                        <td style="padding: 8px 0; color: #1e293b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">${body.name}</td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Email:</td>
-                        <td style="padding: 8px 0; color: #1abc9c; font-weight: 600; border-bottom: 1px solid #f1f5f9;">
-                          <a href="mailto:${body.email}" style="color: #1abc9c; text-decoration: none;">${body.email}</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 8px 0; color: #64748b; font-weight: 600; border-bottom: 1px solid #f1f5f9;">Phone:</td>
-                        <td style="padding: 8px 0; color: #1e293b; border-bottom: 1px solid #f1f5f9;">
-                          <a href="tel:${body.phone}" style="color: #1e293b; text-decoration: none;">${body.phone}</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 12px 0 6px; color: #64748b; font-weight: 600; vertical-align: top;" colspan="2">Message / Comment:</td>
-                      </tr>
-                      <tr>
-                        <td colspan="2" style="padding: 12px 14px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; color: #1e293b; line-height: 22px;">
-                          ${body.comment ? body.comment.replace(/\n/g, '<br />') : '<em style="color: #94a3b8;">No comment provided</em>'}
-                        </td>
-                      </tr>
-                    </table>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Phone</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">
+                    <a href="tel:${body.phone}" style="color: #000000; text-decoration: none;">${body.phone}</a>
                   </td>
                 </tr>
-              </table>
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; vertical-align: top;">Comment</td>
+                  <td style="padding: 10px 14px; color: #000000; line-height: 22px;">
+                    ${body.comment ? body.comment.replace(/\n/g, '<br />') : '<em style="color: #999999;">No comment provided</em>'}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
-              <!-- Action Button -->
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="text-align: center; padding-top: 8px;">
+            <!-- Button -->
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: center; margin: 30px 0 10px;">
+              <tbody>
                 <tr>
                   <td align="center">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
-                      <tr>
-                        <td align="center" style="background-color: #1abc9c; border-radius: 8px;">
-                          <a href="mailto:${body.email}?subject=Regarding%20your%20message%20to%20Avenir%20Souriant" style="display: inline-block; padding: 12px 28px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none; letter-spacing: 0.3px;">
-                            Reply to ${body.name} (${body.email}) →
-                          </a>
-                        </td>
-                      </tr>
-                    </table>
+                    <a href="mailto:${body.email}?subject=Regarding%20your%20inquiry%20to%20Avenir%20Souriant" target="_blank" style="background-color: #000000; font-size: 15px; line-height: 22px; font-family: 'Helvetica', Arial, sans-serif; font-weight: normal; text-decoration: none; padding: 12px 25px; color: #ffffff; border-radius: 4px; display: inline-block; mso-padding-alt: 0;">
+                      <!--[if mso]>
+                      <i style="letter-spacing: 25px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i>
+                      <![endif]-->
+                      <span style="mso-text-raise: 15pt; color: #ffffff;">Reply to ${body.name}</span>
+                      <!--[if mso]>
+                      <i style="letter-spacing: 25px; mso-font-width: -100%;">&nbsp;</i>
+                      <![endif]-->
+                    </a>
                   </td>
                 </tr>
-              </table>
+              </tbody>
+            </table>
 
-            </td>
-          </tr>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- End single column section -->
 
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 20px 28px; text-align: center;">
-              <p style="margin: 0; font-size: 12px; color: #64748b;">
-                Avenir Souriant Website Contact System
-              </p>
-            </td>
-          </tr>
+    <!-- Start footer -->
+    <table align="center" style="text-align: center; vertical-align: top; width: 600px; max-width: 600px; background-color: #000000;" width="600">
+      <tbody>
+        <tr>
+          <td style="width: 596px; vertical-align: top; padding-left: 30px; padding-right: 30px; padding-top: 25px; padding-bottom: 25px;" width="596">
+            <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #ffffff; margin: 0;">
+              Avenir Souriant Website Administration System
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- End footer -->
 
-        </table>
+  </div>
 
-      </td>
-    </tr>
-  </table>
-</body>
+  </body>
 </html>
   `;
 }
