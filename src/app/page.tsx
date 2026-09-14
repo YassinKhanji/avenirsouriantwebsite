@@ -25,6 +25,7 @@ const heroSlides = [
     ),
     subtitle: 'From Arabic language mastery to STEM & Robotics, our programs are designed to spark curiosity, build confidence, and make learning an adventure.',
     cta: { label: 'View Programs', href: '/programs' },
+    cta2: { label: 'Register Now', href: '/register-now' },
     showPhone: false,
     textColor: 'text-gray-900',
   },
@@ -41,7 +42,8 @@ const heroSlides = [
       </>
     ),
     subtitle: null,
-    cta: { label: 'Learn More', href: '/register' },
+    cta: { label: 'Register Now', href: '/register-now' },
+    cta2: null,
     showPhone: true,
     textColor: 'text-gray-900',
   },
@@ -53,6 +55,7 @@ const heroSlides = [
     heading: <>Join the Avenir Souriant <br className="hidden sm:inline" /> Family Today</>,
     subtitle: 'Enroll your child in Montréal\'s most exciting Arabic learning center. Limited spots available — register now!',
     cta: { label: 'Register Now', href: '/register-now' },
+    cta2: { label: 'View Programs', href: '/programs' },
     showPhone: false,
     textColor: 'text-white',
   },
@@ -198,13 +201,22 @@ export default function Home() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5, duration: 0.5 }}
+                    className="flex flex-col sm:flex-row items-center justify-center gap-3"
                   >
                     <TransitionLink
                       href={slide.cta.href}
-                      className="inline-block w-full sm:w-auto px-8 py-3.5 sm:px-10 sm:py-4 bg-secondary text-white rounded-full font-bold text-base sm:text-lg md:text-xl hover:bg-opacity-90 mb-4 sm:mb-6 shadow-lg transition-transform hover:scale-105 active:scale-95 text-center"
+                      className="inline-block w-full sm:w-auto px-8 py-3.5 sm:px-10 sm:py-4 bg-secondary text-white rounded-full font-bold text-base sm:text-lg md:text-xl hover:bg-opacity-90 mb-0 shadow-lg transition-transform hover:scale-105 active:scale-95 text-center"
                     >
                       {slide.cta.label}
                     </TransitionLink>
+                    {'cta2' in slide && slide.cta2 && (
+                      <TransitionLink
+                        href={slide.cta2.href}
+                        className="inline-block w-full sm:w-auto px-8 py-3.5 sm:px-10 sm:py-4 bg-white/20 backdrop-blur-sm text-white border-2 border-white/70 rounded-full font-bold text-base sm:text-lg md:text-xl hover:bg-white/30 shadow-lg transition-transform hover:scale-105 active:scale-95 text-center"
+                      >
+                        {slide.cta2.label}
+                      </TransitionLink>
+                    )}
                   </motion.div>
 
                   {slide.showPhone && (
@@ -275,9 +287,14 @@ export default function Home() {
                     <span>Diverse Activities: Robotics, Soccer, & Stitching</span>
                   </li>
                 </ul>
-                <TransitionLink href="/programs" className="inline-block w-full sm:w-auto text-center px-8 py-3.5 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 shadow-sm transition-all hover:scale-105 active:scale-95">
-                  View Programs
-                </TransitionLink>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <TransitionLink href="/programs" className="inline-block w-full sm:w-auto text-center px-8 py-3.5 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 shadow-sm transition-all hover:scale-105 active:scale-95">
+                    View Programs
+                  </TransitionLink>
+                  <TransitionLink href="/register-now" className="inline-block w-full sm:w-auto text-center px-8 py-3.5 bg-primary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 shadow-sm transition-all hover:scale-105 active:scale-95">
+                    Register Now
+                  </TransitionLink>
+                </div>
               </div>
             </div>
           </div>
@@ -388,15 +405,21 @@ export default function Home() {
                         </div>
                       </div>
 
-                      {/* Action Button */}
-                      <TransitionLink
-                        href="/register"
-                        className="w-full"
-                      >
-                        <button className="w-full py-3 px-4 sm:px-6 rounded-2xl border-2 border-gray-200 text-gray-800 font-bold text-sm md:text-base hover:border-secondary hover:bg-secondary hover:text-white transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center">
-                          {program.active ? 'Learn More' : 'Find Out More'}
-                        </button>
-                      </TransitionLink>
+                      {/* Action Buttons */}
+                      <div className="flex flex-col gap-2">
+                        <TransitionLink href={program.active ? `/programs/${program.slug}` : '/register'} className="w-full">
+                          <button className="w-full py-3 px-4 sm:px-6 rounded-2xl border-2 border-gray-200 text-gray-800 font-bold text-sm md:text-base hover:border-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center">
+                            {program.active ? 'Learn More' : 'Find Out More'}
+                          </button>
+                        </TransitionLink>
+                        {program.active && (
+                          <TransitionLink href="/register-now" className="w-full">
+                            <button className="w-full py-3 px-4 sm:px-6 rounded-2xl bg-secondary text-white font-bold text-sm md:text-base hover:bg-secondary/90 transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center">
+                              Register Now
+                            </button>
+                          </TransitionLink>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

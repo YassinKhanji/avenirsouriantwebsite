@@ -318,6 +318,24 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                       {paragraph}
                     </p>
                   ))}
+
+                  {/* Inline Register CTA after description */}
+                  {course.active && (
+                    <div className="mt-6 p-5 sm:p-6 bg-gradient-to-r from-secondary/10 to-primary/10 border border-secondary/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div>
+                        <p className="font-bold text-gray-900 text-base sm:text-lg">Ready to join this program?</p>
+                        <p className="text-gray-600 text-sm mt-0.5">Secure your child&apos;s spot before it fills up.</p>
+                      </div>
+                      <TransitionLink href="/register-now" className="shrink-0">
+                        <button className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-white font-bold text-sm sm:text-base rounded-full hover:bg-secondary/90 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-md whitespace-nowrap">
+                          Register Now
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                          </svg>
+                        </button>
+                      </TransitionLink>
+                    </div>
+                  )}
                 </motion.div>
 
                 {/* ═══ Parent Challenges Addressed (if present) ═══ */}
@@ -517,6 +535,64 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   </CollapsibleSection>
                 )}
 
+                {/* ═══ 6-Week Curriculum Roadmap (if present) ═══ */}
+                {course.curriculumTracks && course.curriculumTracks.length > 0 && (
+                  <CollapsibleSection title="The Course Roadmap (6 Weeks)" defaultOpen={false}>
+                    <div className="space-y-4">
+                      {course.curriculumTracks.map((track, i) => (
+                        <div key={i} className="bg-gray-50 p-5 rounded-2xl border border-gray-300 hover:border-primary/50 transition-colors">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="inline-block bg-primary text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                              {track.badge || `Week ${i + 1}`}
+                            </span>
+                          </div>
+                          <h3 className="font-bold text-gray-900 text-base sm:text-lg font-heading mb-1">
+                            {track.title}
+                          </h3>
+                          {track.subtitle && (
+                            <p className="text-xs sm:text-sm text-secondary font-semibold mb-3">
+                              {track.subtitle}
+                            </p>
+                          )}
+                          <ul className="space-y-2 mt-2">
+                            {track.items.map((item, idx) => (
+                              <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-700">
+                                <span className="text-primary font-bold">➔</span>
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleSection>
+                )}
+
+                {/* ═══ Hands-On Tools & Lab Environment (if present) ═══ */}
+                {course.facilities && course.facilities.length > 0 && (
+                  <CollapsibleSection title="Hands-On Tools Students Use" defaultOpen={false}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {course.facilities.map((tool, i) => (
+                        <div key={i} className="bg-gray-50 p-5 rounded-2xl border border-gray-300 hover:border-primary/50 transition-colors flex items-start gap-3.5">
+                          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-2xl shrink-0">
+                            {tool.icon || '🛠️'}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-gray-900 text-base font-heading mb-1">
+                              {tool.title}
+                            </h3>
+                            {tool.desc && (
+                              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                                {tool.desc}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleSection>
+                )}
+
                 {/* ═══ Program Details Table ═══ */}
                 {course.programDetails && course.programDetails.length > 0 && (
                   <CollapsibleSection title="Program Details" defaultOpen={false}>
@@ -708,6 +784,26 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
             </div>
           </div>
         </section>
+
+        {/* Sticky Mobile Register Bar */}
+        {course.active && (
+          <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-xl px-4 py-3">
+            <div className="flex items-center justify-between gap-3 max-w-lg mx-auto">
+              <div className="min-w-0">
+                <p className="font-bold text-gray-900 text-sm truncate">{course.title}</p>
+                <p className="text-secondary font-bold text-sm">{course.price} <span className="text-gray-500 font-normal">/ session</span></p>
+              </div>
+              <TransitionLink href="/register-now" className="shrink-0">
+                <button className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary text-white font-bold text-sm rounded-full hover:bg-secondary/90 transition-all duration-300 active:scale-95 cursor-pointer shadow-md">
+                  Register Now
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
+                </button>
+              </TransitionLink>
+            </div>
+          </div>
+        )}
       </main>
       <Footer />
     </>

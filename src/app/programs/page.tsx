@@ -27,6 +27,23 @@ export default function Services() {
           </div>
         </section>
 
+        {/* Quick Register Banner */}
+        <div className="bg-secondary py-4 px-4">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-white font-semibold text-base sm:text-lg text-center sm:text-left">
+              🎓 Enrollment is now open — spots are filling up fast!
+            </p>
+            <TransitionLink href="/register-now" className="shrink-0">
+              <button className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-secondary font-bold text-sm sm:text-base rounded-full hover:bg-secondary-light hover:text-white border-2 border-white transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98]">
+                Register Now
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </button>
+            </TransitionLink>
+          </div>
+        </div>
+
         {/* Programs Grid Section */}
         <section className="py-14 sm:py-20 bg-gray-50/50 overflow-x-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,18 +113,57 @@ export default function Services() {
                       </div>
                     </div>
 
-                    {/* Action Button */}
-                    <TransitionLink
-                      href="/register"
-                      className="w-full"
-                    >
-                      <button className="w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-2xl border-2 border-gray-200 text-gray-800 font-bold text-sm sm:text-base hover:border-secondary hover:bg-secondary hover:text-white transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center">
-                        Learn More
-                      </button>
-                    </TransitionLink>
+                    {/* Action Buttons */}
+                    <div className="flex flex-col gap-2">
+                      <TransitionLink
+                        href={service.active ? `/programs/${service.slug}` : '/register'}
+                        className="w-full"
+                      >
+                        <button className="w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-2xl border-2 border-gray-200 text-gray-800 font-bold text-sm sm:text-base hover:border-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center">
+                          Learn More
+                        </button>
+                      </TransitionLink>
+                      {service.active && (
+                        <TransitionLink href="/register-now" className="w-full">
+                          <button className="w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-2xl bg-secondary text-white font-bold text-sm sm:text-base hover:bg-secondary/90 transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center inline-flex items-center justify-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 shrink-0">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                            </svg>
+                            Register Now
+                          </button>
+                        </TransitionLink>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Bottom Register CTA */}
+        <section className="py-12 sm:py-16 bg-primary">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-heading text-white mb-3">
+              Ready to Enroll?
+            </h2>
+            <p className="text-white/80 text-base sm:text-lg mb-6 max-w-xl mx-auto">
+              Spaces are limited. Reserve your child&apos;s spot today and start their journey with Avenir Souriant.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <TransitionLink href="/register-now">
+                <button className="inline-flex items-center gap-2 px-8 sm:px-10 py-3.5 sm:py-4 bg-secondary text-white font-bold text-base sm:text-lg rounded-full hover:bg-secondary/90 shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer">
+                  Register Now
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
+                </button>
+              </TransitionLink>
+              <TransitionLink href="/register">
+                <button className="inline-flex items-center gap-2 px-8 sm:px-10 py-3.5 sm:py-4 bg-white/15 border-2 border-white text-white font-bold text-base sm:text-lg rounded-full hover:bg-white/25 shadow-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer">
+                  Contact Us
+                </button>
+              </TransitionLink>
             </div>
           </div>
         </section>

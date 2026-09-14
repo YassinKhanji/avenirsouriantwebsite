@@ -39,6 +39,7 @@ const courseOptions = [
   'Reading Skills Development Course for Girls 8-14 years (Friday)',
   'Reading Skills Development Course for Boys 12-14 years (Thursday)',
   'Foundation Course for Non-Arabic Speakers 16+ (Friday for Women, Sunday for Men)',
+  'Cybersecurity for Teens 13-16 years (6 Weeks - July)',
 ];
 
 const steps = [
@@ -266,12 +267,14 @@ export default function RegisterNow() {
     }, 60);
   };
 
+  const isAdultSelf = guardian.relationship === 'Does not apply';
+
   const validateGuardian = (): boolean => {
     const e: Record<string, string> = {};
     if (!guardian.email) e.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guardian.email)) e.email = 'Invalid email format';
-    if (!guardian.guardianName) e.guardianName = 'Full name is required';
-    if (!guardian.phone) e.phone = 'Phone number is required';
+    if (!isAdultSelf && !guardian.guardianName) e.guardianName = 'Full name is required';
+    if (!isAdultSelf && !guardian.phone) e.phone = 'Phone number is required';
     if (!guardian.relationship) e.relationship = 'Please select a relationship';
     if (guardian.relationship === 'Other' && !guardian.relationshipOther) e.relationshipOther = 'Please specify';
     setErrors(e);
@@ -436,47 +439,17 @@ export default function RegisterNow() {
                   >
                     <div className="mb-6">
                       <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900 mb-2">
-                        Guardian Information
+                        {isAdultSelf ? 'Your Information' : 'Guardian Information'}
                       </h2>
                       <p className="text-gray-500 text-sm sm:text-base">
-                        So we can contact you about the registration and course details.
+                        {isAdultSelf
+                          ? 'Welcome! Since you are registering for yourself, just provide your email below.'
+                          : 'So we can contact you about the registration and course details.'}
                       </p>
                     </div>
 
                     <div className="space-y-5">
-                      <InputField
-                        label="Email Address"
-                        name="email"
-                        type="email"
-                        value={guardian.email}
-                        onChange={(e) => setGuardian({ ...guardian, email: e.target.value })}
-                        placeholder="parent@example.com"
-                        required
-                        error={errors.email}
-                      />
-
-                      <InputField
-                        label="Guardian Full Name"
-                        name="guardianName"
-                        value={guardian.guardianName}
-                        onChange={(e) => setGuardian({ ...guardian, guardianName: e.target.value })}
-                        placeholder="John Doe"
-                        required
-                        error={errors.guardianName}
-                      />
-
-                      <InputField
-                        label="Phone Number"
-                        name="phone"
-                        type="tel"
-                        value={guardian.phone}
-                        onChange={(e) => setGuardian({ ...guardian, phone: e.target.value })}
-                        placeholder="+1 (555) 000-0000"
-                        required
-                        error={errors.phone}
-                        dir="ltr"
-                      />
-
+                      {/* ── Relationship to Student (always on top) ── */}
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
                           Relationship to Student <span className="text-secondary">*</span>
@@ -488,8 +461,8 @@ export default function RegisterNow() {
                               name="relationship"
                               value={rel}
                               checked={guardian.relationship === rel}
-                              onChange={() => setGuardian({ ...guardian, relationship: rel })}
-                              label={rel}
+                              onChange={() => setGuardian({ ...guardian, relationship: rel, relationshipOther: '' })}
+                              label={rel === 'Does not apply' ? 'Does not apply (I am the student)' : rel}
                             />
                           ))}
                         </div>
@@ -512,6 +485,54 @@ export default function RegisterNow() {
                           </div>
                         )}
                       </div>
+
+                      {/* ── Email (always visible) ── */}
+                      <InputField
+                        label="Email Address"
+                        name="email"
+                        type="email"
+                        value={guardian.email}
+                        onChange={(e) => setGuardian({ ...guardian, email: e.target.value })}
+                        placeholder={isAdultSelf ? 'you@example.com' : 'parent@example.com'}
+                        required
+                        error={errors.email}
+                      />
+
+                      {/* ── Fields hidden when adult self-registering ── */}
+                      <AnimatePresence>
+                        {!isAdultSelf && (
+                          <motion.div
+                            key="guardian-extra-fields"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            className="space-y-5 overflow-hidden"
+                          >
+                            <InputField
+                              label="Guardian Full Name"
+                              name="guardianName"
+                              value={guardian.guardianName}
+                              onChange={(e) => setGuardian({ ...guardian, guardianName: e.target.value })}
+                              placeholder="John Doe"
+                              required
+                              error={errors.guardianName}
+                            />
+
+                            <InputField
+                              label="Phone Number"
+                              name="phone"
+                              type="tel"
+                              value={guardian.phone}
+                              onChange={(e) => setGuardian({ ...guardian, phone: e.target.value })}
+                              placeholder="+1 (555) 000-0000"
+                              required
+                              error={errors.phone}
+                              dir="ltr"
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
 
                     <div className="mt-8 flex justify-end">
@@ -747,23 +768,31 @@ export default function RegisterNow() {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <span className="text-gray-500 font-medium">Full Name</span>
-                          <p className="text-gray-900 font-semibold">{guardian.guardianName}</p>
+                          <span className="text-gray-500 font-medium">Relationship</span>
+                          <p className="text-gray-900 font-semibold">
+                            {guardian.relationship === 'Does not apply'
+                              ? 'Self (Adult Student)'
+                              : guardian.relationship === 'Other'
+                              ? guardian.relationshipOther
+                              : guardian.relationship}
+                          </p>
                         </div>
                         <div>
                           <span className="text-gray-500 font-medium">Email</span>
                           <p className="text-gray-900 font-semibold">{guardian.email}</p>
                         </div>
-                        <div>
-                          <span className="text-gray-500 font-medium">Phone</span>
-                          <p className="text-gray-900 font-semibold force-ltr" dir="ltr">{guardian.phone}</p>
-                        </div>
-                        <div>
-                          <span className="text-gray-500 font-medium">Relationship</span>
-                          <p className="text-gray-900 font-semibold">
-                            {guardian.relationship === 'Other' ? guardian.relationshipOther : guardian.relationship}
-                          </p>
-                        </div>
+                        {!isAdultSelf && (
+                          <>
+                            <div>
+                              <span className="text-gray-500 font-medium">Full Name</span>
+                              <p className="text-gray-900 font-semibold">{guardian.guardianName}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-500 font-medium">Phone</span>
+                              <p className="text-gray-900 font-semibold force-ltr" dir="ltr">{guardian.phone}</p>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
 
@@ -888,6 +917,9 @@ export default function RegisterNow() {
                       </h2>
                       <p className="text-gray-600 text-lg mb-2 leading-relaxed max-w-md mx-auto">
                         Thank you for registering with <strong>Avenir Souriant</strong>.
+                      </p>
+                      <p className="text-gray-500 text-base mb-2 max-w-md mx-auto">
+                        A confirmation receipt has been sent to <strong className="text-gray-800">{guardian.email}</strong>.
                       </p>
                       <p className="text-gray-500 text-base mb-8 max-w-md mx-auto">
                         One of our team members will contact you <strong>in the next 24 hours</strong> to confirm the details and finalize enrollment.
