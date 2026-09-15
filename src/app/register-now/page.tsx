@@ -12,7 +12,7 @@ interface StudentData {
   dateOfBirth: string;
   gender: string;
   currentGrade: string;
-  course: string;
+  courses: string[];
   addAnotherStudent?: 'yes' | 'no' | '';
 }
 
@@ -29,7 +29,7 @@ const emptyStudent: StudentData = {
   dateOfBirth: '',
   gender: '',
   currentGrade: '',
-  course: '',
+  courses: [],
   addAnotherStudent: '',
 };
 
@@ -39,7 +39,7 @@ const courseOptions = [
   'Reading Skills Development Course for Girls 8-14 years (Friday)',
   'Reading Skills Development Course for Boys 12-14 years (Thursday)',
   'Foundation Course for Non-Arabic Speakers 16+ (Friday for Women, Sunday for Men)',
-  'Cybersecurity for Teens 13-16 years (6 Weeks - July)',
+  'Cybersecurity for Teens 13-16 years (6 Weeks - August)',
 ];
 
 const steps = [
@@ -138,6 +138,63 @@ const RadioOption = ({
     <span className="text-gray-800 font-medium text-sm sm:text-base">{label}</span>
   </label>
 );
+
+const MultiSelectCourses = ({
+  label,
+  selectedCourses,
+  onChange,
+  options,
+  required = false,
+  error,
+}: {
+  label: string;
+  selectedCourses: string[];
+  onChange: (courses: string[]) => void;
+  options: string[];
+  required?: boolean;
+  error?: string;
+}) => {
+  const toggle = (opt: string) => {
+    if (selectedCourses.includes(opt)) {
+      onChange(selectedCourses.filter((c) => c !== opt));
+    } else {
+      onChange([...selectedCourses, opt]);
+    }
+  };
+
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+        {label} {required && <span className="text-secondary">*</span>}
+      </label>
+      <p className="text-xs text-gray-500 mb-2">Select all that apply</p>
+      <div className="space-y-2">
+        {options.map((opt) => {
+          const checked = selectedCourses.includes(opt);
+          return (
+            <label
+              key={opt}
+              className={`flex items-start gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${
+                checked
+                  ? 'border-secondary bg-secondary/5 ring-2 ring-secondary/20'
+                  : 'border-gray-200 hover:border-gray-300 bg-white'
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={checked}
+                onChange={() => toggle(opt)}
+                className="w-4 h-4 mt-0.5 accent-[#ff9f43] shrink-0"
+              />
+              <span className="text-gray-800 font-medium text-sm sm:text-base leading-snug">{opt}</span>
+            </label>
+          );
+        })}
+      </div>
+      {error && <p className="mt-1 text-sm text-red-500 font-medium">{error}</p>}
+    </div>
+  );
+};
 
 const SelectField = ({
   label,
@@ -288,7 +345,7 @@ export default function RegisterNow() {
     if (!student.dateOfBirth) e.dateOfBirth = 'Date of birth is required';
     if (!student.gender) e.gender = 'Please select gender';
     // Current grade level is optional
-    if (!student.course) e.course = 'Please select a course';
+    if (!student.courses || student.courses.length === 0) e.course = 'Please select at least one course';
     if (!student.addAnotherStudent) {
       e.addAnother = 'Please select whether you would like to add another student';
     }
@@ -358,7 +415,7 @@ export default function RegisterNow() {
     }
   };
 
-  const updateStudent = (field: keyof StudentData, value: string) => {
+  const updateStudent = (field: keyof StudentData, value: string | string[]) => {
     const updated = [...students];
     updated[currentStudentIndex] = { ...updated[currentStudentIndex], [field]: value };
     setStudents(updated);
@@ -654,12 +711,11 @@ export default function RegisterNow() {
                         error={errors.currentGrade}
                       />
 
-                      <SelectField
-                        label="Course to Register For"
-                        value={students[currentStudentIndex].course}
-                        onChange={(val) => updateStudent('course', val)}
+                      <MultiSelectCourses
+                        label="Course(s) to Register For"
+                        selectedCourses={students[currentStudentIndex].courses}
+                        onChange={(val) => updateStudent('courses', val)}
                         options={courseOptions}
-                        placeholder="Select a course..."
                         required
                         error={errors.course}
                       />
@@ -819,9 +875,16 @@ export default function RegisterNow() {
                               <span className="text-gray-500 font-medium">Full Name</span>
                               <p className="text-gray-900 font-semibold">{student.fullName}</p>
                             </div>
-                            <div>
+                            <div className="sm:col-span-2">
                               <span className="text-gray-500 font-medium">Date of Birth</span>
-                              <p className="text-gray-900 font-semibold">{student.dateOfBirth}</p>
+                              <p className="text-gray-900 font-semibold">
+                                {student.dateOfBirth
+                                  ? (() => {
+                                      const [y, m, d] = student.dateOfBirth.split('-');
+                                      return `${d}/${m}/${y}`;
+                                    })()
+                                  : ''}
+                              </p>
                             </div>
                             <div>
                               <span className="text-gray-500 font-medium">Gender</span>
@@ -832,8 +895,16 @@ export default function RegisterNow() {
                               <p className="text-gray-900 font-semibold">{student.currentGrade || 'Not provided'}</p>
                             </div>
                             <div className="sm:col-span-2">
-                              <span className="text-gray-500 font-medium">Course</span>
-                              <p className="text-gray-900 font-semibold">{student.course}</p>
+                              <span className="text-gray-500 font-medium">Course(s)</span>
+                              {student.courses && student.courses.length > 0 ? (
+                                <ul className="mt-1 space-y-1">
+                                  {student.courses.map((c) => (
+                                    <li key={c} className="text-gray-900 font-semibold text-sm">{c}</li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="text-gray-400 font-medium">None selected</p>
+                              )}
                             </div>
                           </div>
                         </div>

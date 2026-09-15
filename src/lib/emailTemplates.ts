@@ -3,7 +3,7 @@ export interface StudentData {
   dateOfBirth: string;
   gender: string;
   currentGrade?: string;
-  course: string;
+  courses: string[];
   addAnotherStudent?: string;
 }
 
@@ -41,7 +41,13 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
     ? body.relationshipOther
     : body.relationship;
 
-  const studentsHtml = body.students.map((student, index) => `
+  const studentsHtml = body.students.map((student, index) => {
+    const [y, m, d] = (student.dateOfBirth || '').split('-');
+    const formattedDob = y && m && d ? `${d}/${m}/${y}` : student.dateOfBirth || '';
+    const coursesDisplay = Array.isArray(student.courses)
+      ? student.courses.join(', ')
+      : (student as unknown as { course?: string }).course || '';
+    return `
     <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 16px; border: 1px solid #e5e5e5; background-color: #ffffff;">
       <tbody>
         <tr style="background-color: #f8f9fa;">
@@ -50,12 +56,12 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
           </td>
         </tr>
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Course</td>
-          <td style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #eeeeee;">${student.course}</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Course(s)</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #eeeeee;">${coursesDisplay}</td>
         </tr>
         <tr>
           <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Date of Birth</td>
-          <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${student.dateOfBirth}</td>
+          <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${formattedDob}</td>
         </tr>
         <tr>
           <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Gender</td>
@@ -69,7 +75,8 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
         ` : ''}
       </tbody>
     </table>
-  `).join('');
+  `;
+  }).join('');
 
   return `<!-- Free to use, HTML email template designed & built by FullSphere. Learn more about us at www.fullsphere.co.uk -->
 
@@ -303,7 +310,13 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
     ? body.relationshipOther
     : body.relationship;
 
-  const studentsHtml = body.students.map((student, index) => `
+  const studentsHtml = body.students.map((student, index) => {
+    const [y, m, d] = (student.dateOfBirth || '').split('-');
+    const formattedDob = y && m && d ? `${d}/${m}/${y}` : student.dateOfBirth || '';
+    const coursesDisplay = Array.isArray(student.courses)
+      ? student.courses.join(', ')
+      : (student as unknown as { course?: string }).course || '';
+    return `
     <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 16px; border: 1px solid #e5e5e5; background-color: #ffffff;">
       <tbody>
         <tr style="background-color: #f8f9fa;">
@@ -312,12 +325,12 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
           </td>
         </tr>
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Course</td>
-          <td style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #eeeeee;">${student.course}</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Course(s)</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #eeeeee;">${coursesDisplay}</td>
         </tr>
         <tr>
           <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Date of Birth</td>
-          <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${student.dateOfBirth}</td>
+          <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${formattedDob}</td>
         </tr>
         <tr>
           <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Gender</td>
@@ -331,7 +344,8 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
         ` : ''}
       </tbody>
     </table>
-  `).join('');
+  `;
+  }).join('');
 
   return `<!-- Free to use, HTML email template designed & built by FullSphere. Learn more about us at www.fullsphere.co.uk -->
 

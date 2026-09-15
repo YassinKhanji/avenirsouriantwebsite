@@ -261,7 +261,7 @@ export const courses: CourseData[] = [
     desc: "A 6-week hands-on cybersecurity course for ages 13–16. Real skills, real tools, real confidence. Master networking, Linux, ethical hacking, AI tools, and CTF challenges.",
     image: "/images/cybersecurity-teens.png",
     active: true,
-    subtitle: "Ages 13 to 16 • 6-Week Cohort (2 hrs/week) • Starting July",
+    subtitle: "Ages 13 to 16 • 6-Week Cohort (2 hrs/week) • Starting August",
     tagline: "CYBERSECURITY FOR TEENS",
     subTagline: "A 6-week hands-on course for ages 13–16. Real skills. Real tools. Real confidence.",
     teacher: {
@@ -272,7 +272,7 @@ export const courses: CourseData[] = [
     objectiveHeadline: "Real Skills, Tools & Confidence",
     objective: "Understand how technology and networks work, master real cyber safety habits, explore AI and IT career paths, and solve hands-on security challenges.",
     scheduleHeadline: "6 Weeks · 2 Hours per Week",
-    scheduleDetails: "Hands-on 2-hour lab sessions weekly starting the first week of July. In-person at our Saint-Laurent center (1325 Rue Cartier). Exact cohort schedule sent after registration.",
+    scheduleDetails: "Hands-on 2-hour lab sessions weekly starting the first week of August. In-person at our Saint-Laurent center (1325 Rue Cartier). Exact cohort schedule sent after registration.",
     targetAudienceHeadline: "Teens Ages 13–16",
     targetAudience: "Designed for youth ages 13 to 16. No prior coding or technical experience needed — beginners are warmly welcome! Safe, supervised, and ethical.",
     contactPhones: ["(514) 515-4492", "(514) 581-5305", "(514) 808-5216"],
@@ -293,7 +293,7 @@ export const courses: CourseData[] = [
       { label: "Tuition", value: "$35 / session ($200 for 6-week cohort)" },
       { label: "Payment Model", value: "Pay per session or full 6-week course package ($200)" },
       { label: "Duration", value: "6 weeks · 2 hours per week (12 hours total)" },
-      { label: "Start Date", value: "First week of July — exact schedule sent upon registration" },
+      { label: "Start Date", value: "First week of August — exact schedule sent upon registration" },
       { label: "Age Group", value: "Teens 13–16 years old" },
       { label: "Prerequisites", value: "No experience needed — beginners welcome!" },
       { label: "Format", value: "Hands-on tech lab (Linux, Wireshark, AI, CTF challenges)" },
@@ -301,7 +301,7 @@ export const courses: CourseData[] = [
       { label: "Location", value: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6" }
     ],
     schedule: [
-      { day: "Weekly Lab Session", time: "2 Hours / Week (Starting First Week of July)" },
+      { day: "Weekly Lab Session", time: "2 Hours / Week (Starting First Week of August)" },
       { day: "Cohort Details", time: "Exact days & times sent to parents after registration" }
     ],
     highlights: [
