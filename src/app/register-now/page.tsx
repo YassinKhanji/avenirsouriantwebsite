@@ -40,6 +40,7 @@ const courseOptions = [
   'Reading Skills Development Course for Boys 12-14 years (Thursday)',
   'Foundation Course for Non-Arabic Speakers 16+ (Friday for Women, Sunday for Men)',
   'Cybersecurity for Teens 13-16 years (6 Weeks - August)',
+  'Chess Class for Beginners - Boys 8-10 years (8 Weeks - Oct-Dec)',
 ];
 
 const steps = [

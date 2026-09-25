@@ -68,8 +68,12 @@ export interface CourseData {
   category: string;
   price: string;
   originalPrice?: string;
+  priceUnit?: string;
+  promoTitle?: string;
+  promoDesc?: string;
   desc: string;
   image: string;
+  flyerImage?: string;
   active: boolean;
   subtitle: string;
   tagline?: string;
@@ -88,7 +92,9 @@ export interface CourseData {
   address?: string;
   parentChallenges?: string[];
   curriculumTracks?: CurriculumTrack[];
+  curriculumTitle?: string;
   facilities?: FacilityItem[];
+  facilitiesTitle?: string;
   innovationClubs?: ClubItem[];
   clubActivities?: string[];
   studentOutcomes?: StudentOutcome[];
@@ -557,6 +563,192 @@ export const courses: CourseData[] = [
     enrollmentNotice: "Enrollment is now open for the school year and term sessions. Reserve your spot today!",
     metaTitle: "Homeschooling Support Hub | Avenir Souriant Montreal",
     metaDescription: "Comprehensive homeschooling support in Saint-Laurent, Montreal. STEM labs, AI coding, languages, tutoring, and personalized progress tracking. Flexible plans."
+  },
+  {
+    slug: "chess-for-beginners",
+    title: "Chess Class for Beginners (Boys Ages 8–10)",
+    category: "Strategy & Mind Sports (8–10)",
+    price: "$120",
+    originalPrice: "$150",
+    priceUnit: "total (8-week cohort)",
+    promoTitle: "Complete 8-Week Chess Package",
+    promoDesc: "Special introductory rate: $120 only (regular $150). Includes full 8-week curriculum, tournament chess sets, Chess.com Premium resources, and tournament entry.",
+    desc: "An 8-week structured chess course for boys ages 8–10. Develop strategic thinking, concentration, and problem-solving through interactive lessons, tactical puzzles, and a friendly tournament.",
+    image: "/images/pexels-larsmai-4815483.jpg",
+    flyerImage: "/images/Gemini_Generated_Image_n8ygbrn8ygbrn8yg_1.png",
+    active: true,
+    subtitle: "Boys Ages 8 to 10 • 8-Week Cohort (2 hrs/week) • Oct 18 – Dec 6, 2026",
+    tagline: "MASTER THE ART & STRATEGY OF CHESS",
+    subTagline: "A structured 8-week journey for boys ages 8–10. Build critical thinking, sharp focus, and lasting self-confidence.",
+    teacher: {
+      name: "Abdullah Alatassi & Joud Altabbalh",
+      title: "Chess Instructors & Mentors",
+      bio: "Passionate chess educators at Académie de l'Avenir Souriant committed to making chess an exciting, enriching, and confidence-building journey for every young learner."
+    },
+    objectiveHeadline: "Strategy, Logic & Focus",
+    objective: "Cultivate observation skills, critical reasoning, and patient problem-solving while mastering piece mechanics, tactical motifs, and opening principles.",
+    scheduleHeadline: "Sundays · 2 Hours per Week",
+    scheduleDetails: "Weekly 2-hour interactive sessions on Sundays from October 18 to December 6, 2026 (8 weeks total / 16 hours). In-person at our Saint-Laurent center (1325 Rue Cartier).",
+    targetAudienceHeadline: "Boys Ages 8–10 (Beginners)",
+    targetAudience: "Designed specifically for boys ages 8 to 10 with little to no prior chess experience. Small cohort strictly capped at 12 students (6 boards) for maximum practice.",
+    contactPhones: ["(438) 346-7103", "(514) 581-5305", "(514) 808-5216"],
+    address: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6",
+    introHeadline: "Why Chess is More Than a Game — It's an Art of Thinking",
+    registerSubtext: "Ready to ignite your child's passion for strategy and focus? Register online or contact us directly by phone:",
+    enrollmentNotice: "Strictly limited to 12 students (6 chessboards) to guarantee individualized coaching and active over-the-board play. Promotional rate: $120 for the full 8-week course (regular $150). 10% sibling discount applies.",
+    longDescription: [
+      "Chess is universally celebrated as the greatest strategy game in the world. Far more than simple recreation, chess is an intellectual art form that sharpens critical reasoning, cultivates razor-sharp observation, and trains the mind to think ahead with patience and composure. The Académie de l'Avenir Souriant is proud to present our dedicated 8-Week Chess Course for Beginners, specifically designed for boys ages 8 to 10 at our modern Saint-Laurent center (1325 Rue Cartier).",
+      "Led by enthusiastic instructors Abdullah Alatassi and Joud Altabbalh, this program transforms chess from an intimidating board game into an electrifying, interactive journey. Rather than passive lecturing, each weekly 2-hour session blends clear conceptual instruction with multimedia presentations, tactical puzzles on Chess.com, and immediate over-the-board practice.",
+      "Running every Sunday from October 18, 2026 to December 6, 2026, the course offers an exceptional educational experience at a special promotional rate of just $120 (regular $150) for the full 8-week curriculum. To ensure every student receives personal attention and active board time, enrollment is strictly capped at 12 participants (6 tournament boards). A 10% discount also applies for siblings."
+    ],
+    programDescription: [
+      "Our 8-week curriculum guides young beginners through every dimension of the royal game: from board geometry and piece values to the golden rules of the opening (rapid piece development, center control, king safety), core tactical patterns (forks, pins, skewers, discovered attacks), and fundamental endgame checkmates.",
+      "Students also learn standard algebraic chess notation, analyze classic games played by masters on the HD projector, and develop essential sportsmanship and emotional control. The program culminates in Week 8 with an exciting, friendly Swiss-system tournament, group game analysis, and an official graduation ceremony awarding certificates of achievement."
+    ],
+    programDetails: [
+      { label: "Tuition", value: "$120 for 8 weeks (Regular $150 — Save $30!)" },
+      { label: "Payment Model", value: "Complete 8-week cohort package ($15/session equivalent)" },
+      { label: "Duration", value: "8 weeks · 2 hours / week (16 hours total)" },
+      { label: "Dates", value: "October 18, 2026 – December 6, 2026 (Sundays)" },
+      { label: "Audience", value: "Boys ages 8 to 10 (Beginners)" },
+      { label: "Class Capacity", value: "Strictly limited to 12 students (6 chess sets)" },
+      { label: "Instructors", value: "Abdullah Alatassi & Joud Altabbalh" },
+      { label: "Equipment Included", value: "Tournament boards, Chess.com Premium, notation books" },
+      { label: "Location", value: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6" },
+      { label: "Family Discount", value: "10% OFF for siblings" }
+    ],
+    schedule: [
+      { day: "Weekly Sunday Session", time: "2 Hours / Week (Oct 18, 2026 – Dec 6, 2026)" },
+      { day: "Schedule Details", time: "Exact cohort timing confirmed upon registration" }
+    ],
+    curriculumTitle: "The Course Roadmap (8 Weeks)",
+    curriculumTracks: [
+      {
+        title: "Week 1 — Introduction to the Game of Chess",
+        subtitle: "Board Geometry, History & Piece Setup",
+        badge: "Week 1",
+        items: [
+          "The history, cultural heritage, and noble objective of the game of chess",
+          "Navigating the chessboard: ranks, files, diagonals, and square coordinates",
+          "Proper initial setup and alignment of pawns and major pieces",
+          "Fun mini-games to recognize piece movements and board vision"
+        ]
+      },
+      {
+        title: "Week 2 — Piece Movements & Special Rules",
+        subtitle: "Mastering the Army & Essential Rules",
+        badge: "Week 2",
+        items: [
+          "Movement mechanics: pawns, knights, bishops, rooks, queen, and king",
+          "Special chess rules: castling (kingside & queenside), en passant, and pawn promotion",
+          "Understanding the concepts of check, checkmate, and stalemate",
+          "Guided practice exercises and simplified mini-matches"
+        ]
+      },
+      {
+        title: "Week 3 — Principles of the Opening",
+        subtitle: "Starting the Game with Strength & Purpose",
+        badge: "Week 3",
+        items: [
+          "The 3 Golden Rules: rapid piece development, controlling the center, and king safety",
+          "Study of classic foundational openings (Italian Game, Spanish Opening / Ruy Lopez)",
+          "Common opening traps and how to avoid early blunders (Scholar's Mate defense)",
+          "Thematic mini-games with assigned opening positions"
+        ]
+      },
+      {
+        title: "Week 4 — Fundamental Tactics",
+        subtitle: "Tactical Weapons to Win Material",
+        badge: "Week 4",
+        items: [
+          "Core tactical motifs: forks, pins, skewers, and discovered attacks",
+          "Calculating candidate moves and recognizing opponent threats",
+          "Interactive chessboard puzzle exercises powered by Chess.com",
+          "Mini-game challenge: 'Find the Best Move' speed rounds"
+        ]
+      },
+      {
+        title: "Week 5 — The Middlegame Strategy",
+        subtitle: "Creating Plans, Outposts & Coordination",
+        badge: "Week 5",
+        items: [
+          "Understanding middlegame objectives and formulating attack or defense plans",
+          "Pawn structure fundamentals, strong squares (outposts), and piece harmony",
+          "Position evaluation and spotting imbalances on the board",
+          "Themed sparring games: attacking the castled king and fighting for central dominance"
+        ]
+      },
+      {
+        title: "Week 6 — Endgame Fundamentals",
+        subtitle: "The Art of Converting Advantages into Checkmate",
+        badge: "Week 6",
+        items: [
+          "Recognizing the most common and essential endgame positions",
+          "Essential checkmating patterns: King + Queen vs King, King + Rook vs King",
+          "The principle of opposition, passed pawns, and pawn promotion races",
+          "Hands-on checkmate drills against coaches and peers"
+        ]
+      },
+      {
+        title: "Week 7 — Strategy & Chess Notation",
+        subtitle: "Reading, Writing & Connecting the Phases",
+        badge: "Week 7",
+        items: [
+          "Introduction to standard algebraic chess notation (recording moves)",
+          "Connecting the phases: transitioning smoothly from opening to middlegame to endgame",
+          "Interactive analysis of a famous historical master game on the HD projector",
+          "Full practice games played with complete live move notation"
+        ]
+      },
+      {
+        title: "Week 8 — Friendly Tournament & Graduation",
+        subtitle: "Putting It All Together & Celebrating Growth",
+        badge: "Week 8",
+        items: [
+          "Friendly end-of-course tournament (Swiss-system format)",
+          "Collective group game review with coaches highlighting brilliant moves",
+          "Reinforcing sportsmanship, gracious winning, and learning from defeats",
+          "Official graduation ceremony, presentation of certificates, and course celebration"
+        ]
+      }
+    ],
+    facilitiesTitle: "Equipment & Learning Tools Provided",
+    facilities: [
+      {
+        title: "Tournament Chess Sets",
+        desc: "6 official tournament-size chessboards with weighted Staunton pieces for paired over-the-board play.",
+        icon: "♟️"
+      },
+      {
+        title: "Chess.com Premium Platform",
+        desc: "Teacher-guided digital tools: interactive AI analysis engine, tactical puzzle trainer, and video walkthroughs.",
+        icon: "💻"
+      },
+      {
+        title: "HD Presentation Projector",
+        desc: "Large-screen interactive display for group lectures, master game analysis, and real-time tactical demonstrations.",
+        icon: "📽️"
+      },
+      {
+        title: "Notation & Study Materials",
+        desc: "Official score sheets, workbooks, and tactical review sheets to record games and reinforce learning at home.",
+        icon: "📝"
+      }
+    ],
+    highlights: [
+      "Complete mastery of the chessboard, piece moves, values, and special rules (castling, promotion, en passant)",
+      "The 3 golden opening rules: rapid piece development, controlling central squares, and safeguarding the king",
+      "Crucial tactical patterns: forks, pins, skewers, and discovered attacks to outmaneuver opponents",
+      "Strategic middlegame concepts: pawn structures, outposts, and piece coordination",
+      "Essential endgame checkmating techniques with King + Queen and King + Rook",
+      "Learning algebraic chess notation to read, record, and review games like a tournament player",
+      "Developing vital mental faculties: focus, foresight, patience, logical analysis, and emotional resilience",
+      "Hands-on practice on tournament-grade boards paired with Chess.com Premium digital analysis",
+      "Exciting friendly end-of-course Swiss tournament with official certificates of achievement",
+      "Exclusive cohort capped at 12 boys (ages 8–10) ensuring close guidance from passionate instructors"
+    ],
+    metaTitle: "Chess Course for Beginners (Boys Ages 8–10) Montreal | Avenir Souriant",
+    metaDescription: "Join our 8-week Chess Course for Beginners (Boys ages 8-10) in Saint-Laurent, Montreal. Master tactics, strategy, and opening principles. $120 full course. Starts Oct 18, 2026."
   },
 ];
 

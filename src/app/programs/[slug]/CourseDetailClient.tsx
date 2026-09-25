@@ -281,10 +281,10 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                           Special Limited-Time Rate
                         </div>
                         <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900">
-                          Complete 8-Session Package
+                          {course.promoTitle || "Complete 8-Session Package"}
                         </h2>
                         <p className="text-gray-600 mt-1">
-                          Includes full curriculum, reading materials, and personalized instructor guidance.
+                          {course.promoDesc || "Includes full curriculum, reading materials, and personalized instructor guidance."}
                         </p>
                       </div>
 
@@ -535,9 +535,9 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   </CollapsibleSection>
                 )}
 
-                {/* ═══ 6-Week Curriculum Roadmap (if present) ═══ */}
+                {/* ═══ Curriculum Roadmap (if present) ═══ */}
                 {course.curriculumTracks && course.curriculumTracks.length > 0 && (
-                  <CollapsibleSection title="The Course Roadmap (6 Weeks)" defaultOpen={false}>
+                  <CollapsibleSection title={course.curriculumTitle || `The Course Roadmap (${course.curriculumTracks.length} Weeks)`} defaultOpen={false}>
                     <div className="space-y-4">
                       {course.curriculumTracks.map((track, i) => (
                         <div key={i} className="bg-gray-50 p-5 rounded-2xl border border-gray-300 hover:border-primary/50 transition-colors">
@@ -570,7 +570,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                 {/* ═══ Hands-On Tools & Lab Environment (if present) ═══ */}
                 {course.facilities && course.facilities.length > 0 && (
-                  <CollapsibleSection title="Hands-On Tools Students Use" defaultOpen={false}>
+                  <CollapsibleSection title={course.facilitiesTitle || "Hands-On Tools Students Use"} defaultOpen={false}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {course.facilities.map((tool, i) => (
                         <div key={i} className="bg-gray-50 p-5 rounded-2xl border border-gray-300 hover:border-primary/50 transition-colors flex items-start gap-3.5">
@@ -733,6 +733,29 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                     </TransitionLink>
                   </motion.div>
 
+                  {/* Official Flyer (if present) */}
+                  {course.flyerImage && (
+                    <motion.div
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.25 }}
+                      className="bg-white rounded-3xl p-5 shadow-md border border-gray-300"
+                    >
+                      <h3 className="text-lg font-bold font-heading text-gray-900 mb-3">
+                        Official Course Flyer
+                      </h3>
+                      <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-gray-200 shadow-inner group">
+                        <Image
+                          src={course.flyerImage}
+                          alt={`${course.title} Poster`}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+
                   {/* Useful Links */}
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
@@ -791,7 +814,16 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
             <div className="flex items-center justify-between gap-3 max-w-lg mx-auto">
               <div className="min-w-0">
                 <p className="font-bold text-gray-900 text-sm truncate">{course.title}</p>
-                <p className="text-secondary font-bold text-sm">{course.price} <span className="text-gray-500 font-normal">/ session</span></p>
+                <p className="text-secondary font-bold text-sm">
+                  {course.price}
+                  {course.priceUnit ? (
+                    <span className="text-gray-500 font-normal text-xs"> {course.priceUnit}</span>
+                  ) : course.price.includes('/') ? (
+                    ''
+                  ) : (
+                    <span className="text-gray-500 font-normal text-xs"> / session</span>
+                  )}
+                </p>
               </div>
               <TransitionLink href="/register-now" className="shrink-0">
                 <button className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary text-white font-bold text-sm rounded-full hover:bg-secondary/90 transition-all duration-300 active:scale-95 cursor-pointer shadow-md">
