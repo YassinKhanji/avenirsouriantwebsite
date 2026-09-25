@@ -30,7 +30,7 @@ export default function Header() {
     { label: 'Home', path: '/' },
     { label: 'Programs', path: '/programs' },
     { label: 'Contact', path: '/register' },
-    { label: 'Register Now', path: '/register-now', isRegister: true },
+    { label: 'Book a Fit Call', path: '/register-now', isRegister: true },
   ];
 
   // Helper to determine if a link uses orange (secondary) styling

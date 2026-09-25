@@ -18,6 +18,8 @@ export interface RegistrationBody {
   appointmentDate?: string;
   appointmentTime?: string;
   appointmentType?: 'virtual' | 'in-person';
+  virtualOption?: 'meet' | 'phone';
+  meetingLink?: string;
 }
 
 export interface ContactBody {
@@ -181,24 +183,61 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
               const ampm = aHour >= 12 ? 'PM' : 'AM';
               const displayHour = aHour > 12 ? aHour - 12 : aHour === 0 ? 12 : aHour;
               const displayTime = `${displayHour}:${aMin.toString().padStart(2, '0')} ${ampm}`;
-              const typeLabel = body.appointmentType === 'virtual' ? '💻 Virtual Meeting' : '🏫 In-Person';
+              
+              let endM = aMin + 15;
+              let endH = aHour;
+              if (endM >= 60) {
+                endM = 0;
+                endH += 1;
+              }
+              const endAmpm = endH >= 12 ? 'PM' : 'AM';
+              const endDisplayH = endH > 12 ? endH - 12 : endH === 0 ? 12 : endH;
+              const displayEndTime = `${endDisplayH}:${endM.toString().padStart(2, '0')} ${endAmpm}`;
+
+              const isVirtual = body.appointmentType === 'virtual';
+              const isPhone = isVirtual && body.virtualOption === 'phone';
+              const meetLink = body.meetingLink || 'https://meet.google.com/asf-wytq-fit';
+
+              const studentNamesAndDobs = body.students.map((s) => {
+                const [y, m, d] = (s.dateOfBirth || '').split('-');
+                const fDob = y && m && d ? `${d}/${m}/${y}` : s.dateOfBirth || 'N/A';
+                return `<strong>${s.fullName}</strong> (Birth Date: ${fDob})`;
+              }).join(', ');
+
               return `
             <!-- APPOINTMENT BOX -->
             <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; margin: 0 0 24px;">
               <tbody>
                 <tr>
-                  <td style="background-color: #fff5eb; border-left: 4px solid #ff9f43; padding: 16px 20px;">
-                    <p style="font-size: 16px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 700; color: #000000; margin: 0 0 8px;">
+                  <td style="background-color: #fff5eb; border-left: 4px solid #ff9f43; padding: 18px 20px;">
+                    <p style="font-size: 16px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 700; color: #000000; margin: 0 0 10px;">
                       📅 Your Fit Assessment Appointment
                     </p>
-                    <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #000000; margin: 0;">
+                    <p style="font-size: 14px; line-height: 22px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #000000; margin: 0 0 10px;">
                       <strong>Date:</strong> ${dayName}, ${monthName} ${ad}, ${ay}<br />
-                      <strong>Time:</strong> ${displayTime} (Eastern Time)<br />
-                      <strong>Type:</strong> ${typeLabel}
+                      <strong>Time:</strong> ${displayTime} — ${displayEndTime} (15 minutes — Eastern Time)<br />
+                      <strong>Booked For:</strong> ${recipientGreetingName}<br />
+                      <strong>Student(s):</strong> ${studentNamesAndDobs}<br />
+                      <strong>Meeting Format:</strong> ${
+                        !isVirtual
+                          ? '🏫 In-Person (8990 Boul. Michel-Chartrand, Anjou, QC)'
+                          : isPhone
+                          ? `📞 Phone Call (We will call ${body.phone || 'your phone number'})`
+                          : `💻 Google Meet Video Call`
+                      }
                     </p>
+                    ${isVirtual && !isPhone ? `
+                    <div style="margin: 12px 0 8px;">
+                      <a href="${meetLink}" target="_blank" style="background-color: #ff9f43; color: #ffffff; padding: 10px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; text-decoration: none; display: inline-block;">
+                        📹 Join Google Meet Call
+                      </a>
+                      <p style="font-size: 12px; color: #666666; margin: 6px 0 0;">
+                        Meeting link: <a href="${meetLink}" style="color: #ff9f43; text-decoration: underline;">${meetLink}</a>
+                      </p>
+                    </div>
+                    ` : ''}
                     <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #666666; margin: 8px 0 0;">
-                      ${body.appointmentType === 'virtual' ? 'A meeting link will be sent to you before the appointment.' : 'Please arrive 5 minutes before your scheduled time.'}
-                      A calendar invite (.ics) is attached to this email.
+                      A calendar invite (.ics) is attached to this email. You can add it directly to Google Calendar, Apple Calendar, or Outlook.
                     </p>
                   </td>
                 </tr>
@@ -466,9 +505,29 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
               New Course Registration
             </h1>
 
-            <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #555555; text-align: left; margin: 0 0 24px;">
-              A new registration has been submitted through the Avenir Souriant website.
-            </p>
+            <!-- PROMINENT AT-A-GLANCE SUMMARY -->
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; margin: 0 0 20px; background-color: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 6px;">
+              <tbody>
+                <tr>
+                  <td style="padding: 14px 16px;">
+                    <p style="font-size: 15px; line-height: 22px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 700; color: #1e293b; margin: 0 0 8px;">
+                      📋 Registration Overview
+                    </p>
+                    <p style="font-size: 14px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; color: #334155; margin: 0 0 6px;">
+                      <strong>Registrant / Contact:</strong> ${subjectName} (${body.email}${body.phone ? ` • ${body.phone}` : ''})
+                    </p>
+                    <p style="font-size: 14px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; color: #334155; margin: 0;">
+                      <strong>Student(s) Registered (${body.students.length}):</strong><br />
+                      ${body.students.map((s, idx) => {
+                        const [y, m, d] = (s.dateOfBirth || '').split('-');
+                        const fDob = y && m && d ? `${d}/${m}/${y}` : s.dateOfBirth || 'Not specified';
+                        return `• <strong>${s.fullName}</strong> — Date of Birth: <span style="background-color: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${fDob}</span>`;
+                      }).join('<br />')}
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
             ${body.appointmentDate && body.appointmentTime ? (() => {
               const [ay, am, ad] = body.appointmentDate!.split('-');
@@ -479,21 +538,54 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
               const ampm = aHour >= 12 ? 'PM' : 'AM';
               const displayHour = aHour > 12 ? aHour - 12 : aHour === 0 ? 12 : aHour;
               const displayTime = `${displayHour}:${aMin.toString().padStart(2, '0')} ${ampm}`;
-              const typeLabel = body.appointmentType === 'virtual' ? '💻 Virtual Meeting' : '🏫 In-Person';
+
+              let endM = aMin + 15;
+              let endH = aHour;
+              if (endM >= 60) {
+                endM = 0;
+                endH += 1;
+              }
+              const endAmpm = endH >= 12 ? 'PM' : 'AM';
+              const endDisplayH = endH > 12 ? endH - 12 : endH === 0 ? 12 : endH;
+              const displayEndTime = `${endDisplayH}:${endM.toString().padStart(2, '0')} ${endAmpm}`;
+
+              const isVirtual = body.appointmentType === 'virtual';
+              const isPhone = isVirtual && body.virtualOption === 'phone';
+              const meetLink = body.meetingLink || 'https://meet.google.com/asf-wytq-fit';
+
+              const studentNamesAndDobs = body.students.map((s) => {
+                const [y, m, d] = (s.dateOfBirth || '').split('-');
+                const fDob = y && m && d ? `${d}/${m}/${y}` : s.dateOfBirth || 'N/A';
+                return `<strong>${s.fullName}</strong> (Birth Date: ${fDob})`;
+              }).join(', ');
+
               return `
             <!-- APPOINTMENT SECTION -->
             <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; margin: 0 0 24px;">
               <tbody>
                 <tr>
-                  <td style="background-color: #fff5eb; border-left: 4px solid #ff9f43; padding: 16px 20px;">
+                  <td style="background-color: #fff5eb; border-left: 4px solid #ff9f43; padding: 18px 20px;">
                     <p style="font-size: 16px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 700; color: #000000; margin: 0 0 8px;">
                       📅 Fit Assessment Appointment Booked
                     </p>
-                    <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #000000; margin: 0;">
+                    <p style="font-size: 14px; line-height: 22px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #000000; margin: 0 0 6px;">
                       <strong>Date:</strong> ${dayName}, ${monthName} ${ad}, ${ay}<br />
-                      <strong>Time:</strong> ${displayTime} (Eastern Time)<br />
-                      <strong>Type:</strong> ${typeLabel}
+                      <strong>Time:</strong> ${displayTime} — ${displayEndTime} (15 minutes — Eastern Time)<br />
+                      <strong>Contact Person:</strong> ${subjectName}<br />
+                      <strong>Student(s):</strong> ${studentNamesAndDobs}<br />
+                      <strong>Format:</strong> ${
+                        !isVirtual
+                          ? '🏫 In-Person (8990 Boul. Michel-Chartrand, Anjou, QC)'
+                          : isPhone
+                          ? `📞 Phone Call to ${body.phone || 'client number'}`
+                          : `💻 Google Meet Video Call`
+                      }
                     </p>
+                    ${isVirtual && !isPhone ? `
+                    <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; margin: 8px 0 0;">
+                      <strong>Google Meet Link:</strong> <a href="${meetLink}" style="color: #ff9f43; text-decoration: underline;">${meetLink}</a>
+                    </p>
+                    ` : ''}
                     <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #666666; margin: 8px 0 0;">
                       A calendar invite (.ics) is attached to this email.
                     </p>
@@ -510,19 +602,17 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
 
             <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 24px; border: 1px solid #e5e5e5; background-color: #ffffff;">
               <tbody>
-                ${!isAdultSelf ? `
                 <tr>
                   <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Full Name</td>
-                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${body.guardianName || ''}</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${subjectName}</td>
                 </tr>
-                ` : ''}
                 <tr>
                   <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Email</td>
                   <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">
                     <a href="mailto:${body.email}" style="color: #0000EE; text-decoration: underline;">${body.email}</a>
                   </td>
                 </tr>
-                ${!isAdultSelf && body.phone ? `
+                ${body.phone ? `
                 <tr>
                   <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Phone</td>
                   <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">

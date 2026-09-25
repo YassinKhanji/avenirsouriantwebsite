@@ -8,8 +8,12 @@ export interface AppointmentData {
   date: string;        // ISO date string e.g. "2026-10-05"
   time: string;        // 24h time string e.g. "18:00"
   type: 'virtual' | 'in-person';
+  virtualOption?: 'meet' | 'phone';
+  meetingLink?: string;
   registrantName: string;
   registrantEmail: string;
+  registrantPhone?: string;
+  studentDetails?: string;
 }
 
 /**
@@ -22,11 +26,8 @@ function pad(n: number): string {
 /**
  * Converts a date + time string into a UTC datetime string for ICS
  * Input time is assumed to be in America/Montreal (Eastern Time).
- * We convert to UTC for the ICS file.
  */
 function toICSDatetime(dateStr: string, timeStr: string): string {
-  // Create a date in local time (the server should use the TZID approach instead)
-  // For simplicity, we use the TZID approach with America/Montreal
   const [year, month, day] = dateStr.split('-').map(Number);
   const [hours, minutes] = timeStr.split(':').map(Number);
   return `${year}${pad(month)}${pad(day)}T${pad(hours)}${pad(minutes)}00`;
@@ -55,21 +56,35 @@ function nowICS(): string {
 export function generateICS(appointment: AppointmentData): string {
   const dtStart = toICSDatetime(appointment.date, appointment.time);
 
-  // Appointment is 30 minutes long
+  // Each appointment slot is 15 minutes long
   const [hours, minutes] = appointment.time.split(':').map(Number);
-  const endMinutes = minutes + 30;
+  const endMinutes = minutes + 15;
   const endHours = hours + Math.floor(endMinutes / 60);
   const endMins = endMinutes % 60;
   const endTime = `${pad(endHours)}:${pad(endMins)}`;
   const dtEnd = toICSDatetime(appointment.date, endTime);
 
-  const location = appointment.type === 'virtual'
-    ? 'Virtual Meeting (link will be sent via email)'
-    : 'Avenir Souriant - In Person';
+  let location = 'Avenir Souriant — 8990 Boul. Michel-Chartrand, Anjou, QC';
+  let description = `Fit Assessment Session (15 minutes)\\nAttendee: ${appointment.registrantName}`;
 
-  const description = appointment.type === 'virtual'
-    ? `Fit Assessment Interview with ${appointment.registrantName}\\nType: Virtual Meeting\\nA meeting link will be shared before the appointment.`
-    : `Fit Assessment Interview with ${appointment.registrantName}\\nType: In-Person Meeting`;
+  if (appointment.studentDetails) {
+    description += `\\nStudent(s): ${appointment.studentDetails}`;
+  }
+
+  if (appointment.type === 'virtual') {
+    if (appointment.virtualOption === 'phone') {
+      const phoneText = appointment.registrantPhone ? ` (${appointment.registrantPhone})` : '';
+      location = `Phone Call${phoneText}`;
+      description += `\\nMeeting Type: Phone Call\\nWe will call you at ${appointment.registrantPhone || 'your contact number'} at the scheduled time.`;
+    } else {
+      // Default to Google Meet video meeting
+      const meetLink = appointment.meetingLink || 'https://meet.google.com/asf-wytq-fit';
+      location = meetLink;
+      description += `\\nMeeting Type: Google Meet Video Call\\nJoin Google Meet: ${meetLink}`;
+    }
+  } else {
+    description += `\\nMeeting Type: In-Person Fit Assessment\\nLocation: 8990 Boul. Michel-Chartrand, Anjou, QC`;
+  }
 
   const uid = generateUID();
   const dtstamp = nowICS();
@@ -117,9 +132,9 @@ export function generateICS(appointment: AppointmentData): string {
     `ATTENDEE;CN=${appointment.registrantName};RSVP=TRUE:mailto:${appointment.registrantEmail}`,
     'STATUS:CONFIRMED',
     'BEGIN:VALARM',
-    'TRIGGER:-PT30M',
+    'TRIGGER:-PT15M',
     'ACTION:DISPLAY',
-    'DESCRIPTION:Reminder: Fit Assessment Interview in 30 minutes',
+    'DESCRIPTION:Reminder: Fit Assessment session in 15 minutes',
     'END:VALARM',
     'END:VEVENT',
     'END:VCALENDAR',

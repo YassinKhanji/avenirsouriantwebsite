@@ -9,6 +9,7 @@ import {
   type ContactBody,
 } from '@/lib/emailTemplates';
 import { generateICS } from '@/lib/icsGenerator';
+import { bookSlot, generateGoogleMeetLink } from '@/lib/appointments';
 
 type RequestBody = RegistrationBody | ContactBody;
 
@@ -120,12 +121,53 @@ export async function POST(request: Request) {
       let icalEvent: { filename: string; method: string; content: string } | undefined = undefined;
 
       if (body.appointmentDate && body.appointmentTime && body.appointmentType) {
+        let meetingLink: string | undefined = undefined;
+        if (body.appointmentType === 'virtual' && body.virtualOption !== 'phone') {
+          meetingLink = generateGoogleMeetLink();
+          body.meetingLink = meetingLink;
+        }
+
+        // Atomically book the appointment slot and check 2-capacity limit
+        const bookingResult = bookSlot({
+          date: body.appointmentDate,
+          time: body.appointmentTime,
+          type: body.appointmentType,
+          virtualOption: body.virtualOption,
+          meetingLink,
+          registrantName: subjectName,
+          registrantEmail: body.email,
+          registrantPhone: body.phone,
+          students: body.students.map((s) => ({
+            fullName: s.fullName,
+            dateOfBirth: s.dateOfBirth,
+          })),
+        });
+
+        if (!bookingResult.success) {
+          return Response.json(
+            { error: bookingResult.error || 'This time slot is no longer available. Please select another slot.' },
+            { status: 409 }
+          );
+        }
+
+        const studentDetailsStr = body.students
+          .map((s) => {
+            const [y, m, d] = (s.dateOfBirth || '').split('-');
+            const fDob = y && m && d ? `${d}/${m}/${y}` : s.dateOfBirth || '';
+            return `${s.fullName}${fDob ? ` (DOB: ${fDob})` : ''}`;
+          })
+          .join(', ');
+
         const icsContent = generateICS({
           date: body.appointmentDate,
           time: body.appointmentTime,
           type: body.appointmentType,
+          virtualOption: body.virtualOption,
+          meetingLink,
           registrantName: subjectName,
           registrantEmail: body.email,
+          registrantPhone: body.phone,
+          studentDetails: studentDetailsStr,
         });
         calendarAttachments.push({
           filename: 'appointment.ics',
@@ -139,6 +181,15 @@ export async function POST(request: Request) {
         };
       }
 
+      // Format student names and DOBs for prominent admin notification
+      const studentsDobSummary = body.students
+        .map((s) => {
+          const [y, m, d] = (s.dateOfBirth || '').split('-');
+          const fDob = y && m && d ? `${d}/${m}/${y}` : s.dateOfBirth || '';
+          return `${s.fullName}${fDob ? ` (DOB: ${fDob})` : ''}`;
+        })
+        .join(', ');
+
       // 1. Send notification to administration
       const adminHtmlContent = generateAdminRegistrationEmail(body);
       await transporter.sendMail({
@@ -146,7 +197,7 @@ export async function POST(request: Request) {
         to: recipient,
         cc: ccRecipient,
         replyTo: body.email,
-        subject: `New Course Registration — ${subjectName} (${body.students.length} student${body.students.length > 1 ? 's' : ''})`,
+        subject: `New Registration — ${subjectName} [Student: ${studentsDobSummary}]`,
         html: adminHtmlContent,
         attachments: [...attachments, ...calendarAttachments],
         icalEvent,
