@@ -590,16 +590,16 @@ export const courses: CourseData[] = [
     scheduleHeadline: "Sundays · 2 Hours per Week",
     scheduleDetails: "Weekly 2-hour interactive sessions on Sundays from October 18 to December 6, 2026 (8 weeks total / 16 hours). In-person at our Saint-Laurent center (1325 Rue Cartier).",
     targetAudienceHeadline: "Boys Ages 8–10 (Beginners)",
-    targetAudience: "Designed specifically for boys ages 8 to 10 with little to no prior chess experience. Small cohort strictly capped at 12 students (6 boards) for maximum practice.",
+    targetAudience: "Designed specifically for boys ages 8 to 10 with little to no prior chess experience. Small cohort strictly capped at 10 spots for maximum practice and personalized coaching.",
     contactPhones: ["(438) 346-7103", "(514) 581-5305", "(514) 808-5216"],
     address: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6",
     introHeadline: "Why Chess is More Than a Game — It's an Art of Thinking",
     registerSubtext: "Ready to ignite your child's passion for strategy and focus? Register online or contact us directly by phone:",
-    enrollmentNotice: "Strictly limited to 12 students (6 chessboards) to guarantee individualized coaching and active over-the-board play. Promotional rate: $120 for the full 8-week course (regular $150). 10% sibling discount applies.",
+    enrollmentNotice: "Strictly limited to only 10 spots to guarantee individualized coaching and active over-the-board play. Promotional rate: $120 for the full 8-week course (regular $150). 10% sibling discount applies.",
     longDescription: [
       "Chess is universally celebrated as the greatest strategy game in the world. Far more than simple recreation, chess is an intellectual art form that sharpens critical reasoning, cultivates razor-sharp observation, and trains the mind to think ahead with patience and composure. The Académie de l'Avenir Souriant is proud to present our dedicated 8-Week Chess Course for Beginners, specifically designed for boys ages 8 to 10 at our modern Saint-Laurent center (1325 Rue Cartier).",
       "Led by enthusiastic instructors Abdullah Alatassi and Joud Altabbalh, this program transforms chess from an intimidating board game into an electrifying, interactive journey. Rather than passive lecturing, each weekly 2-hour session blends clear conceptual instruction with multimedia presentations, tactical puzzles on Chess.com, and immediate over-the-board practice.",
-      "Running every Sunday from October 18, 2026 to December 6, 2026, the course offers an exceptional educational experience at a special promotional rate of just $120 (regular $150) for the full 8-week curriculum. To ensure every student receives personal attention and active board time, enrollment is strictly capped at 12 participants (6 tournament boards). A 10% discount also applies for siblings."
+      "Running every Sunday from October 18, 2026 to December 6, 2026, the course offers an exceptional educational experience at a special promotional rate of just $120 (regular $150) for the full 8-week curriculum. To ensure every student receives personal attention and active board time, enrollment is strictly capped at only 10 spots. A 10% discount also applies for siblings."
     ],
     programDescription: [
       "Our 8-week curriculum guides young beginners through every dimension of the royal game: from board geometry and piece values to the golden rules of the opening (rapid piece development, center control, king safety), core tactical patterns (forks, pins, skewers, discovered attacks), and fundamental endgame checkmates.",
@@ -611,7 +611,7 @@ export const courses: CourseData[] = [
       { label: "Duration", value: "8 weeks · 2 hours / week (16 hours total)" },
       { label: "Dates", value: "October 18, 2026 – December 6, 2026 (Sundays)" },
       { label: "Audience", value: "Boys ages 8 to 10 (Beginners)" },
-      { label: "Class Capacity", value: "Strictly limited to 12 students (6 chess sets)" },
+      { label: "Class Capacity", value: "Strictly limited to 10 spots only" },
       { label: "Instructors", value: "Abdullah Alatassi & Joud Altabbalh" },
       { label: "Equipment Included", value: "Tournament boards, Chess.com Premium, notation books" },
       { label: "Location", value: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6" },
@@ -716,7 +716,7 @@ export const courses: CourseData[] = [
     facilities: [
       {
         title: "Tournament Chess Sets",
-        desc: "6 official tournament-size chessboards with weighted Staunton pieces for paired over-the-board play.",
+        desc: "Official tournament-size chessboards with weighted Staunton pieces for paired over-the-board play.",
         icon: "♟️"
       },
       {
@@ -745,7 +745,7 @@ export const courses: CourseData[] = [
       "Developing vital mental faculties: focus, foresight, patience, logical analysis, and emotional resilience",
       "Hands-on practice on tournament-grade boards paired with Chess.com Premium digital analysis",
       "Exciting friendly end-of-course Swiss tournament with official certificates of achievement",
-      "Exclusive cohort capped at 12 boys (ages 8–10) ensuring close guidance from passionate instructors"
+      "Exclusive cohort strictly capped at 10 spots (boys ages 8–10) ensuring close guidance from passionate instructors"
     ],
     metaTitle: "Chess Course for Beginners (Boys Ages 8–10) Montreal | Avenir Souriant",
     metaDescription: "Join our 8-week Chess Course for Beginners (Boys ages 8-10) in Saint-Laurent, Montreal. Master tactics, strategy, and opening principles. $120 full course. Starts Oct 18, 2026."
