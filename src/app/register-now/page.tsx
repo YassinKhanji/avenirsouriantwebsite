@@ -2,7 +2,7 @@
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TransitionLink } from '@/components/TransitionLink';
 
@@ -47,7 +47,8 @@ const steps = [
   { number: 1, label: 'Guardian' },
   { number: 2, label: 'Students' },
   { number: 3, label: 'Review' },
-  { number: 4, label: 'Done' },
+  { number: 4, label: 'Appointment' },
+  { number: 5, label: 'Done' },
 ];
 
 /* ── Animation Variants ── */
@@ -310,10 +311,103 @@ export default function RegisterNow() {
   const [students, setStudents] = useState<StudentData[]>([{ ...emptyStudent }]);
   const [currentStudentIndex, setCurrentStudentIndex] = useState(0);
 
+  // Appointment data
+  const [appointmentDate, setAppointmentDate] = useState('');
+  const [appointmentTime, setAppointmentTime] = useState('');
+  const [appointmentType, setAppointmentType] = useState<'virtual' | 'in-person' | ''>('');
+
   // Validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const formCardRef = useRef<HTMLDivElement>(null);
+
+  /* ── Appointment helpers ── */
+  // Get minimum selectable date (tomorrow)
+  const minDate = useMemo(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  }, []);
+
+  // Get max selectable date (60 days from now)
+  const maxDate = useMemo(() => {
+    const max = new Date();
+    max.setDate(max.getDate() + 60);
+    return max.toISOString().split('T')[0];
+  }, []);
+
+  // Get available time slots based on selected date
+  const getTimeSlots = (dateStr: string): { value: string; label: string }[] => {
+    if (!dateStr) return [];
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const dayOfWeek = dateObj.getDay(); // 0=Sun, 6=Sat
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+    const slots: { value: string; label: string }[] = [];
+
+    if (isWeekend) {
+      // Weekends: 11 AM to 5 PM (last slot at 4:30 for 30-min appointment)
+      for (let hour = 11; hour < 17; hour++) {
+        for (const min of [0, 30]) {
+          if (hour === 16 && min === 30) continue; // 4:30 + 30min = 5:00 PM (last usable)
+          const h24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          const ampm = hour >= 12 ? 'PM' : 'AM';
+          const h12 = hour > 12 ? hour - 12 : hour;
+          const label = `${h12}:${min.toString().padStart(2, '0')} ${ampm}`;
+          slots.push({ value: h24, label });
+        }
+      }
+    } else {
+      // Weekdays: 6 PM to 11 PM (last slot at 10:30 for 30-min appointment)
+      for (let hour = 18; hour < 23; hour++) {
+        for (const min of [0, 30]) {
+          if (hour === 22 && min === 30) continue; // 10:30 + 30min = 11:00 PM (last usable)
+          const h24 = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+          const h12 = hour > 12 ? hour - 12 : hour;
+          const label = `${h12}:${min.toString().padStart(2, '0')} PM`;
+          slots.push({ value: h24, label });
+        }
+      }
+    }
+
+    return slots;
+  };
+
+  // Check if a date is a valid appointment day (not in the past)
+  const isValidAppointmentDate = (dateStr: string): boolean => {
+    if (!dateStr) return false;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return dateObj > today;
+  };
+
+  // Get day info for display
+  const getDateInfo = (dateStr: string): { dayName: string; isWeekend: boolean; hours: string } | null => {
+    if (!dateStr) return null;
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const dayOfWeek = dateObj.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    const hours = isWeekend ? '11:00 AM — 5:00 PM' : '6:00 PM — 11:00 PM';
+    return { dayName, isWeekend, hours };
+  };
+
+  const timeSlots = useMemo(() => getTimeSlots(appointmentDate), [appointmentDate]);
+  const dateInfo = useMemo(() => getDateInfo(appointmentDate), [appointmentDate]);
+
+  const validateAppointment = (): boolean => {
+    const e: Record<string, string> = {};
+    if (!appointmentDate) e.appointmentDate = 'Please select a date';
+    else if (!isValidAppointmentDate(appointmentDate)) e.appointmentDate = 'Please select a future date';
+    if (!appointmentTime) e.appointmentTime = 'Please select a time slot';
+    if (!appointmentType) e.appointmentType = 'Please select a meeting type';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
 
   /* ── Helpers ── */
   const goToStep = (step: number) => {
@@ -423,6 +517,8 @@ export default function RegisterNow() {
   };
 
   const handleSubmit = async () => {
+    if (!validateAppointment()) return;
+
     setIsSubmitting(true);
     setSubmitError('');
 
@@ -438,6 +534,9 @@ export default function RegisterNow() {
           relationship: guardian.relationship,
           relationshipOther: guardian.relationshipOther,
           students,
+          appointmentDate,
+          appointmentTime,
+          appointmentType,
         }),
       });
 
@@ -449,7 +548,7 @@ export default function RegisterNow() {
         return;
       }
 
-      goToStep(4);
+      goToStep(5);
     } catch {
       setSubmitError('Network error. Please check your connection and try again.');
     } finally {
@@ -912,11 +1011,6 @@ export default function RegisterNow() {
                       ))}
                     </div>
 
-                    {submitError && (
-                      <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-                        <p className="text-red-600 text-sm font-medium">{submitError}</p>
-                      </div>
-                    )}
 
                     <div className="mt-8 flex flex-col sm:flex-row justify-between gap-3">
                       <button
@@ -927,6 +1021,217 @@ export default function RegisterNow() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                         Back
+                      </button>
+                      <button
+                        onClick={() => goToStep(4)}
+                        className="px-10 py-3.5 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md cursor-pointer flex items-center justify-center gap-2"
+                      >
+                        Continue to Appointment
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* ───── STEP 4: Book Appointment ───── */}
+                {currentStep === 4 && (
+                  <motion.div
+                    key="step4"
+                    custom={direction}
+                    variants={slideVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  >
+                    <div className="mb-6">
+                      <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900 mb-2">
+                        Book a Fit Assessment
+                      </h2>
+                      <p className="text-gray-500 text-sm sm:text-base">
+                        Before finalizing your registration, please schedule a short meeting so we can ensure the best experience for your student.
+                      </p>
+                    </div>
+
+                    {/* Availability Info Banner */}
+                    <div className="mb-6 bg-secondary/5 border border-secondary/20 rounded-xl p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="text-2xl shrink-0 mt-0.5">📅</div>
+                        <div className="text-sm text-gray-700">
+                          <p className="font-semibold text-gray-900 mb-1">Available Time Slots</p>
+                          <p><span className="font-medium">Weekdays (Mon–Fri):</span> 6:00 PM — 11:00 PM</p>
+                          <p><span className="font-medium">Weekends (Sat–Sun):</span> 11:00 AM — 5:00 PM</p>
+                          <p className="mt-1 text-xs text-gray-500">All times are Eastern Time (ET). Each appointment is 30 minutes.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-5">
+                      {/* Meeting Type */}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Meeting Type <span className="text-secondary">*</span>
+                        </label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <label
+                            className={`flex items-center gap-3 px-4 py-4 rounded-xl border-2 cursor-pointer transition-all ${
+                              appointmentType === 'virtual'
+                                ? 'border-secondary bg-secondary/5 ring-2 ring-secondary/20'
+                                : 'border-gray-200 hover:border-gray-300 bg-white'
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="appointmentType"
+                              value="virtual"
+                              checked={appointmentType === 'virtual'}
+                              onChange={() => setAppointmentType('virtual')}
+                              className="w-4 h-4 accent-[#ff9f43]"
+                            />
+                            <div>
+                              <span className="text-lg">💻</span>
+                              <span className="text-gray-800 font-medium text-sm sm:text-base ml-1">Virtual</span>
+                            </div>
+                          </label>
+                          <label
+                            className={`flex items-center gap-3 px-4 py-4 rounded-xl border-2 cursor-pointer transition-all ${
+                              appointmentType === 'in-person'
+                                ? 'border-secondary bg-secondary/5 ring-2 ring-secondary/20'
+                                : 'border-gray-200 hover:border-gray-300 bg-white'
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="appointmentType"
+                              value="in-person"
+                              checked={appointmentType === 'in-person'}
+                              onChange={() => setAppointmentType('in-person')}
+                              className="w-4 h-4 accent-[#ff9f43]"
+                            />
+                            <div>
+                              <span className="text-lg">🏫</span>
+                              <span className="text-gray-800 font-medium text-sm sm:text-base ml-1">In-Person</span>
+                            </div>
+                          </label>
+                        </div>
+                        {errors.appointmentType && (
+                          <p className="mt-1 text-sm text-red-500 font-medium">{errors.appointmentType}</p>
+                        )}
+                      </div>
+
+                      {/* Date Selection */}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                          Preferred Date <span className="text-secondary">*</span>
+                        </label>
+                        <input
+                          type="date"
+                          value={appointmentDate}
+                          min={minDate}
+                          max={maxDate}
+                          onChange={(e) => {
+                            setAppointmentDate(e.target.value);
+                            setAppointmentTime(''); // Reset time when date changes
+                          }}
+                          className={`w-full px-4 py-3 rounded-xl border text-base ${
+                            errors.appointmentDate ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-300'
+                          } focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none transition-all bg-gray-50 text-gray-900`}
+                        />
+                        {errors.appointmentDate && (
+                          <p className="mt-1 text-sm text-red-500 font-medium">{errors.appointmentDate}</p>
+                        )}
+                        {dateInfo && (
+                          <div className="mt-2 flex items-center gap-2 text-sm">
+                            <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                              dateInfo.isWeekend ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
+                            }`}>
+                              {dateInfo.isWeekend ? 'Weekend' : 'Weekday'}
+                            </span>
+                            <span className="text-gray-500">Available: {dateInfo.hours}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Time Slot Selection */}
+                      <AnimatePresence>
+                        {appointmentDate && timeSlots.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            className="overflow-hidden"
+                          >
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              Select a Time Slot <span className="text-secondary">*</span>
+                            </label>
+                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                              {timeSlots.map((slot) => (
+                                <button
+                                  key={slot.value}
+                                  type="button"
+                                  onClick={() => setAppointmentTime(slot.value)}
+                                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+                                    appointmentTime === slot.value
+                                      ? 'bg-secondary text-white shadow-md scale-[1.02]'
+                                      : 'bg-gray-50 border border-gray-200 text-gray-700 hover:border-secondary hover:bg-secondary/5'
+                                  }`}
+                                >
+                                  {slot.label}
+                                </button>
+                              ))}
+                            </div>
+                            {errors.appointmentTime && (
+                              <p className="mt-1 text-sm text-red-500 font-medium">{errors.appointmentTime}</p>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      {/* Appointment Summary */}
+                      <AnimatePresence>
+                        {appointmentDate && appointmentTime && appointmentType && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className="bg-gradient-to-br from-secondary/10 to-primary/5 border border-secondary/20 rounded-xl p-5"
+                          >
+                            <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                              <span className="text-xl">✅</span> Your Appointment
+                            </h4>
+                            <div className="space-y-1 text-sm text-gray-700">
+                              <p><span className="font-semibold">Date:</span> {dateInfo?.dayName}</p>
+                              <p><span className="font-semibold">Time:</span> {timeSlots.find(s => s.value === appointmentTime)?.label} (Eastern Time)</p>
+                              <p><span className="font-semibold">Type:</span> {appointmentType === 'virtual' ? '💻 Virtual Meeting' : '🏫 In-Person'}</p>
+                            </div>
+                            <p className="mt-3 text-xs text-gray-500">
+                              {appointmentType === 'virtual'
+                                ? 'A meeting link will be sent to your email before the appointment.'
+                                : 'Please arrive 5 minutes before your scheduled time.'}
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {submitError && (
+                      <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+                        <p className="text-red-600 text-sm font-medium">{submitError}</p>
+                      </div>
+                    )}
+
+                    <div className="mt-8 flex flex-col sm:flex-row justify-between gap-3">
+                      <button
+                        onClick={() => goToStep(3)}
+                        className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all cursor-pointer flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        Back to Review
                       </button>
                       <button
                         onClick={handleSubmit}
@@ -954,10 +1259,10 @@ export default function RegisterNow() {
                   </motion.div>
                 )}
 
-                {/* ───── STEP 4: Confirmation ───── */}
-                {currentStep === 4 && (
+                {/* ───── STEP 5: Confirmation ───── */}
+                {currentStep === 5 && (
                   <motion.div
-                    key="step4"
+                    key="step5"
                     custom={direction}
                     variants={slideVariants}
                     initial="enter"
@@ -993,8 +1298,23 @@ export default function RegisterNow() {
                       <p className="text-gray-500 text-base mb-2 max-w-md mx-auto">
                         A confirmation receipt has been sent to <strong className="text-gray-800">{guardian.email}</strong>.
                       </p>
+                      {appointmentDate && appointmentTime && (
+                        <div className="my-5 mx-auto max-w-sm bg-secondary/5 border border-secondary/20 rounded-xl p-4 text-left">
+                          <p className="font-bold text-gray-900 mb-1 flex items-center gap-2">
+                            <span className="text-xl">📅</span> Your Appointment
+                          </p>
+                          <div className="text-sm text-gray-700 space-y-0.5">
+                            <p><span className="font-semibold">Date:</span> {getDateInfo(appointmentDate)?.dayName}</p>
+                            <p><span className="font-semibold">Time:</span> {getTimeSlots(appointmentDate).find(s => s.value === appointmentTime)?.label} (ET)</p>
+                            <p><span className="font-semibold">Type:</span> {appointmentType === 'virtual' ? '💻 Virtual' : '🏫 In-Person'}</p>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-2">
+                            A calendar invite has been sent with your confirmation email.
+                          </p>
+                        </div>
+                      )}
                       <p className="text-gray-500 text-base mb-8 max-w-md mx-auto">
-                        One of our team members will contact you <strong>in the next 24 hours</strong> to confirm the details and finalize enrollment.
+                        We look forward to meeting you at the scheduled appointment!
                       </p>
                       <div className="flex flex-col sm:flex-row gap-3 justify-center">
                         <TransitionLink

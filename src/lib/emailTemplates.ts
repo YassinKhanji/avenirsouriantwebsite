@@ -15,6 +15,9 @@ export interface RegistrationBody {
   relationship: string;
   relationshipOther?: string;
   students: StudentData[];
+  appointmentDate?: string;
+  appointmentTime?: string;
+  appointmentType?: 'virtual' | 'in-person';
 }
 
 export interface ContactBody {
@@ -169,6 +172,39 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
               Thank you for registering with <strong>Avenir Souriant</strong>! We have successfully received your registration details.
             </p>
 
+            ${body.appointmentDate && body.appointmentTime ? (() => {
+              const [ay, am, ad] = body.appointmentDate!.split('-');
+              const appointmentDateObj = new Date(Number(ay), Number(am) - 1, Number(ad));
+              const dayName = appointmentDateObj.toLocaleDateString('en-US', { weekday: 'long' });
+              const monthName = appointmentDateObj.toLocaleDateString('en-US', { month: 'long' });
+              const [aHour, aMin] = body.appointmentTime!.split(':').map(Number);
+              const ampm = aHour >= 12 ? 'PM' : 'AM';
+              const displayHour = aHour > 12 ? aHour - 12 : aHour === 0 ? 12 : aHour;
+              const displayTime = `${displayHour}:${aMin.toString().padStart(2, '0')} ${ampm}`;
+              const typeLabel = body.appointmentType === 'virtual' ? '💻 Virtual Meeting' : '🏫 In-Person';
+              return `
+            <!-- APPOINTMENT BOX -->
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; margin: 0 0 24px;">
+              <tbody>
+                <tr>
+                  <td style="background-color: #fff5eb; border-left: 4px solid #ff9f43; padding: 16px 20px;">
+                    <p style="font-size: 16px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 700; color: #000000; margin: 0 0 8px;">
+                      📅 Your Fit Assessment Appointment
+                    </p>
+                    <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #000000; margin: 0;">
+                      <strong>Date:</strong> ${dayName}, ${monthName} ${ad}, ${ay}<br />
+                      <strong>Time:</strong> ${displayTime} (Eastern Time)<br />
+                      <strong>Type:</strong> ${typeLabel}
+                    </p>
+                    <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #666666; margin: 8px 0 0;">
+                      ${body.appointmentType === 'virtual' ? 'A meeting link will be sent to you before the appointment.' : 'Please arrive 5 minutes before your scheduled time.'}
+                      A calendar invite (.ics) is attached to this email.
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>`;
+            })() : `
             <!-- 24-HOUR NOTICE BOX -->
             <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; margin: 0 0 24px;">
               <tbody>
@@ -180,7 +216,7 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
                   </td>
                 </tr>
               </tbody>
-            </table>
+            </table>`}
 
             <!-- Student(s) Heading -->
             <h2 style="font-size: 17px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #000000; text-align: left; margin: 24px 0 12px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px;">
@@ -433,6 +469,39 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
             <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #555555; text-align: left; margin: 0 0 24px;">
               A new registration has been submitted through the Avenir Souriant website.
             </p>
+
+            ${body.appointmentDate && body.appointmentTime ? (() => {
+              const [ay, am, ad] = body.appointmentDate!.split('-');
+              const appointmentDateObj = new Date(Number(ay), Number(am) - 1, Number(ad));
+              const dayName = appointmentDateObj.toLocaleDateString('en-US', { weekday: 'long' });
+              const monthName = appointmentDateObj.toLocaleDateString('en-US', { month: 'long' });
+              const [aHour, aMin] = body.appointmentTime!.split(':').map(Number);
+              const ampm = aHour >= 12 ? 'PM' : 'AM';
+              const displayHour = aHour > 12 ? aHour - 12 : aHour === 0 ? 12 : aHour;
+              const displayTime = `${displayHour}:${aMin.toString().padStart(2, '0')} ${ampm}`;
+              const typeLabel = body.appointmentType === 'virtual' ? '💻 Virtual Meeting' : '🏫 In-Person';
+              return `
+            <!-- APPOINTMENT SECTION -->
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; margin: 0 0 24px;">
+              <tbody>
+                <tr>
+                  <td style="background-color: #fff5eb; border-left: 4px solid #ff9f43; padding: 16px 20px;">
+                    <p style="font-size: 16px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 700; color: #000000; margin: 0 0 8px;">
+                      📅 Fit Assessment Appointment Booked
+                    </p>
+                    <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #000000; margin: 0;">
+                      <strong>Date:</strong> ${dayName}, ${monthName} ${ad}, ${ay}<br />
+                      <strong>Time:</strong> ${displayTime} (Eastern Time)<br />
+                      <strong>Type:</strong> ${typeLabel}
+                    </p>
+                    <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #666666; margin: 8px 0 0;">
+                      A calendar invite (.ics) is attached to this email.
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>`;
+            })() : ''}
 
             <!-- Registrant Details Heading -->
             <h2 style="font-size: 17px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #000000; text-align: left; margin: 0 0 12px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px;">

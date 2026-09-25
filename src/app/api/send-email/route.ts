@@ -8,6 +8,7 @@ import {
   type RegistrationBody,
   type ContactBody,
 } from '@/lib/emailTemplates';
+import { generateICS } from '@/lib/icsGenerator';
 
 type RequestBody = RegistrationBody | ContactBody;
 
@@ -114,6 +115,30 @@ export async function POST(request: Request) {
         ? (body.students[0]?.fullName || 'Adult Student')
         : (body.guardianName || 'Registrant');
 
+      // Generate ICS calendar attachment and native invite if appointment data is present
+      const calendarAttachments: { filename: string; content: string; contentType: string }[] = [];
+      let icalEvent: { filename: string; method: string; content: string } | undefined = undefined;
+
+      if (body.appointmentDate && body.appointmentTime && body.appointmentType) {
+        const icsContent = generateICS({
+          date: body.appointmentDate,
+          time: body.appointmentTime,
+          type: body.appointmentType,
+          registrantName: subjectName,
+          registrantEmail: body.email,
+        });
+        calendarAttachments.push({
+          filename: 'appointment.ics',
+          content: icsContent,
+          contentType: 'text/calendar; method=REQUEST',
+        });
+        icalEvent = {
+          filename: 'appointment.ics',
+          method: 'REQUEST',
+          content: icsContent,
+        };
+      }
+
       // 1. Send notification to administration
       const adminHtmlContent = generateAdminRegistrationEmail(body);
       await transporter.sendMail({
@@ -123,7 +148,8 @@ export async function POST(request: Request) {
         replyTo: body.email,
         subject: `New Course Registration — ${subjectName} (${body.students.length} student${body.students.length > 1 ? 's' : ''})`,
         html: adminHtmlContent,
-        attachments,
+        attachments: [...attachments, ...calendarAttachments],
+        icalEvent,
       });
 
       // 2. Generate and send confirmation of receipt to the registrant
@@ -135,7 +161,8 @@ export async function POST(request: Request) {
           replyTo: process.env.CONTACT_EMAIL || 'administration@avenirsouriant.com',
           subject: 'Confirmation of Registration Receipt — Avenir Souriant',
           html: confirmationHtml,
-          attachments,
+          attachments: [...attachments, ...calendarAttachments],
+          icalEvent,
         });
       } catch (confirmError) {
         console.error('Confirmation email send error:', confirmError);
