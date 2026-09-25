@@ -575,7 +575,6 @@ export const courses: CourseData[] = [
     promoDesc: "Special introductory rate: $120 only (regular $150). Includes full 8-week curriculum, tournament chess sets, Chess.com Premium resources, and tournament entry.",
     desc: "An 8-week structured chess course for boys ages 8–10. Develop strategic thinking, concentration, and problem-solving through interactive lessons, tactical puzzles, and a friendly tournament.",
     image: "/images/pexels-larsmai-4815483.jpg",
-    flyerImage: "/images/Gemini_Generated_Image_n8ygbrn8ygbrn8yg_1.png",
     active: true,
     subtitle: "Boys Ages 8 to 10 • 8-Week Cohort (2 hrs/week) • Oct 18 – Dec 6, 2026",
     tagline: "MASTER THE ART & STRATEGY OF CHESS",
