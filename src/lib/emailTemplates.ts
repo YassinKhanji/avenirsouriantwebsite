@@ -61,6 +61,10 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
           </td>
         </tr>
         <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Full Name</td>
+          <td style="padding: 10px 14px; font-weight: 700; color: #000000; border-bottom: 1px solid #eeeeee;">${student.fullName}</td>
+        </tr>
+        <tr>
           <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Course(s)</td>
           <td style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #eeeeee;">${coursesDisplay}</td>
         </tr>
@@ -398,6 +402,10 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
           <td colspan="2" style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #e5e5e5; font-size: 15px;">
             Student ${index + 1}: ${student.fullName}
           </td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Full Name</td>
+          <td style="padding: 10px 14px; font-weight: 700; color: #000000; border-bottom: 1px solid #eeeeee;">${student.fullName}</td>
         </tr>
         <tr>
           <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Course(s)</td>
