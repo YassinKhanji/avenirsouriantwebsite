@@ -573,6 +573,11 @@ export default function RegisterNow() {
   const validateAppointment = (): boolean => {
     const e: Record<string, string> = {};
     if (!appointmentType) e.appointmentType = 'Please select a meeting type';
+    if (appointmentType === 'virtual' && virtualOption === 'phone') {
+      if (!guardian.phone || !guardian.phone.trim()) {
+        e.appointmentPhone = 'Please provide your phone number so we can call you';
+      }
+    }
     if (!appointmentDate) e.appointmentDate = 'Please select a date on the calendar';
     else if (!isValidAppointmentDate(appointmentDate)) e.appointmentDate = 'Please select an upcoming date';
     if (!appointmentTime) e.appointmentTime = 'Please select an available 15-minute time slot';
@@ -759,7 +764,7 @@ export default function RegisterNow() {
 
         {/* Registration Form */}
         <section className="py-8 sm:py-16 bg-gradient-to-b from-secondary-light to-white min-h-[60vh]">
-          <div className="max-w-2xl mx-auto px-3 sm:px-6">
+          <div className="max-w-2xl lg:max-w-3xl mx-auto px-3 sm:px-6">
             <div ref={formCardRef} className="bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-gray-100 p-5 sm:p-8 md:p-10">
               <StepProgress currentStep={currentStep} />
 
@@ -1243,9 +1248,6 @@ export default function RegisterNow() {
                         <div className="text-sm text-gray-700 w-full">
                           <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
                             <p className="font-bold text-gray-900 text-base">Available Hours</p>
-                            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-secondary/15 text-secondary">
-                              15 min per slot • 2 spots max
-                            </span>
                           </div>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
                             <p className="bg-white/80 rounded-lg px-3 py-1.5 border border-secondary/15">
@@ -1372,12 +1374,58 @@ export default function RegisterNow() {
                                   <span>📞</span> Phone Call
                                 </p>
                                 <p className="text-xs text-gray-500 mt-0.5 leading-snug">
-                                  We will call you at{' '}
-                                  <strong className="text-gray-700">{guardian.phone || 'your phone number'}</strong> at your scheduled time.
+                                  We will call you at your phone number at your scheduled time.
                                 </p>
                               </div>
                             </label>
                           </div>
+
+                          {/* Phone number input prompt right below Phone Call option */}
+                          <AnimatePresence>
+                            {virtualOption === 'phone' && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                                animate={{ opacity: 1, height: 'auto', marginTop: 14 }}
+                                exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                                transition={{ duration: 0.25, ease: 'easeInOut' }}
+                                className="overflow-hidden"
+                              >
+                                <div className="bg-white rounded-xl border border-secondary/30 p-3.5 sm:p-4 shadow-xs">
+                                  <label className="block text-sm font-semibold text-gray-800 mb-1">
+                                    Phone Number for Fit Assessment Call <span className="text-secondary">*</span>
+                                  </label>
+                                  <p className="text-xs text-gray-500 mb-2">
+                                    Please enter the best phone number where we can reach you for the 15-minute call.
+                                  </p>
+                                  <div className="relative">
+                                    <input
+                                      type="tel"
+                                      name="appointmentPhone"
+                                      value={guardian.phone}
+                                      onChange={(e) => {
+                                        setGuardian({ ...guardian, phone: e.target.value });
+                                        if (errors.appointmentPhone) {
+                                          const eMap = { ...errors };
+                                          delete eMap.appointmentPhone;
+                                          setErrors(eMap);
+                                        }
+                                      }}
+                                      placeholder="+1 (555) 000-0000"
+                                      dir="ltr"
+                                      className={`w-full px-4 py-2.5 rounded-xl border text-sm sm:text-base ${
+                                        errors.appointmentPhone
+                                          ? 'border-red-400 ring-2 ring-red-100'
+                                          : 'border-gray-300'
+                                      } focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none transition-all bg-gray-50 text-gray-900`}
+                                    />
+                                  </div>
+                                  {errors.appointmentPhone && (
+                                    <p className="mt-1 text-xs sm:text-sm text-red-500 font-medium">{errors.appointmentPhone}</p>
+                                  )}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </motion.div>
                       )}
 
@@ -1467,7 +1515,7 @@ export default function RegisterNow() {
                                   </div>
                                 ) : (
                                   <div className="space-y-1">
-                                    <div className="max-h-[260px] sm:max-h-[280px] overflow-y-auto pr-1 grid grid-cols-2 gap-1.5 sm:gap-2">
+                                    <div className="max-h-[260px] sm:max-h-[290px] overflow-y-auto pr-1 grid grid-cols-2 gap-1.5 sm:gap-2">
                                       {slotsData.map((slot) => {
                                         const isSelected = appointmentTime === slot.time;
                                         const isFull = !slot.available || slot.spotsLeft <= 0;
@@ -1495,12 +1543,13 @@ export default function RegisterNow() {
                                                 : 'bg-white border-gray-200 hover:border-secondary hover:bg-secondary/5 text-gray-800 cursor-pointer'
                                             }`}
                                           >
-                                            <div className="flex items-center justify-between gap-1">
-                                              <span className={`text-[11px] sm:text-sm font-bold truncate ${isSelected ? 'text-white' : 'text-gray-900'}`}>
+                                            {/* On mobile: row with time and badge side by side. On PC (md+ / lg+): time on top, badge moved down so time is never truncated */}
+                                            <div className="flex md:flex-col items-start md:items-start justify-between md:justify-start gap-1">
+                                              <span className={`text-[11px] sm:text-sm font-bold whitespace-nowrap ${isSelected ? 'text-white' : 'text-gray-900'}`}>
                                                 {slot.label}
                                               </span>
                                               <span
-                                                className={`text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.5 rounded-full font-semibold shrink-0 ${
+                                                className={`text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.5 rounded-full font-semibold shrink-0 md:mt-0.5 ${
                                                   isFull
                                                     ? 'bg-gray-200 text-gray-500'
                                                     : isSelected
@@ -1513,7 +1562,7 @@ export default function RegisterNow() {
                                                 {isFull ? 'Full' : slot.spotsLeft === 1 ? '1 spot' : '2 spots'}
                                               </span>
                                             </div>
-                                            <span className={`text-[9px] sm:text-[10px] mt-0.5 sm:mt-1 ${isSelected ? 'text-white/80' : 'text-gray-400'}`}>
+                                            <span className={`text-[9px] sm:text-[10px] mt-1 ${isSelected ? 'text-white/80' : 'text-gray-400'}`}>
                                               {slot.label} – {slot.endLabel}
                                             </span>
                                           </button>
