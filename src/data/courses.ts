@@ -582,12 +582,12 @@ export const courses: CourseData[] = [
     teacher: {
       name: "Abdullah Alatassi & Joud Altabbalh",
       title: "Chess Instructors & Mentors",
-      bio: "Passionate chess educators at Académie de l'Avenir Souriant committed to making chess an exciting, enriching, and confidence-building journey for every young learner."
+      bio: "Passionate chess educators at Académie de l'Avenir Souriant committed to making chess an exciting, enriching, and confidence-building journey for every young learner. Our lead instructor holds a 1300 ELO rating on Chess.com."
     },
     objectiveHeadline: "Strategy, Logic & Focus",
     objective: "Cultivate observation skills, critical reasoning, and patient problem-solving while mastering piece mechanics, tactical motifs, and opening principles.",
-    scheduleHeadline: "Sundays · 2 Hours per Week",
-    scheduleDetails: "Weekly 2-hour interactive sessions on Sundays from October 18 to December 6, 2026 (8 weeks total / 16 hours). In-person at our Saint-Laurent center (1325 Rue Cartier).",
+    scheduleHeadline: "Sundays · 10:00 AM – 12:00 PM",
+    scheduleDetails: "Weekly 2-hour interactive sessions on Sundays from October 18 to December 6, 2026 (8 sessions total / 16 hours) from 10:00 AM to 12:00 PM. In-person at our Saint-Laurent center (1325 Rue Cartier).",
     targetAudienceHeadline: "Boys Ages 8–10 (Beginners)",
     targetAudience: "Designed specifically for boys ages 8 to 10 with little to no prior chess experience. Small cohort strictly capped at 10 spots for maximum practice and personalized coaching.",
     contactPhones: ["(438) 346-7103", "(514) 581-5305", "(514) 808-5216"],
@@ -605,20 +605,22 @@ export const courses: CourseData[] = [
       "Students also learn standard algebraic chess notation, analyze classic games played by masters on the HD projector, and develop essential sportsmanship and emotional control. The program culminates in Week 8 with an exciting, friendly Swiss-system tournament, group game analysis, and an official graduation ceremony awarding certificates of achievement."
     ],
     programDetails: [
-      { label: "Tuition", value: "$120 for 8 weeks (Regular $150 — Save $30!)" },
-      { label: "Payment Model", value: "Complete 8-week cohort package ($15/session equivalent)" },
-      { label: "Duration", value: "8 weeks · 2 hours / week (16 hours total)" },
+      { label: "Tuition", value: "$120 for 8 sessions (Regular $150 — Save $30!)" },
+      { label: "Payment Model", value: "Complete 8-session cohort package ($15/session equivalent)" },
+      { label: "Sessions", value: "8 sessions · 2 hours each (16 hours total)" },
+      { label: "Schedule", value: "Sundays · 10:00 AM – 12:00 PM" },
       { label: "Dates", value: "October 18, 2026 – December 6, 2026 (Sundays)" },
       { label: "Audience", value: "Boys ages 8 to 10 (Beginners)" },
       { label: "Class Capacity", value: "Strictly limited to 10 spots only" },
-      { label: "Instructors", value: "Abdullah Alatassi & Joud Altabbalh" },
+      { label: "Instructors", value: "Abdullah Alatassi & Joud Altabbalh (1300 ELO on Chess.com)" },
       { label: "Equipment Included", value: "Tournament boards, Chess.com Premium, notation books" },
+      { label: "Tournament Prizes", value: "Prizes awarded to chess tournament winners!" },
       { label: "Location", value: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6" },
       { label: "Family Discount", value: "10% OFF for siblings" }
     ],
     schedule: [
-      { day: "Weekly Sunday Session", time: "2 Hours / Week (Oct 18, 2026 – Dec 6, 2026)" },
-      { day: "Schedule Details", time: "Exact cohort timing confirmed upon registration" }
+      { day: "Sundays (Oct 18 – Dec 6, 2026)", time: "10:00 AM – 12:00 PM (8 Sessions)" },
+      { day: "Tournament", time: "Week 8 — Prizes awarded to winners!" }
     ],
     curriculumTitle: "The Course Roadmap (8 Weeks)",
     curriculumTracks: [
