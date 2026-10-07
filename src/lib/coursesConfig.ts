@@ -81,6 +81,22 @@ export const FALL_2026_COURSES: CourseDefinition[] = [
     description: 'Dedicated male cohort developing independent Arabic reading, pronunciation, and fluency.',
   },
   {
+    id: 'chess-beginners-9-14',
+    name: 'Chess Program for Beginners \u2013 Boys Ages 9\u201314',
+    nameFr: 'Programme d\u2019\u00e9checs pour d\u00e9butants \u2013 Gar\u00e7ons de 9 \u00e0 14 ans',
+    minAge: 9,
+    maxAge: 14,
+    genderEligibility: 'male',
+    isChildEligible: true,
+    isAdultEligible: false,
+    is16Plus: false,
+    sessions: {
+      default: 'Sundays 10:00 AM \u2013 12:00 PM (Oct 18 \u2013 Dec 6, 2026)',
+    },
+    isActive: true,
+    description: '8-week chess program for boys ages 9\u201314. Sundays 10AM\u201312PM, Oct 18 \u2013 Dec 6, 2026. $15/session ($120 total). Limited to 10 students.',
+  },
+  {
     id: 'foundation-arabic-16-plus',
     name: 'Foundation Arabic Course for Non-Arabic Speakers – Ages 16+',
     nameFr: 'Cours de base d’arabe pour non-arabophones – 16 ans et plus',
