@@ -115,4 +115,13 @@ h1, h2, h3, h4, h5, h6, p, span, a, button {
   scrollbar-width: none;
 }
 
-
+/* Brand name: show Latin by default, Arabic only when page is in Arabic */
+.brand-name-arabic {
+  display: none;
+}
+html[lang="ar"] .brand-name-latin {
+  display: none !important;
+}
+html[lang="ar"] .brand-name-arabic {
+  display: block;
+}

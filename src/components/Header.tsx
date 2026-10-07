@@ -30,7 +30,7 @@ export default function Header() {
     { label: 'Home', path: '/' },
     { label: 'Programs', path: '/programs' },
     { label: 'Contact', path: '/register' },
-    { label: 'Book a Fit Call', path: '/register-now', isRegister: true },
+    { label: 'Register', path: '/register-now', isRegister: true },
   ];
 
   // Helper to determine if a link uses orange (secondary) styling
@@ -58,8 +58,11 @@ export default function Header() {
                 className="w-16 sm:w-20 md:w-28 object-contain"
                 priority
               />
-              <span className="font-heading font-bold text-xl sm:text-2xl text-primary hidden sm:block mt-1">
+              <span className="brand-name-latin font-heading font-bold text-xl sm:text-2xl text-primary hidden sm:block mt-1 notranslate" translate="no">
                 Avenir Souriant
+              </span>
+              <span className="brand-name-arabic font-heading font-bold text-xl sm:text-2xl text-primary mt-1 notranslate" translate="no" dir="rtl">
+                المستقبل الباسم
               </span>
             </TransitionLink>
           </div>
