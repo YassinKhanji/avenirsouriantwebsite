@@ -6,60 +6,12 @@ import Image from 'next/image';
 import { TransitionLink } from '@/components/TransitionLink';
 import { NumberCounter } from '@/components/NumberCounter';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { courses } from '@/data/courses';
-
-/* ── Hero Carousel Slides ── */
-const heroSlides = [
-  {
-    id: 'programs',
-    type: 'video' as const,
-    src: '/videos/7975461-hd_1920_1080_25fps.mp4',
-    overlayClass: 'bg-white/40',
-    heading: (
-      <>
-        Engaging <span className="text-secondary" style={{ textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black, -2px 0 0 black, 2px 0 0 black, 0 -2px 0 black, 0 2px 0 black' }}>Programs</span>{' '}
-        <br className="hidden sm:inline" /> for Every{' '}
-        <span className="text-primary" style={{ textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black, -2px 0 0 black, 2px 0 0 black, 0 -2px 0 black, 0 2px 0 black' }}>Person</span>
-      </>
-    ),
-    subtitle: 'From Arabic language mastery to STEM & Robotics, our programs are designed to spark curiosity, build confidence, and make learning an adventure.',
-    cta: { label: 'View Programs', href: '/programs' },
-    cta2: { label: 'Register Now', href: '/register-now' },
-    showPhone: false,
-    textColor: 'text-gray-900',
-  },
-  {
-    id: 'video',
-    type: 'video' as const,
-    src: '/videos/hero-video.mp4',
-    overlayClass: 'bg-white/40',
-    heading: (
-      <>
-        Discover the <span className="text-secondary" style={{ textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black, -2px 0 0 black, 2px 0 0 black, 0 -2px 0 black, 0 2px 0 black' }}>Joy</span>{' '}
-        <br className="hidden sm:inline" /> of Learning{' '}
-        <span className="text-primary" style={{ textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black, -2px 0 0 black, 2px 0 0 black, 0 -2px 0 black, 0 2px 0 black' }}>Arabic</span>
-      </>
-    ),
-    subtitle: null,
-    cta: { label: 'Register Now', href: '/register-now' },
-    cta2: null,
-    showPhone: true,
-    textColor: 'text-gray-900',
-  },
-  {
-    id: 'register',
-    type: 'image' as const,
-    src: '/images/classroom_hero.jpg',
-    overlayClass: 'bg-black/60',
-    heading: <>Join the Avenir Souriant <br className="hidden sm:inline" /> Family Today</>,
-    subtitle: 'Enroll your child in Montréal\'s most exciting Arabic learning center. Limited spots available — register now!',
-    cta: { label: 'Register Now', href: '/register-now' },
-    cta2: { label: 'View Programs', href: '/programs' },
-    showPhone: false,
-    textColor: 'text-white',
-  },
-];
+import { useLanguage } from '@/contexts/LanguageContext';
+import { HOME_TRANSLATIONS } from '@/lib/translations/home';
+import { getLocalizedCourse } from '@/lib/translations/coursesI18n';
+import { COMMON_TRANSLATIONS } from '@/lib/translations/common';
 
 export default function Home() {
   const containerRef = useRef(null);
@@ -69,6 +21,76 @@ export default function Home() {
   });
   
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.3]);
+
+  const { language } = useLanguage();
+  const t = HOME_TRANSLATIONS[language];
+  const common = COMMON_TRANSLATIONS[language];
+
+  const localizedCourses = useMemo(
+    () => courses.map((c) => getLocalizedCourse(c, language)),
+    [language]
+  );
+
+  const heroSlides = useMemo(() => [
+    {
+      id: 'programs',
+      type: 'video' as const,
+      src: '/videos/7975461-hd_1920_1080_25fps.mp4',
+      overlayClass: 'bg-white/40',
+      heading: (
+        <>
+          {t.hero.slide1.headingPart1}{' '}
+          <span className="text-secondary" style={{ textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black, -2px 0 0 black, 2px 0 0 black, 0 -2px 0 black, 0 2px 0 black' }}>
+            {t.hero.slide1.headingHighlight1}
+          </span>{' '}
+          <br className="hidden sm:inline" /> {t.hero.slide1.headingPart2}{' '}
+          <span className="text-primary" style={{ textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black, -2px 0 0 black, 2px 0 0 black, 0 -2px 0 black, 0 2px 0 black' }}>
+            {t.hero.slide1.headingHighlight2}
+          </span>
+        </>
+      ),
+      subtitle: t.hero.slide1.subtitle,
+      cta: { label: t.hero.slide1.cta1, href: '/programs' },
+      cta2: { label: t.hero.slide1.cta2, href: '/register-now' },
+      showPhone: false,
+      textColor: 'text-gray-900',
+    },
+    {
+      id: 'video',
+      type: 'video' as const,
+      src: '/videos/hero-video.mp4',
+      overlayClass: 'bg-white/40',
+      heading: (
+        <>
+          {t.hero.slide2.headingPart1}{' '}
+          <span className="text-secondary" style={{ textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black, -2px 0 0 black, 2px 0 0 black, 0 -2px 0 black, 0 2px 0 black' }}>
+            {t.hero.slide2.headingHighlight1}
+          </span>{' '}
+          <br className="hidden sm:inline" /> {t.hero.slide2.headingPart2}{' '}
+          <span className="text-primary" style={{ textShadow: '-2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black, -2px 0 0 black, 2px 0 0 black, 0 -2px 0 black, 0 2px 0 black' }}>
+            {t.hero.slide2.headingHighlight2}
+          </span>
+        </>
+      ),
+      subtitle: null,
+      cta: { label: t.hero.slide2.cta, href: '/register-now' },
+      cta2: null,
+      showPhone: true,
+      textColor: 'text-gray-900',
+    },
+    {
+      id: 'register',
+      type: 'image' as const,
+      src: '/images/classroom_hero.jpg',
+      overlayClass: 'bg-black/60',
+      heading: <>{t.hero.slide3.heading}</>,
+      subtitle: t.hero.slide3.subtitle,
+      cta: { label: t.hero.slide3.cta1, href: '/register-now' },
+      cta2: { label: t.hero.slide3.cta2, href: '/programs' },
+      showPhone: false,
+      textColor: 'text-white',
+    },
+  ], [t]);
 
   /* ── Carousel state ── */
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -113,20 +135,6 @@ export default function Home() {
       });
     }
   };
-
-
-  const clients = [
-    { name: "Nour Al-Sabah", quote: "My kids used to dread Arabic classes, but Avenir Souriant completely flipped the script. They come home excited to learn!" },
-    { name: "Kareem Hassan", quote: "The blend of language learning with robotics and soccer is incredible. It keeps my son engaged and active all weekend." },
-    { name: "Layla M.", quote: "An amazing center! The teachers are passionate, the environment is safe, and my daughter's confidence has skyrocketed." }
-  ];
-
-  const stats = [
-    { val: courses.length.toString(), label: "Interactive Programs" },
-    { val: "98%", label: "Engagement" },
-    { val: "7", label: "Expert Instructors" },
-    { val: "37", label: "Happy Students" }
-  ];
 
   return (
     <>
@@ -225,7 +233,9 @@ export default function Home() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.65, duration: 0.5 }}
                     >
-                      <p className="text-gray-800 mb-4 sm:mb-6 font-semibold text-lg sm:text-xl drop-shadow-sm">or</p>
+                      <p className="text-gray-800 mb-4 sm:mb-6 font-semibold text-lg sm:text-xl drop-shadow-sm">
+                        {t.hero.slide2.or}
+                      </p>
                       <a href="tel:+15145815305" className="text-2xl sm:text-3xl md:text-4xl font-bold text-white transition-all duration-300 flex items-center justify-center drop-shadow-sm group">
                         <span className="mr-2 sm:mr-3 group-hover:scale-110 transition-transform">📞</span>
                         <span dir="ltr" className="group-hover:[-webkit-text-stroke:1.5px_#1abc9c] transition-all duration-300 force-ltr">(514) 581-5305</span>
@@ -257,12 +267,14 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
               <div>
-                <h2 className="text-3xl sm:text-4xl font-bold font-heading mb-6 sm:mb-8 text-start">Welcome to Avenir Souriant</h2>
+                <h2 className="text-3xl sm:text-4xl font-bold font-heading mb-6 sm:mb-8 text-start">
+                  {t.welcome.title}
+                </h2>
                 <div ref={containerRef} className="relative aspect-[1024/558] w-full rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-white">
                   <motion.div style={{ scale, width: '100%', height: '100%', position: 'relative' }}>
                     <Image 
                       src="/images/Gemini_Generated_Image_30n9zp30n9zp30n9.png"
-                      alt="Welcome to Avenir Souriant"
+                      alt={t.welcome.title}
                       fill
                       className="object-contain"
                     />
@@ -271,28 +283,22 @@ export default function Home() {
               </div>
               <div>
                 <p className="text-gray-600 mb-6 sm:mb-8 text-base sm:text-lg leading-relaxed text-start">
-                  Avenir Souriant is the Arabic learning center that flipped the script. No more boring drills, no more dreading class. We made Arabic their favorite subject — and the kids will tell you themselves. Based in Montréal, we're building the next generation of confident Arabic speakers, one smiling face at a time.
+                  {t.welcome.body}
                 </p>
                 <ul className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-                  <li className="flex items-center gap-3 text-gray-700 text-start text-base sm:text-lg">
-                    <span className="text-primary shrink-0 text-lg">✔</span>
-                    <span>Innovative & Interactive Learning</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-700 text-start text-base sm:text-lg">
-                    <span className="text-primary shrink-0 text-lg">✔</span>
-                    <span>Arabic for Speakers and Non-Speakers</span>
-                  </li>
-                  <li className="flex items-center gap-3 text-gray-700 text-start text-base sm:text-lg">
-                    <span className="text-primary shrink-0 text-lg">✔</span>
-                    <span>Diverse Activities: Robotics, Soccer, & Stitching</span>
-                  </li>
+                  {t.welcome.points.map((point, idx) => (
+                    <li key={idx} className="flex items-center gap-3 text-gray-700 text-start text-base sm:text-lg">
+                      <span className="text-primary shrink-0 text-lg">✔</span>
+                      <span>{point}</span>
+                    </li>
+                  ))}
                 </ul>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <TransitionLink href="/programs" className="inline-block w-full sm:w-auto text-center px-8 py-3.5 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 shadow-sm transition-all hover:scale-105 active:scale-95">
-                    View Programs
+                    {t.welcome.ctaPrograms}
                   </TransitionLink>
                   <TransitionLink href="/register-now" className="inline-block w-full sm:w-auto text-center px-8 py-3.5 bg-primary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 shadow-sm transition-all hover:scale-105 active:scale-95">
-                    Register Now
+                    {t.welcome.ctaRegister}
                   </TransitionLink>
                 </div>
               </div>
@@ -308,16 +314,16 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-10 sm:mb-16">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading text-gray-900 mb-3 sm:mb-4">
-                Our Programs
+                {t.programsSection.title}
               </h2>
               <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">
-                Explore our comprehensive array of educational programs and engaging extracurricular activities tailored to inspire your child.
+                {t.programsSection.subtitle}
               </p>
             </div>
 
             {/* Slider Container with Arrows */}
             <div className="relative">
-              {/* Left Navigation Arrow - visible on tablet and desktop */}
+              {/* Left Navigation Arrow */}
               <button
                 onClick={() => scrollPrograms('left')}
                 aria-label="Previous programs"
@@ -328,7 +334,7 @@ export default function Home() {
                 </svg>
               </button>
 
-              {/* Right Navigation Arrow - visible on tablet and desktop */}
+              {/* Right Navigation Arrow */}
               <button
                 onClick={() => scrollPrograms('right')}
                 aria-label="Next programs"
@@ -345,7 +351,7 @@ export default function Home() {
                 className="flex gap-4 sm:gap-6 md:gap-8 overflow-x-auto scroll-smooth snap-x snap-mandatory py-4 px-1 sm:px-2 no-scrollbar"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
-                {courses.map((program) => (
+                {localizedCourses.map((program) => (
                   <div
                     key={program.slug}
                     className="w-[82vw] max-w-[320px] sm:w-[340px] md:w-[370px] shrink-0 snap-center sm:snap-start bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl border border-gray-300 hover:border-primary/50 transition-all duration-300 flex flex-col group/card relative"
@@ -368,11 +374,11 @@ export default function Home() {
 
                           {program.active ? (
                             <span className="shrink-0 bg-emerald-500/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm animate-pulse">
-                              Enrolling Now
+                              {common.badges.enrollingNow}
                             </span>
                           ) : (
                             <span className="shrink-0 bg-gray-900/85 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm">
-                              Coming Soon
+                              {common.badges.comingSoon}
                             </span>
                           )}
                         </div>
@@ -392,7 +398,7 @@ export default function Home() {
 
                       {/* Price Tag Row */}
                       <div className="flex items-baseline justify-between pt-4 border-t border-gray-200 mb-4 sm:mb-6">
-                        <span className="text-xs sm:text-sm font-medium text-gray-500">Tuition</span>
+                        <span className="text-xs sm:text-sm font-medium text-gray-500">{common.badges.tuition}</span>
                         <div className="flex items-baseline gap-2">
                           {program.originalPrice && (
                             <span className="text-xs sm:text-sm line-through text-gray-400 font-medium">
@@ -409,13 +415,13 @@ export default function Home() {
                       <div className="flex flex-col gap-2">
                         <TransitionLink href={program.active ? `/programs/${program.slug}` : '/register'} className="w-full">
                           <button className="w-full py-3 px-4 sm:px-6 rounded-2xl border-2 border-gray-200 text-gray-800 font-bold text-sm md:text-base hover:border-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center">
-                            {program.active ? 'Learn More' : 'Find Out More'}
+                            {program.active ? common.badges.learnMore : common.badges.findOutMore}
                           </button>
                         </TransitionLink>
                         {program.active && (
                           <TransitionLink href="/register-now" className="w-full">
                             <button className="w-full py-3 px-4 sm:px-6 rounded-2xl bg-secondary text-white font-bold text-sm md:text-base hover:bg-secondary/90 transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center">
-                              Register Now
+                              {common.nav.registerNow}
                             </button>
                           </TransitionLink>
                         )}
@@ -432,7 +438,7 @@ export default function Home() {
                 href="/programs"
                 className="inline-block w-full sm:w-auto px-8 sm:px-10 py-3.5 sm:py-4 bg-secondary text-white rounded-full font-bold text-base sm:text-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md cursor-pointer text-center"
               >
-                View More Programs
+                {t.programsSection.viewMore}
               </TransitionLink>
             </div>
           </div>
@@ -441,7 +447,9 @@ export default function Home() {
         {/* Location & Map Section */}
         <section className="py-14 sm:py-20 bg-primary-light">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl sm:text-4xl font-bold font-heading mb-8 sm:mb-12 text-center">Visit Our Center</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold font-heading mb-8 sm:mb-12 text-center">
+              {t.location.title}
+            </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-gray-200">
               <div className="order-2 lg:order-1 h-64 sm:h-80 md:h-96 w-full rounded-xl overflow-hidden shadow-inner">
                 <iframe 
@@ -455,9 +463,11 @@ export default function Home() {
                 ></iframe>
               </div>
               <div className="order-1 lg:order-2 text-start">
-                <h3 className="text-2xl sm:text-3xl font-bold font-heading mb-4 sm:mb-6 text-gray-900">Avenir Souriant</h3>
+                <h3 className="text-2xl sm:text-3xl font-bold font-heading mb-4 sm:mb-6 text-gray-900">
+                  {common.brandName}
+                </h3>
                 <p className="text-base sm:text-lg text-gray-600 mb-6">
-                  Come see our modern facilities where we inspire the next generation of confident Arabic speakers. 
+                  {t.location.subtitle}
                 </p>
                 <div className="space-y-4">
                   <p className="flex items-start gap-3 text-base sm:text-lg">
@@ -480,9 +490,11 @@ export default function Home() {
           style={{ backgroundImage: "url('/images/geometric-pattern-bg.png')", backgroundSize: "350px" }}
         >
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold font-heading mb-8 sm:mb-12">What Clients Say</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold font-heading mb-8 sm:mb-12">
+              {t.testimonials.title}
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-              {clients.map((client, idx) => (
+              {t.testimonials.items.map((client, idx) => (
                 <div key={idx} className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border-2 border-primary/20 flex flex-col items-center">
                   <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary-light rounded-full flex items-center justify-center mb-5 sm:mb-6">
                     <span className="text-2xl text-primary">❝</span>
@@ -498,28 +510,32 @@ export default function Home() {
         {/* Stats Section */}
         <section className="py-14 sm:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl sm:text-3xl lg:hidden font-bold font-heading mb-6 text-center text-primary">Avenir Souriant</h2>
+            <h2 className="text-2xl sm:text-3xl lg:hidden font-bold font-heading mb-6 text-center text-primary">
+              {common.brandName}
+            </h2>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-center">
               <div className="flex justify-center max-w-[240px] sm:max-w-[320px] mx-auto">
                 <Image 
                   src="/images/every-baby-illustration.png" 
-                  alt="A New Era of Education" 
+                  alt={t.statsSection.title} 
                   width={350}
                   height={350}
                   className="object-contain"
                 />
               </div>
               <div className="text-start">
-                <h2 className="text-3xl sm:text-4xl font-bold font-heading mb-4 sm:mb-6">A New Era of Education</h2>
+                <h2 className="text-3xl sm:text-4xl font-bold font-heading mb-4 sm:mb-6">
+                  {t.statsSection.title}
+                </h2>
                 <p className="text-gray-600 mb-6 sm:mb-8 text-base sm:text-lg leading-relaxed">
-                  We believe that learning should be an adventure. Our certified instructors combine language immersion with fun activities like sports and robotics to ensure every child loves coming to class.
+                  {t.statsSection.body}
                 </p>
                 <TransitionLink href="/programs" className="inline-block w-full sm:w-auto text-center px-8 py-3.5 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 shadow-sm transition-all hover:scale-105 active:scale-95">
-                  View Programs
+                  {t.statsSection.cta}
                 </TransitionLink>
               </div>
               <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-                {stats.map((stat, idx) => (
+                {t.statsSection.stats.map((stat, idx) => (
                   <div key={idx} className="bg-white p-4 sm:p-5 lg:p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col items-center text-center hover:border-primary transition-colors">
                     <p className="text-2xl sm:text-3xl font-bold text-primary mb-1 sm:mb-2"><NumberCounter value={stat.val} /></p>
                     <h6 className="font-semibold text-xs sm:text-sm text-gray-700">{stat.label}</h6>
@@ -537,23 +553,23 @@ export default function Home() {
               <div className="relative h-60 sm:h-80 md:h-96 w-full rounded-2xl overflow-hidden">
                 <Image 
                   src="/images/register_callout.png"
-                  alt="Ready to Join Avenir Souriant?"
+                  alt={t.ctaBanner.title}
                   fill
                   className="object-cover"
                 />
               </div>
               <div className="flex flex-col items-start justify-center text-start">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-heading mb-4 sm:mb-6 text-gray-900 leading-tight">
-                  Ready to Join Avenir Souriant?
+                  {t.ctaBanner.title}
                 </h2>
                 <p className="text-gray-600 text-base sm:text-lg mb-6 sm:mb-8 leading-relaxed">
-                  Give your child the gift of language, creativity, and coding. Join the Avenir Souriant family and watch them build confidence, make friends, and discover the joy of learning Arabic through hands-on activities, robotics, and sports.
+                  {t.ctaBanner.body}
                 </p>
                 <TransitionLink 
                   href="/register-now" 
                   className="inline-block w-full sm:w-auto text-center px-8 sm:px-10 py-3.5 sm:py-4 bg-secondary text-white rounded-full font-bold text-base sm:text-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md cursor-pointer"
                 >
-                  Register Now
+                  {t.ctaBanner.button}
                 </TransitionLink>
               </div>
             </div>

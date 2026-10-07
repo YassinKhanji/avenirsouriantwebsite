@@ -23,6 +23,7 @@ import {
   getAssignedSession,
   type CourseDefinition,
 } from '@/lib/coursesConfig';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   I18N_DICTIONARIES,
   type FormLang,
@@ -397,8 +398,9 @@ const CalendarMonthPicker = ({
 };
 
 export default function RegisterNow() {
-  const [uiLang, setUiLang] = useState<FormLang>('en');
-  const t = useMemo(() => I18N_DICTIONARIES[uiLang], [uiLang]);
+  const { language } = useLanguage();
+  const uiLang: FormLang = (language as FormLang) || 'en';
+  const t = useMemo(() => I18N_DICTIONARIES[uiLang] || I18N_DICTIONARIES.en, [uiLang]);
   const isRTL = uiLang === 'ar';
 
   const [currentStep, setCurrentStep] = useState(1);

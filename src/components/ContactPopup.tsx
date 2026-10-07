@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { COMMON_TRANSLATIONS } from '@/lib/translations/common';
 
 export function ContactPopup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,6 +17,9 @@ export function ContactPopup() {
   });
   const [error, setError] = useState('');
   const pathname = usePathname();
+
+  const { language } = useLanguage();
+  const t = COMMON_TRANSLATIONS[language].popup;
 
   useEffect(() => {
     // Check if popup was already shown in this session
@@ -60,7 +65,6 @@ export function ContactPopup() {
 
     if (pathname === '/') {
       window.addEventListener('scroll', handleScroll, { passive: true });
-      // Check immediately in case they load halfway down the page
       handleScroll();
     }
 
@@ -77,7 +81,7 @@ export function ContactPopup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.phone) {
-      setError('Please fill in all required fields.');
+      setError(t.errorRequired);
       return;
     }
     setError('');
@@ -99,7 +103,7 @@ export function ContactPopup() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Failed to send message. Please try again.');
+        setError(data.error || t.errorNetwork);
         setIsSubmitting(false);
         return;
       }
@@ -108,7 +112,7 @@ export function ContactPopup() {
       setIsSubmitted(true);
       setFormData({ name: '', email: '', phone: '', comment: '' });
     } catch {
-      setError('Network error. Please check your connection and try again.');
+      setError(t.errorNetwork);
     } finally {
       setIsSubmitting(false);
     }
@@ -133,7 +137,7 @@ export function ContactPopup() {
         <button 
           onClick={handleClose}
           className="absolute top-3 right-3 sm:top-4 sm:right-4 rtl:right-auto rtl:left-3 rtl:sm:left-4 w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors cursor-pointer z-10"
-          aria-label="Close"
+          aria-label={t.closeBtn}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -143,54 +147,54 @@ export function ContactPopup() {
         {!isSubmitted ? (
           <>
             <div className="text-center mb-5 sm:mb-6 pt-2">
-              <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900 mb-2">Want to register?</h2>
-              <p className="text-gray-600 text-sm sm:text-base">Leave your details and our team will get in touch with you!</p>
+              <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900 mb-2">{t.title}</h2>
+              <p className="text-gray-600 text-sm sm:text-base">{t.subtitle}</p>
             </div>
 
             <form className="space-y-3 sm:space-y-4 text-start" onSubmit={handleSubmit}>
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">Full Name *</label>
+                <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">{t.fullName}</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="John Doe"
+                  placeholder={t.fullNamePlaceholder}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-gray-50 text-gray-900"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">{t.email}</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="john@example.com"
+                  placeholder={t.emailPlaceholder}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-gray-50 text-gray-900"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Phone Number *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">{t.phone}</label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="(514) 581-5305"
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-gray-50 text-gray-900"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Comment</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">{t.message}</label>
                 <textarea
                   name="comment"
                   value={formData.comment}
                   onChange={handleChange}
-                  placeholder="My student is eager to begin their Arabic learning journey with Avenir Souriant!"
+                  placeholder={t.messagePlaceholder}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-gray-50 text-gray-900 resize-none"
                   rows={3}
                 />
@@ -209,10 +213,10 @@ export function ContactPopup() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
-                    Sending...
+                    {t.submittingBtn}
                   </>
                 ) : (
-                  'Send Request'
+                  t.submitBtn
                 )}
               </button>
             </form>
@@ -225,16 +229,16 @@ export function ContactPopup() {
               </svg>
             </div>
             <h3 className="text-2xl font-bold font-heading text-gray-900 mb-3">
-              Thank You!
+              {t.successTitle}
             </h3>
             <p className="text-gray-600 text-lg mb-6 leading-relaxed">
-              Your message has been sent successfully. One of our staff members will contact you <strong>in the next 24 hours</strong>.
+              {t.successDesc}
             </p>
             <button
               onClick={handleClose}
               className="px-8 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md cursor-pointer"
             >
-              Got it!
+              {t.closeBtn}
             </button>
           </div>
         )}

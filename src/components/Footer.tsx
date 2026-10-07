@@ -3,8 +3,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { TransitionLink } from '@/components/TransitionLink';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { COMMON_TRANSLATIONS } from '@/lib/translations/common';
 
 export default function Footer() {
+  const { language } = useLanguage();
+  const t = COMMON_TRANSLATIONS[language];
+
   return (
     <footer 
       className="relative text-white pt-16 pb-8 bg-repeat bg-center"
@@ -27,14 +32,14 @@ export default function Footer() {
               />
             </Link>
             <p className="mb-4 text-white/95 font-medium leading-relaxed text-sm sm:text-base">
-              Join Avenir Souriant and give your child the gift of language and adventure.
+              {t.footer.tagline}
             </p>
             <p className="flex items-start gap-2 mb-2 text-white/95 font-medium text-sm sm:text-base">
               <span className="shrink-0 mt-0.5">📍</span>
               <span>1325 Rue Cartier, Saint-Laurent, QC H4L 2N6</span>
             </p>
             <a href="https://maps.google.com/?q=1325+Rue+Cartier,+Saint-Laurent,+QC+H4L+2N6" target="_blank" rel="noopener noreferrer" className="text-secondary-light hover:text-white underline text-xs sm:text-sm mb-6 inline-block font-semibold">
-              View on Google Maps
+              {t.footer.viewMap}
             </a>
             
             <div className="flex items-center gap-4">
@@ -55,7 +60,7 @@ export default function Footer() {
 
           {/* Contact Details */}
           <div>
-            <h3 className="text-xl sm:text-2xl font-bold font-heading mb-4 sm:mb-6 text-white">Questions?</h3>
+            <h3 className="text-xl sm:text-2xl font-bold font-heading mb-4 sm:mb-6 text-white">{t.footer.questions}</h3>
             <p className="flex items-center gap-2 text-lg sm:text-xl font-bold mb-2">
               <span className="shrink-0">📞</span>
               <a href="tel:+15145815305" className="text-white hover:text-secondary-light transition-colors force-ltr" dir="ltr">(514) 581-5305</a>
@@ -73,19 +78,21 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl sm:text-2xl font-bold font-heading mb-4 sm:mb-6 text-white">Quick Links</h3>
+            <h3 className="text-xl sm:text-2xl font-bold font-heading mb-4 sm:mb-6 text-white">{t.footer.quickLinks}</h3>
             <div className="grid grid-cols-2 gap-3 sm:gap-4 font-heading text-sm sm:text-base">
-              <TransitionLink href="/" className="text-white/95 hover:text-secondary-light font-medium transition-colors">Home</TransitionLink>
-              <TransitionLink href="/programs" className="text-white/95 hover:text-secondary-light font-medium transition-colors">Programs</TransitionLink>
-              <TransitionLink href="/register" className="text-white/95 hover:text-secondary-light font-medium transition-colors">Contact</TransitionLink>
-              <TransitionLink href="/register-now" className="text-white/95 hover:text-secondary-light font-medium transition-colors">Register Now</TransitionLink>
+              <TransitionLink href="/" className="text-white/95 hover:text-secondary-light font-medium transition-colors">{t.nav.home}</TransitionLink>
+              <TransitionLink href="/programs" className="text-white/95 hover:text-secondary-light font-medium transition-colors">{t.nav.programs}</TransitionLink>
+              <TransitionLink href="/register" className="text-white/95 hover:text-secondary-light font-medium transition-colors">{t.nav.contact}</TransitionLink>
+              <TransitionLink href="/register-now" className="text-white/95 hover:text-secondary-light font-medium transition-colors">
+                {t.nav.registerNow}
+              </TransitionLink>
             </div>
           </div>
         </div>
 
         <div className="border-t border-white/20 mt-12 pt-8 text-center">
           <p className="text-sm text-white/85 font-medium">
-            © {new Date().getFullYear().toString()} Avenir Souriant. All rights reserved.
+            © {new Date().getFullYear().toString()} {t.brandName}. {t.footer.copyright}
           </p>
         </div>
       </div>

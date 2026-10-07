@@ -4,9 +4,13 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import { TransitionLink } from '@/components/TransitionLink';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useState, useMemo } from 'react';
 import type { CourseData } from '@/data/courses';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getLocalizedCourse } from '@/lib/translations/coursesI18n';
+import { COURSE_DETAILS_PAGE_TRANSLATIONS } from '@/lib/translations/courseDetailsPage';
+import { COMMON_TRANSLATIONS } from '@/lib/translations/common';
 
 // CollapsibleSection component for mobile-friendly expandable sections
 function CollapsibleSection({ 
@@ -26,7 +30,7 @@ function CollapsibleSection({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between py-3 group cursor-pointer text-left md:pointer-events-none"
+        className="w-full flex items-center justify-between py-3 group cursor-pointer text-left rtl:text-right md:pointer-events-none"
       >
         <h2 className="text-2xl md:text-3xl font-bold font-heading text-primary italic">
           {title}
@@ -49,8 +53,55 @@ interface CourseDetailClientProps {
   course: CourseData;
 }
 
-export default function CourseDetailClient({ course }: CourseDetailClientProps) {
-  const [showFullDescription, setShowFullDescription] = useState(false);
+export default function CourseDetailClient({ course: initialCourse }: CourseDetailClientProps) {
+  const { language } = useLanguage();
+  const course = useMemo(() => getLocalizedCourse(initialCourse, language), [initialCourse, language]);
+  const t = useMemo(() => COURSE_DETAILS_PAGE_TRANSLATIONS[language] || COURSE_DETAILS_PAGE_TRANSLATIONS.en, [language]);
+  const common = useMemo(() => COMMON_TRANSLATIONS[language] || COMMON_TRANSLATIONS.en, [language]);
+
+  const enrollingBadge = language === 'ar' ? 'التسجيل مفتوح' : language === 'fr' ? 'Inscriptions ouvertes' : 'Enrolling Now';
+  const callLabel = language === 'ar' ? 'اتصل:' : language === 'fr' ? 'Appelez :' : 'Call:';
+  const promoBadge = language === 'ar' ? 'عرض خاص لفترة محدودة' : language === 'fr' ? 'Tarif d’inscription spécial' : 'Special Limited-Time Rate';
+  const objectiveLabel = language === 'ar' ? 'الهدف' : language === 'fr' ? 'Objectif' : 'Objective';
+  const whoForLabel = language === 'ar' ? 'الفئة المستهدفة' : language === 'fr' ? 'Public cible' : 'Who Is It For';
+  const parentChallengesTitle = language === 'ar' ? 'التحديات التي نساعد أولياء الأمور في تجاوزها' : language === 'fr' ? 'Les défis parentaux relevés' : 'Parent Challenges Solved';
+  const tailoredSupportBadge = language === 'ar' ? 'دعم أكاديمي مخصص' : language === 'fr' ? 'Soutien académique personnalisé' : 'Tailored Academic Support';
+  const homeschoolingSubtitle = language === 'ar' 
+    ? 'أهم التحديات التي تواجه عائلات التعليم المنزلي' 
+    : language === 'fr' 
+    ? 'Principaux défis des familles en enseignement à domicile' 
+    : 'Key Challenges for Homeschooling Families';
+  const homeschoolingDesc = language === 'ar'
+    ? 'يتولى مركزنا الجوانب الأكثر تطلباً في التعليم المنزلي لتقديم تجربة غنية وسلسة:'
+    : language === 'fr'
+    ? 'Notre centre prend en charge les aspects les plus exigeants de l’enseignement à domicile :'
+    : 'Our center takes care of the most demanding aspects of homeschooling to deliver an enriching, stress-free experience:';
+  
+  const membershipTitle = language === 'ar' ? 'خطط الاشتراك المرنة' : language === 'fr' ? 'Formules d’abonnement flexibles' : 'Flexible Membership Plans';
+  const membershipDesc = language === 'ar'
+    ? 'اختر الخطة المناسبة لجدول عائلتك وأهدافك التعليمية (9:00 ص – 1:00 م):'
+    : language === 'fr'
+    ? 'Choisissez le forfait adapté à votre horaire et vos objectifs (9h00 à 13h00) :'
+    : 'Select the plan that best fits your family’s schedule and learning goals (9:00 AM – 1:00 PM):';
+  const popularBadge = language === 'ar' ? 'الأكثر طلباً' : language === 'fr' ? 'Populaire' : 'Popular';
+  const ratesTitle = language === 'ar' ? 'الرسوم' : language === 'fr' ? 'Tarifs' : 'Rates';
+  const oneMonthLabel = language === 'ar' ? 'شهر واحد' : language === 'fr' ? '1 Mois' : '1 Month';
+  const oneTermLabel = language === 'ar' ? 'فصل دراسي' : language === 'fr' ? '1 Trimestre' : '1 Term';
+  const schoolYearLabel = language === 'ar' ? 'عام دراسي كامل' : language === 'fr' ? 'Année scolaire' : 'School Year';
+  const tutoringLabel = language === 'ar' ? 'دروس تقوية مخصصة في:' : language === 'fr' ? 'Tutorat personnalisé en :' : 'Personalized Tutoring In:';
+  
+  const gradeLevelsTitle = language === 'ar' ? 'البرامج حسب المرحلة الدراسية' : language === 'fr' ? 'Programmes par niveau scolaire' : 'Programs by Grade Level';
+  const programDetailsTitle = language === 'ar' ? 'تفاصيل البرنامج' : language === 'fr' ? 'Détails du programme' : 'Program Details';
+  
+  const howToRegisterTitle = language === 'ar' ? 'طريقة التسجيل' : language === 'fr' ? 'Comment s’inscrire' : 'How to Register';
+  const callToRegisterLabel = language === 'ar' ? 'اتصل للتسجيل' : language === 'fr' ? 'Appelez pour vous inscrire' : 'Call to Register';
+  const centerLocationLabel = language === 'ar' ? 'مقر المركز:' : language === 'fr' ? 'Adresse du centre :' : 'Center Location:';
+  
+  const directEnrollmentTitle = language === 'ar' ? 'التسجيل المباشر' : language === 'fr' ? 'Inscription directe' : 'Direct Enrollment';
+  const callNowBtn = language === 'ar' ? 'اتصل الآن' : language === 'fr' ? 'Appelez maintenant' : 'Call Now';
+  const flyerTitle = language === 'ar' ? 'المنشور الرسمي للدورة' : language === 'fr' ? 'Dépliant officiel du cours' : 'Official Course Flyer';
+  const usefulLinksTitle = language === 'ar' ? 'روابط مفيدة' : language === 'fr' ? 'Liens utiles' : 'Useful Links';
+  const perSessionText = language === 'ar' ? ' / للجلسة' : language === 'fr' ? ' / séance' : ' / session';
 
   return (
     <>
@@ -85,7 +136,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                 </span>
                 {course.active && (
                   <span className="bg-secondary text-white text-[10px] sm:text-xs font-bold uppercase tracking-widest px-3 sm:px-4 py-1 sm:py-1.5 rounded-full shadow-sm animate-pulse">
-                    Enrolling Now
+                    {enrollingBadge}
                   </span>
                 )}
               </div>
@@ -113,7 +164,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
                 <TransitionLink href="/register-now" className="w-full sm:w-auto">
                   <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3.5 bg-secondary hover:bg-secondary/90 text-white font-bold text-base sm:text-lg rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-[1.02] active:scale-[0.98] cursor-pointer text-center whitespace-nowrap">
-                    <span>Register Here</span>
+                    <span>{common.nav.registerNow}</span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 rtl:rotate-180 shrink-0">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                     </svg>
@@ -132,7 +183,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                         <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" />
                       </svg>
                     </span>
-                    <span className="whitespace-nowrap">Call: </span>
+                    <span className="whitespace-nowrap">{callLabel} </span>
                     <span className="force-ltr tracking-tight whitespace-nowrap">{course.contactPhones[0]}</span>
                   </a>
                 )}
@@ -163,15 +214,15 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                     </div>
                     <div>
                       <span className="text-xs uppercase font-bold text-gray-500 tracking-wider">
-                        {course.teacher?.title || "Teacher Profile"}
+                        {course.teacher?.title || t.sections.instructor}
                       </span>
                       <h3 className="text-lg font-bold font-heading text-primary leading-tight">
-                        {course.teacher?.name || "Expert Team"}
+                        {course.teacher?.name || (language === 'ar' ? 'فريق تدريس متخصص' : language === 'fr' ? 'Équipe pédagogique qualifiée' : 'Expert Team')}
                       </h3>
                     </div>
                   </div>
                   <p className="text-gray-600 text-sm leading-relaxed mt-1 flex-1">
-                    {course.teacher?.bio || "Experienced, dedicated educators and learning specialists."}
+                    {course.teacher?.bio || (language === 'ar' ? 'نخبة من المعلمين الملتزمين والمتخصصين في التعليم والتأهيل.' : language === 'fr' ? 'Éducateurs expérimentés et engagés pour la réussite de chaque élève.' : 'Experienced, dedicated educators and learning specialists.')}
                   </p>
                 </motion.div>
 
@@ -190,14 +241,14 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                       </svg>
                     </div>
                     <div>
-                      <span className="text-xs uppercase font-bold text-gray-500 tracking-wider">Objective</span>
+                      <span className="text-xs uppercase font-bold text-gray-500 tracking-wider">{objectiveLabel}</span>
                       <h3 className="text-lg font-bold font-heading text-primary leading-tight">
-                        {course.objectiveHeadline || "Learn & Excel"}
+                        {course.objectiveHeadline || t.sections.objective}
                       </h3>
                     </div>
                   </div>
                   <p className="text-gray-600 text-sm leading-relaxed mt-1 flex-1">
-                    {course.objective || "Structured, stimulating curriculum designed for mastery and personal growth."}
+                    {course.objective || (language === 'ar' ? 'منهاج منظم ومحفز صمم لتطوير المهارات والتفوق الشخصي.' : language === 'fr' ? 'Programme structuré et stimulant conçu pour la maîtrise et l’épanouissement personnel.' : 'Structured, stimulating curriculum designed for mastery and personal growth.')}
                   </p>
                 </motion.div>
 
@@ -216,14 +267,14 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                       </svg>
                     </div>
                     <div>
-                      <span className="text-xs uppercase font-bold text-gray-500 tracking-wider">Schedule</span>
+                      <span className="text-xs uppercase font-bold text-gray-500 tracking-wider">{t.quickInfo.schedule}</span>
                       <h3 className="text-lg font-bold font-heading text-primary leading-tight">
-                        {course.scheduleHeadline || "Flexible Schedule"}
+                        {course.scheduleHeadline || t.quickInfo.schedule}
                       </h3>
                     </div>
                   </div>
                   <p className="text-gray-600 text-sm leading-relaxed mt-1 flex-1">
-                    {course.scheduleDetails || "Sessions held in-person at our Saint-Laurent center."}
+                    {course.scheduleDetails || (language === 'ar' ? 'جلسات حضورية في مقرنا بسانت لوران.' : language === 'fr' ? 'Séances en présentiel à notre centre de Saint-Laurent.' : 'Sessions held in-person at our Saint-Laurent center.')}
                   </p>
                 </motion.div>
 
@@ -242,14 +293,14 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                       </svg>
                     </div>
                     <div>
-                      <span className="text-xs uppercase font-bold text-gray-500 tracking-wider">Who Is It For</span>
+                      <span className="text-xs uppercase font-bold text-gray-500 tracking-wider">{whoForLabel}</span>
                       <h3 className="text-lg font-bold font-heading text-primary leading-tight">
-                        {course.targetAudienceHeadline || "All Stages"}
+                        {course.targetAudienceHeadline || t.sections.whoIsItFor}
                       </h3>
                     </div>
                   </div>
                   <p className="text-gray-600 text-sm leading-relaxed mt-1 flex-1">
-                    {course.targetAudience || "Tailored learning tracks adapted to every student."}
+                    {course.targetAudience || (language === 'ar' ? 'مسارات تعلم ملائمة تناسب كل طالب وتلبي احتياجاته.' : language === 'fr' ? 'Parcours d’apprentissage adaptés à chaque profil d’élève.' : 'Tailored learning tracks adapted to every student.')}
                   </p>
                 </motion.div>
 
@@ -278,13 +329,13 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
                       <div>
                         <div className="inline-block bg-primary text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-2">
-                          Special Limited-Time Rate
+                          {promoBadge}
                         </div>
                         <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900">
-                          {course.promoTitle || "Complete 8-Session Package"}
+                          {course.promoTitle || course.title}
                         </h2>
                         <p className="text-gray-600 mt-1">
-                          {course.promoDesc || "Includes full curriculum, reading materials, and personalized instructor guidance."}
+                          {course.promoDesc || (language === 'ar' ? 'يشمل كامل المنهاج والمواد التعليمية والتوجيه الشخصي مع المدرب.' : language === 'fr' ? 'Comprend le programme complet, le matériel pédagogique et l’encadrement personnalisé.' : 'Includes full curriculum, reading materials, and personalized instructor guidance.')}
                         </p>
                       </div>
 
@@ -310,7 +361,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   transition={{ duration: 0.5 }}
                 >
                   <h2 className="text-3xl md:text-4xl font-bold font-heading text-primary mb-6 italic">
-                    {course.introHeadline || (course.active ? "Empowering Education & Enrichment" : "Coming Soon — Stay Tuned!")}
+                    {course.introHeadline || (course.active ? (language === 'ar' ? 'تعليم متميز وتطوير متكامل' : language === 'fr' ? 'Éducation stimulante et épanouissement' : 'Empowering Education & Enrichment') : (language === 'ar' ? 'قريباً — ترقبوا الانطلاق!' : language === 'fr' ? 'Bientôt disponible — Restez à l’affût !' : 'Coming Soon — Stay Tuned!'))}
                   </h2>
 
                   {course.longDescription.map((paragraph, i) => (
@@ -323,13 +374,13 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   {course.active && (
                     <div className="mt-6 p-5 sm:p-6 bg-gradient-to-r from-secondary/10 to-primary/10 border border-secondary/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div>
-                        <p className="font-bold text-gray-900 text-base sm:text-lg">Ready to join this program?</p>
-                        <p className="text-gray-600 text-sm mt-0.5">Secure your child&apos;s spot before it fills up.</p>
+                        <p className="font-bold text-gray-900 text-base sm:text-lg">{t.registerCard.title}</p>
+                        <p className="text-gray-600 text-sm mt-0.5">{t.registerCard.subtitle}</p>
                       </div>
                       <TransitionLink href="/register-now" className="shrink-0">
                         <button className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-white font-bold text-sm sm:text-base rounded-full hover:bg-secondary/90 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-md whitespace-nowrap">
-                          Register Now
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                          {common.nav.registerNow}
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 rtl:rotate-180">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                           </svg>
                         </button>
@@ -340,7 +391,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                 {/* ═══ Parent Challenges Addressed (if present) ═══ */}
                 {course.parentChallenges && course.parentChallenges.length > 0 && (
-                  <CollapsibleSection title="Parent Challenges Solved" defaultOpen={true}>
+                  <CollapsibleSection title={parentChallengesTitle} defaultOpen={true}>
                     <div className="bg-gradient-to-br from-primary/5 via-primary-light/40 to-white p-6 sm:p-8 rounded-3xl border border-primary/20">
                       <div className="flex items-center gap-3 mb-4">
                         <div className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-lg">
@@ -348,15 +399,15 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                         </div>
                         <div>
                           <span className="text-xs uppercase font-bold text-primary tracking-widest block">
-                            Tailored Academic Support
+                            {tailoredSupportBadge}
                           </span>
                           <h3 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900">
-                            Key Challenges for Homeschooling Families
+                            {homeschoolingSubtitle}
                           </h3>
                         </div>
                       </div>
                       <p className="text-gray-600 text-sm sm:text-base mb-6">
-                        Our center takes care of the most demanding aspects of homeschooling to deliver an enriching, stress-free experience:
+                        {homeschoolingDesc}
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {course.parentChallenges.map((challenge, i) => (
@@ -372,10 +423,10 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                 {/* ═══ Membership Tiers & Durations (if present) ═══ */}
                 {course.membershipTiers && course.membershipTiers.length > 0 && (
-                  <CollapsibleSection title="Flexible Membership Plans" defaultOpen={false}>
+                  <CollapsibleSection title={membershipTitle} defaultOpen={false}>
                     <div className="space-y-6">
                       <p className="text-gray-600 text-base">
-                        Select the plan that best fits your family’s schedule and learning goals (9:00 AM – 1:00 PM):
+                        {membershipDesc}
                       </p>
 
                       {/* Duration selector boxes */}
@@ -411,7 +462,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                                 </span>
                                 {tier.isPopular && (
                                   <span className="bg-secondary text-white text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
-                                    Popular
+                                    {popularBadge}
                                   </span>
                                 )}
                               </div>
@@ -423,23 +474,23 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                               {/* Pricing Block */}
                               {(tier.price1Month || tier.price1Session || tier.price12Months) && (
                                 <div className={`rounded-2xl p-4 mb-4 ${tier.isPopular ? 'bg-primary/10 border border-primary/25' : 'bg-gray-50 border border-gray-200'}`}>
-                                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-primary block mb-3">Rates</span>
+                                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-primary block mb-3">{ratesTitle}</span>
                                   <div className="space-y-2">
                                     {tier.price1Month && (
                                       <div className="flex items-center justify-between">
-                                        <span className="text-xs text-gray-500 font-medium">1 Month</span>
+                                        <span className="text-xs text-gray-500 font-medium">{oneMonthLabel}</span>
                                         <span className="text-sm font-extrabold text-gray-900">{tier.price1Month}</span>
                                       </div>
                                     )}
                                     {tier.price1Session && (
                                       <div className="flex items-center justify-between">
-                                        <span className="text-xs text-gray-500 font-medium">1 Term</span>
+                                        <span className="text-xs text-gray-500 font-medium">{oneTermLabel}</span>
                                         <span className="text-sm font-extrabold text-gray-900">{tier.price1Session}</span>
                                       </div>
                                     )}
                                     {tier.price12Months && (
                                       <div className="flex items-center justify-between border-t border-gray-200 pt-2 mt-1">
-                                        <span className="text-xs text-secondary font-bold">School Year</span>
+                                        <span className="text-xs text-secondary font-bold">{schoolYearLabel}</span>
                                         <span className="text-base font-extrabold text-secondary">{tier.price12Months}</span>
                                       </div>
                                     )}
@@ -461,7 +512,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                               {tier.subTutoring && (
                                 <div className="bg-white/80 p-3 rounded-xl border border-primary/20 mt-3">
-                                  <span className="text-[11px] font-bold text-primary uppercase block mb-1.5">Personalized Tutoring In:</span>
+                                  <span className="text-[11px] font-bold text-primary uppercase block mb-1.5">{tutoringLabel}</span>
                                   <ul className="space-y-1 text-xs text-gray-600">
                                     {tier.subTutoring.map((tut, sIdx) => (
                                       <li key={sIdx} className="flex items-center gap-1.5">
@@ -476,7 +527,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                             <div className="mt-6 pt-4 border-t border-gray-200 text-center">
                               <TransitionLink href="/register-now">
                                 <button className="w-full py-2.5 px-4 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-full transition-colors cursor-pointer">
-                                  Choose this plan
+                                  {common.nav.registerNow}
                                 </button>
                               </TransitionLink>
                             </div>
@@ -489,7 +540,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                 {/* ═══ Grade-Level Tracks (if present) ═══ */}
                 {course.levelPrograms && course.levelPrograms.length > 0 && (
-                  <CollapsibleSection title="Programs by Grade Level" defaultOpen={false}>
+                  <CollapsibleSection title={gradeLevelsTitle} defaultOpen={false}>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {course.levelPrograms.map((prog, i) => (
                         <div key={i} className="bg-gray-50 p-5 rounded-2xl border border-gray-300 flex flex-col justify-between">
@@ -514,7 +565,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                 <div className="pt-2 pb-4">
                   <TransitionLink href="/register-now" className="inline-block w-full sm:w-auto">
                     <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3 sm:py-3.5 bg-secondary hover:bg-secondary/90 text-white font-bold text-base sm:text-lg rounded-full transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-                      <span>Register Now</span>
+                      <span>{common.nav.registerNow}</span>
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 rtl:rotate-180">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                       </svg>
@@ -524,7 +575,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                 {/* ═══ Program Description & Objectives ═══ */}
                 {course.programDescription && course.programDescription.length > 0 && (
-                  <CollapsibleSection title="Program Description & Objectives" defaultOpen={false}>
+                  <CollapsibleSection title={t.sections.overview} defaultOpen={false}>
                     <div className="pt-2 space-y-4">
                       {course.programDescription.map((paragraph, i) => (
                         <p key={i} className="text-gray-700 text-base md:text-lg leading-relaxed">
@@ -537,13 +588,13 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                 {/* ═══ Curriculum Roadmap (if present) ═══ */}
                 {course.curriculumTracks && course.curriculumTracks.length > 0 && (
-                  <CollapsibleSection title={course.curriculumTitle || `The Course Roadmap (${course.curriculumTracks.length} Weeks)`} defaultOpen={false}>
+                  <CollapsibleSection title={course.curriculumTitle || (language === 'ar' ? `خطة البرنامج التدريبي (${course.curriculumTracks.length} أسابيع)` : language === 'fr' ? `Plan de formation (${course.curriculumTracks.length} semaines)` : `The Course Roadmap (${course.curriculumTracks.length} Weeks)`)} defaultOpen={false}>
                     <div className="space-y-4">
                       {course.curriculumTracks.map((track, i) => (
                         <div key={i} className="bg-gray-50 p-5 rounded-2xl border border-gray-300 hover:border-primary/50 transition-colors">
                           <div className="flex items-center justify-between mb-2">
                             <span className="inline-block bg-primary text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
-                              {track.badge || `Week ${i + 1}`}
+                              {track.badge || (language === 'ar' ? `الأسبوع ${i + 1}` : language === 'fr' ? `Semaine ${i + 1}` : `Week ${i + 1}`)}
                             </span>
                           </div>
                           <h3 className="font-bold text-gray-900 text-base sm:text-lg font-heading mb-1">
@@ -557,7 +608,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                           <ul className="space-y-2 mt-2">
                             {track.items.map((item, idx) => (
                               <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-700">
-                                <span className="text-primary font-bold">➔</span>
+                                <span className="text-primary font-bold rtl:rotate-180">➔</span>
                                 <span>{item}</span>
                               </li>
                             ))}
@@ -570,7 +621,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                 {/* ═══ Hands-On Tools & Lab Environment (if present) ═══ */}
                 {course.facilities && course.facilities.length > 0 && (
-                  <CollapsibleSection title={course.facilitiesTitle || "Hands-On Tools Students Use"} defaultOpen={false}>
+                  <CollapsibleSection title={course.facilitiesTitle || t.sections.facilities} defaultOpen={false}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {course.facilities.map((tool, i) => (
                         <div key={i} className="bg-gray-50 p-5 rounded-2xl border border-gray-300 hover:border-primary/50 transition-colors flex items-start gap-3.5">
@@ -595,7 +646,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                 {/* ═══ Program Details Table ═══ */}
                 {course.programDetails && course.programDetails.length > 0 && (
-                  <CollapsibleSection title="Program Details" defaultOpen={false}>
+                  <CollapsibleSection title={programDetailsTitle} defaultOpen={false}>
                     <div className="space-y-0">
                       {course.programDetails.map((detail, i) => (
                         <div
@@ -619,7 +670,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                 {/* ═══ What You'll Learn / Highlights ═══ */}
                 {course.highlights && course.highlights.length > 0 && (
-                  <CollapsibleSection title="What You'll Learn" defaultOpen={false}>
+                  <CollapsibleSection title={t.sections.highlights} defaultOpen={false}>
                     <ul className="space-y-4">
                       {course.highlights.map((item, i) => (
                         <li key={i} className="flex items-start gap-3">
@@ -635,13 +686,13 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   </CollapsibleSection>
                 )}
 
-                {/* ═══ How to Register Section (Desktop only - hidden on mobile to prevent duplication with Direct Enrollment) ═══ */}
+                {/* ═══ How to Register Section ═══ */}
                 <div className="hidden lg:block bg-primary/5 rounded-3xl p-8 border border-primary/20">
                   <h3 className="text-2xl font-bold font-heading text-gray-900 mb-3">
-                    How to Register
+                    {howToRegisterTitle}
                   </h3>
                   <p className="text-gray-600 text-base mb-6">
-                    {course.registerSubtext || "Ready to begin your learning journey with Avenir Souriant? Register online or contact us directly by phone:"}
+                    {course.registerSubtext || (language === 'ar' ? 'هل أنت مستعد لبدء مسار التعلم مع المستقبل الباسم؟ سجل عبر الإنترنت أو تواصل معنا هاتفياً:' : language === 'fr' ? 'Prêt à commencer votre parcours d’apprentissage avec Avenir Souriant ? Inscrivez-vous en ligne ou contactez-nous par téléphone :' : 'Ready to begin your learning journey with Avenir Souriant? Register online or contact us directly by phone:')}
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
@@ -657,8 +708,8 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                           </svg>
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-gray-500 block">Call to Register</span>
-                          <span className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">{phone}</span>
+                          <span className="text-xs font-semibold text-gray-500 block">{callToRegisterLabel}</span>
+                          <span className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors force-ltr" dir="ltr">{phone}</span>
                         </div>
                       </a>
                     ))}
@@ -667,8 +718,8 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   <div className="flex flex-wrap items-center gap-4">
                     <TransitionLink href="/register-now">
                       <button className="inline-flex items-center gap-2 px-8 py-4 bg-secondary hover:bg-secondary/90 text-white font-bold text-base md:text-lg rounded-full transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-                        Register Online
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                        {common.nav.registerNow}
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 rtl:rotate-180">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                         </svg>
                       </button>
@@ -676,7 +727,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
 
                     {course.address && (
                       <div className="text-sm text-gray-600 font-medium">
-                        📍 <strong>Center Location:</strong> {course.address}
+                        📍 <strong>{centerLocationLabel}</strong> {course.address}
                       </div>
                     )}
                   </div>
@@ -697,10 +748,10 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                     className="bg-white rounded-3xl p-6 md:p-8 shadow-md border border-gray-300"
                   >
                     <h3 className="text-xl font-bold font-heading text-gray-900 mb-4">
-                      Direct Enrollment
+                      {directEnrollmentTitle}
                     </h3>
                     <p className="text-gray-600 text-sm mb-6">
-                      {course.enrollmentNotice || "Spaces are limited for upcoming sessions. Secure your spot today!"}
+                      {course.enrollmentNotice || t.registerCard.subtitle}
                     </p>
 
                     {/* Phone buttons */}
@@ -714,9 +765,9 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                           >
                             <span className="flex items-center gap-2">
                               <span className="shrink-0">📞</span>
-                              <span className="force-ltr font-bold">{phone}</span>
+                              <span className="force-ltr font-bold" dir="ltr">{phone}</span>
                             </span>
-                            <span className="text-xs text-primary uppercase font-bold">Call Now</span>
+                            <span className="text-xs text-primary uppercase font-bold">{callNowBtn}</span>
                           </a>
                         ))}
                       </div>
@@ -725,8 +776,8 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                     {/* Register Button */}
                     <TransitionLink href="/register-now" className="block">
                       <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-secondary hover:bg-secondary/90 text-white font-bold text-base rounded-full transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
-                        Register Online
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                        {common.nav.registerNow}
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 rtl:rotate-180">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                         </svg>
                       </button>
@@ -743,7 +794,7 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                       className="bg-white rounded-3xl p-5 shadow-md border border-gray-300"
                     >
                       <h3 className="text-lg font-bold font-heading text-gray-900 mb-3">
-                        Official Course Flyer
+                        {flyerTitle}
                       </h3>
                       <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-gray-200 shadow-inner group">
                         <Image
@@ -765,20 +816,20 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                     className="bg-white rounded-3xl p-6 shadow-md border border-gray-300"
                   >
                     <h3 className="text-xl font-bold font-heading text-gray-900 mb-5">
-                      Useful Links
+                      {usefulLinksTitle}
                     </h3>
                     <nav className="space-y-0">
                       {[
-                        { label: "Register Here", href: "/register-now" },
-                        { label: "View All Programs", href: "/programs" },
-                        { label: "Contact Us", href: "/register" },
+                        { label: common.nav.registerNow, href: "/register-now" },
+                        { label: common.nav.programs, href: "/programs" },
+                        { label: common.nav.contact, href: "/register" },
                       ].map((link, i) => (
                         <TransitionLink key={i} href={link.href}>
                           <div className="flex items-center justify-between py-3.5 border-b border-gray-200 last:border-b-0 hover:text-primary transition-colors cursor-pointer group/link">
                             <span className="text-gray-700 group-hover/link:text-primary font-medium transition-colors">
                               {link.label}
                             </span>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-gray-400 group-hover/link:text-primary transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-gray-400 group-hover/link:text-primary transition-colors rtl:rotate-180">
                               <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                             </svg>
                           </div>
@@ -821,14 +872,14 @@ export default function CourseDetailClient({ course }: CourseDetailClientProps) 
                   ) : course.price.includes('/') ? (
                     ''
                   ) : (
-                    <span className="text-gray-500 font-normal text-xs"> / session</span>
+                    <span className="text-gray-500 font-normal text-xs">{perSessionText}</span>
                   )}
                 </p>
               </div>
               <TransitionLink href="/register-now" className="shrink-0">
                 <button className="inline-flex items-center gap-2 px-5 py-2.5 bg-secondary text-white font-bold text-sm rounded-full hover:bg-secondary/90 transition-all duration-300 active:scale-95 cursor-pointer shadow-md">
-                  Register Now
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                  {common.nav.registerNow}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 rtl:rotate-180">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                   </svg>
                 </button>

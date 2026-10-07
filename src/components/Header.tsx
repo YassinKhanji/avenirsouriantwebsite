@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { TransitionLink } from './TransitionLink';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { COMMON_TRANSLATIONS } from '@/lib/translations/common';
 
 export default function Header() {
   const [isHidden, setIsHidden] = useState(false);
@@ -13,6 +15,9 @@ export default function Header() {
   const { scrollY } = useScroll();
   const pathname = usePathname();
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+
+  const { language } = useLanguage();
+  const t = COMMON_TRANSLATIONS[language];
 
   const normalizePath = (p: string) => p.replace(/\/$/, '') || '/';
 
@@ -27,10 +32,10 @@ export default function Header() {
   });
 
   const navLinks = [
-    { label: 'Home', path: '/' },
-    { label: 'Programs', path: '/programs' },
-    { label: 'Contact', path: '/register' },
-    { label: 'Register', path: '/register-now', isRegister: true },
+    { label: t.nav.home, path: '/' },
+    { label: t.nav.programs, path: '/programs' },
+    { label: t.nav.contact, path: '/register' },
+    { label: t.nav.register, path: '/register-now', isRegister: true },
   ];
 
   // Helper to determine if a link uses orange (secondary) styling
@@ -58,11 +63,8 @@ export default function Header() {
                 className="w-16 sm:w-20 md:w-28 object-contain"
                 priority
               />
-              <span className="brand-name-latin font-heading font-bold text-xl sm:text-2xl text-primary hidden sm:block mt-1 notranslate" translate="no">
-                Avenir Souriant
-              </span>
-              <span className="brand-name-arabic font-heading font-bold text-xl sm:text-2xl text-primary mt-1 notranslate" translate="no" dir="rtl">
-                المستقبل الباسم
+              <span className="font-heading font-bold text-xl sm:text-2xl text-primary hidden sm:block mt-1">
+                {t.brandName}
               </span>
             </TransitionLink>
           </div>
@@ -72,7 +74,7 @@ export default function Header() {
               {navLinks.map((link) => {
                 const isActive = normalizePath(pathname) === normalizePath(link.path);
                 const orange = isOrangeTab(link);
-                const activeColorClass = orange ? 'text-secondary' : 'text-primary';
+                const activeColorClass = orange ? 'text-secondary font-bold' : 'text-primary font-bold';
                 const hoverColorClass = orange ? 'hover:text-secondary' : 'hover:text-primary';
                 const underlineColorClass = orange ? 'bg-secondary' : 'bg-primary';
 
@@ -116,7 +118,7 @@ export default function Header() {
             <LanguageSwitcher />
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-900 hover:text-primary focus:outline-none p-1.5 sm:p-2 rounded-lg"
+              className="text-gray-900 hover:text-primary focus:outline-none p-1.5 sm:p-2 rounded-lg cursor-pointer"
               aria-label="Toggle mobile menu"
             >
               <svg className="w-7 h-7 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -159,9 +161,11 @@ export default function Header() {
                 );
               })}
               
-              {/* Accessible LanguageSwitcher in the dropdown menu side panel too */}
+              {/* Accessible LanguageSwitcher in mobile menu */}
               <div className="pt-4 border-t border-gray-200 w-full flex flex-col items-center gap-2">
-                <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">Select Language</span>
+                <span className="text-xs text-gray-500 font-semibold uppercase tracking-wider">
+                  {language === 'ar' ? 'اختر اللغة' : language === 'fr' ? 'Choisir la langue' : 'Select Language'}
+                </span>
                 <LanguageSwitcher />
               </div>
             </div>

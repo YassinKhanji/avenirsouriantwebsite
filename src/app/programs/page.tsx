@@ -6,8 +6,20 @@ import Image from 'next/image';
 import { TransitionLink } from '@/components/TransitionLink';
 import { motion } from 'framer-motion';
 import { courses } from '@/data/courses';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { PROGRAMS_PAGE_TRANSLATIONS } from '@/lib/translations/programsPage';
+import { getLocalizedCourse } from '@/lib/translations/coursesI18n';
+import { useMemo } from 'react';
 
 export default function Services() {
+  const { language } = useLanguage();
+  const t = PROGRAMS_PAGE_TRANSLATIONS[language];
+
+  const localizedCourses = useMemo(
+    () => courses.map((c) => getLocalizedCourse(c, language)),
+    [language]
+  );
+
   return (
     <>
       <Header />
@@ -19,10 +31,10 @@ export default function Services() {
         >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-4 sm:p-6 md:p-8">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-heading mb-4 sm:mb-6 text-gray-900 drop-shadow-md">
-              Our Programs
+              {t.hero.title}
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-800 font-medium max-w-2xl mx-auto drop-shadow-sm">
-              Discover a world of engaging educational and extracurricular activities designed to build confidence, creativity, and language mastery.
+              {t.hero.subtitle}
             </p>
           </div>
         </section>
@@ -30,13 +42,13 @@ export default function Services() {
         {/* Quick Register Banner */}
         <div className="bg-secondary py-4 px-4">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-white font-semibold text-base sm:text-lg text-center sm:text-left">
-              🎓 Enrollment is now open — spots are filling up fast!
+            <p className="text-white font-semibold text-base sm:text-lg text-center sm:text-left rtl:sm:text-right">
+              {t.banner.text}
             </p>
             <TransitionLink href="/register-now" className="shrink-0">
               <button className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-secondary font-bold text-sm sm:text-base rounded-full hover:bg-secondary-light hover:text-white border-2 border-white transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98]">
-                Register Now
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                {t.banner.button}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 rtl:rotate-180">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
               </button>
@@ -48,7 +60,7 @@ export default function Services() {
         <section className="py-14 sm:py-20 bg-gray-50/50 overflow-x-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
-              {courses.map((service, idx) => (
+              {localizedCourses.map((service, idx) => (
                 <motion.div
                   key={service.slug}
                   initial={{ opacity: 0, y: 30 }}
@@ -75,11 +87,11 @@ export default function Services() {
 
                         {service.active ? (
                           <span className="shrink-0 bg-emerald-500/95 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm animate-pulse">
-                            Enrolling Now
+                            {t.card.enrollingNow}
                           </span>
                         ) : (
                           <span className="shrink-0 bg-gray-900/85 backdrop-blur-md px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-bold text-white uppercase tracking-wider shadow-sm">
-                            Coming Soon
+                            {t.card.comingSoon}
                           </span>
                         )}
                       </div>
@@ -100,7 +112,7 @@ export default function Services() {
 
                     {/* Price Tag Row */}
                     <div className="flex items-baseline justify-between pt-4 border-t border-gray-200 mb-4 sm:mb-6">
-                      <span className="text-xs sm:text-sm font-medium text-gray-500">Tuition</span>
+                      <span className="text-xs sm:text-sm font-medium text-gray-500">{t.card.tuition}</span>
                       <div className="flex items-baseline gap-2">
                         {service.originalPrice && (
                           <span className="text-sm sm:text-lg line-through text-gray-400 font-medium">
@@ -120,16 +132,16 @@ export default function Services() {
                         className="w-full"
                       >
                         <button className="w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-2xl border-2 border-gray-200 text-gray-800 font-bold text-sm sm:text-base hover:border-primary hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center">
-                          Learn More
+                          {service.active ? t.card.learnMore : t.card.findOutMore}
                         </button>
                       </TransitionLink>
                       {service.active && (
                         <TransitionLink href="/register-now" className="w-full">
                           <button className="w-full py-3 sm:py-3.5 px-4 sm:px-6 rounded-2xl bg-secondary text-white font-bold text-sm sm:text-base hover:bg-secondary/90 transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.98] text-center inline-flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 shrink-0 rtl:rotate-180">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                             </svg>
-                            Register Now
+                            {t.card.registerNow}
                           </button>
                         </TransitionLink>
                       )}
@@ -145,23 +157,23 @@ export default function Services() {
         <section className="py-12 sm:py-16 bg-primary">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-heading text-white mb-3">
-              Ready to Enroll?
+              {t.bottomCta.title}
             </h2>
             <p className="text-white/80 text-base sm:text-lg mb-6 max-w-xl mx-auto">
-              Spaces are limited. Reserve your child&apos;s spot today and start their journey with Avenir Souriant.
+              {t.bottomCta.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <TransitionLink href="/register-now">
                 <button className="inline-flex items-center gap-2 px-8 sm:px-10 py-3.5 sm:py-4 bg-secondary text-white font-bold text-base sm:text-lg rounded-full hover:bg-secondary/90 shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer">
-                  Register Now
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                  {t.bottomCta.registerBtn}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 rtl:rotate-180">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                   </svg>
                 </button>
               </TransitionLink>
               <TransitionLink href="/register">
                 <button className="inline-flex items-center gap-2 px-8 sm:px-10 py-3.5 sm:py-4 bg-white/15 border-2 border-white text-white font-bold text-base sm:text-lg rounded-full hover:bg-white/25 shadow-md transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer">
-                  Contact Us
+                  {t.bottomCta.contactBtn}
                 </button>
               </TransitionLink>
             </div>

@@ -4,8 +4,15 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { CONTACT_PAGE_TRANSLATIONS } from '@/lib/translations/contactPage';
+import { COMMON_TRANSLATIONS } from '@/lib/translations/common';
 
 export default function Register() {
+  const { language } = useLanguage();
+  const t = CONTACT_PAGE_TRANSLATIONS[language];
+  const common = COMMON_TRANSLATIONS[language];
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -23,7 +30,7 @@ export default function Register() {
   const handleSubmit = async () => {
     // Basic validation
     if (!formData.name || !formData.email || !formData.phone) {
-      setError('Please fill in all required fields.');
+      setError(t.form.errorRequired);
       return;
     }
 
@@ -46,7 +53,7 @@ export default function Register() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Failed to send message. Please try again.');
+        setError(data.error || t.form.errorNetwork);
         setIsSubmitting(false);
         return;
       }
@@ -55,7 +62,7 @@ export default function Register() {
       setShowModal(true);
       setFormData({ name: '', email: '', phone: '', comment: '' });
     } catch {
-      setError('Network error. Please check your connection and try again.');
+      setError(t.form.errorNetwork);
     } finally {
       setIsSubmitting(false);
     }
@@ -72,9 +79,11 @@ export default function Register() {
         >
           <div className="absolute inset-0 bg-white/60 z-0"></div>
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-4">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading mb-4 sm:mb-6 text-gray-900 drop-shadow-md">Contact Us</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading mb-4 sm:mb-6 text-gray-900 drop-shadow-md">
+              {t.hero.title}
+            </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-800 font-medium drop-shadow-sm">
-              Just say مرحبا — we&apos;ll take it from there.
+              {t.hero.subtitle}
             </p>
           </div>
         </section>
@@ -92,40 +101,48 @@ export default function Register() {
                 />
               </div>
               <div>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-heading mb-6 sm:mb-8 text-gray-900">We&apos;d love to hear from you!</h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-heading mb-6 sm:mb-8 text-gray-900">
+                  {t.form.heading}
+                </h2>
                 <form className="space-y-4 sm:space-y-6" onSubmit={(e) => e.preventDefault()}>
                   <div>
-                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Full Name</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
+                      {t.form.fullName}
+                    </label>
                     <input
                       type="text"
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      placeholder="John Doe"
+                      placeholder={t.form.fullNamePlaceholder}
                       className="w-full text-base px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Email Address</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
+                      {t.form.email}
+                    </label>
                     <input
                       type="email"
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="john@example.com"
+                      placeholder={t.form.emailPlaceholder}
                       className="w-full text-base px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Phone Number</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
+                      {t.form.phone}
+                    </label>
                     <input
                       type="tel"
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder="+1 (555) 000-0000"
+                      placeholder={t.form.phonePlaceholder}
                       className="w-full text-base px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90 force-ltr"
                       dir="ltr"
                       required
@@ -134,12 +151,14 @@ export default function Register() {
 
                   {/* Comment section */}
                   <div>
-                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Comment</label>
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">
+                      {t.form.message}
+                    </label>
                     <textarea
                       name="comment"
                       value={formData.comment}
                       onChange={handleChange}
-                      placeholder="My student is eager to begin their Arabic learning journey with Avenir Souriant!"
+                      placeholder={t.form.messagePlaceholder}
                       className="w-full text-base px-4 py-3 sm:px-5 sm:py-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-shadow bg-white/90 resize-none"
                       rows={3}
                     />
@@ -161,10 +180,10 @@ export default function Register() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                         </svg>
-                        Sending...
+                        {t.form.submittingBtn}
                       </>
                     ) : (
-                      'Send'
+                      t.form.submitBtn
                     )}
                   </button>
                 </form>
@@ -176,7 +195,9 @@ export default function Register() {
         {/* Location & Map Section */}
         <section className="py-20 bg-primary-light">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-4xl font-bold font-heading mb-12 text-center">Visit Our Center</h2>
+            <h2 className="text-4xl font-bold font-heading mb-12 text-center">
+              {language === 'ar' ? 'تفضل بزيارة مركزنا' : language === 'fr' ? 'Visitez notre centre' : 'Visit Our Center'}
+            </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
               <div className="order-2 lg:order-1 h-96 w-full rounded-xl overflow-hidden shadow-inner">
                 <iframe 
@@ -189,19 +210,25 @@ export default function Register() {
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
-              <div className="order-1 lg:order-2">
-                <h3 className="text-3xl font-bold font-heading mb-6 text-gray-900">Avenir Souriant</h3>
+              <div className="order-1 lg:order-2 text-start">
+                <h3 className="text-3xl font-bold font-heading mb-6 text-gray-900">
+                  {common.brandName}
+                </h3>
                 <p className="text-lg text-gray-600 mb-6">
-                  Come see our modern facilities where we inspire the next generation of confident Arabic speakers. 
+                  {language === 'ar'
+                    ? 'ندعوكم لزيارة مرافقنا التعليمية الحديثة والتعرف على بيئتنا الإيجابية والملهمة.'
+                    : language === 'fr'
+                    ? 'Venez découvrir nos installations modernes et notre environnement stimulant à Saint-Laurent.'
+                    : 'Come see our modern facilities where we inspire the next generation of confident Arabic speakers.'}
                 </p>
                 <div className="space-y-4">
                   <p className="flex items-start text-lg">
-                    <span className="text-2xl mr-4">📍</span>
+                    <span className="text-2xl mr-4 rtl:mr-0 rtl:ml-4">📍</span>
                     <span className="font-medium text-gray-800">1325 Rue Cartier<br/>Saint-Laurent, QC H4L 2N6</span>
                   </p>
                   <p className="flex items-center text-lg">
-                    <span className="text-2xl mr-4">📞</span>
-                    <a href="tel:+15145815305" className="font-bold text-primary hover:text-primary-light transition-colors">(514) 581-5305</a>
+                    <span className="text-2xl mr-4 rtl:mr-0 rtl:ml-4">📞</span>
+                    <a href="tel:+15145815305" className="font-bold text-primary hover:text-primary-light transition-colors force-ltr" dir="ltr">(514) 581-5305</a>
                   </p>
                 </div>
               </div>
@@ -227,16 +254,16 @@ export default function Register() {
               </svg>
             </div>
             <h3 className="text-2xl font-bold font-heading text-gray-900 mb-3">
-              Thank You!
+              {t.form.successTitle}
             </h3>
             <p className="text-gray-600 text-lg mb-6 leading-relaxed">
-              Your message has been sent successfully. One of our staff members will contact you <strong>in the next 24 hours</strong>.
+              {t.form.successMessage}
             </p>
             <button
               onClick={() => setShowModal(false)}
-              className="px-8 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md"
+              className="px-8 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md cursor-pointer"
             >
-              Got it!
+              {t.form.closeBtn}
             </button>
           </div>
         </div>

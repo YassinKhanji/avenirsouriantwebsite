@@ -59,27 +59,19 @@ iframe[id*=":2."],
   display: none !important;
 }
 
-.goog-te-gadget {
-  color: transparent !important;
-  font-size: 0 !important;
-}
-
-/* Disable highlighted text on hover over translated words */
-.goog-text-highlight {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  box-sizing: border-box !important;
-}
-
-/* Reset top offset that Google Translate injects on HTML/body and prevent horizontal overflow */
 html, body {
-  top: 0px !important;
-  position: static !important;
+  position: static;
   overflow-x: hidden;
   max-width: 100vw;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Arabic typography styling */
+[dir="rtl"] {
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  letter-spacing: normal;
 }
 
 /* Ensure phone numbers, emails, and numeric strings maintain LTR format in Arabic/RTL mode */
@@ -119,9 +111,48 @@ h1, h2, h3, h4, h5, h6, p, span, a, button {
 .brand-name-arabic {
   display: none;
 }
-html[lang="ar"] .brand-name-latin {
+html[lang="ar"] .brand-name-latin,
+html[dir="rtl"] .brand-name-latin {
   display: none !important;
 }
-html[lang="ar"] .brand-name-arabic {
-  display: block;
+html[lang="ar"] .brand-name-arabic:not(.hidden),
+html[dir="rtl"] .brand-name-arabic:not(.hidden) {
+  display: inline;
 }
+@media (min-width: 640px) {
+  html[lang="ar"] .brand-name-arabic,
+  html[dir="rtl"] .brand-name-arabic {
+    display: inline-block;
+  }
+}
+
+/* Register button & links: multi-language display */
+.nav-register-fr,
+.nav-register-ar {
+  display: none !important;
+}
+.nav-register-en {
+  display: inline !important;
+}
+
+/* French language active */
+html[lang="fr"] .nav-register-en,
+html[lang="fr"] .nav-register-ar {
+  display: none !important;
+}
+html[lang="fr"] .nav-register-fr {
+  display: inline !important;
+}
+
+/* Arabic language active */
+html[lang="ar"] .nav-register-en,
+html[lang="ar"] .nav-register-fr,
+html[dir="rtl"] .nav-register-en,
+html[dir="rtl"] .nav-register-fr {
+  display: none !important;
+}
+html[lang="ar"] .nav-register-ar,
+html[dir="rtl"] .nav-register-ar {
+  display: inline !important;
+}
+
