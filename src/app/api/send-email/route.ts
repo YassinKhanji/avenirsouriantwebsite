@@ -84,19 +84,30 @@ export async function POST(request: Request) {
       return Response.json({ success: true, message: 'Message sent successfully!' });
 
     } else if (body.type === 'registration') {
-      // Validate required fields
-      const isAdultSelf = body.relationship === 'Does not apply';
-      if (!body.email || !body.relationship) {
+      const isAdultSelf = body.registrationPathway === 'adult' || body.relationship === 'Does not apply';
+
+      // Validate required contact fields
+      if (!body.email) {
         return Response.json(
-          { error: 'Please fill in all required fields.' },
+          { error: 'Please provide a valid email address.' },
           { status: 400 }
         );
       }
-      if (!isAdultSelf && (!body.guardianName || !body.phone)) {
-        return Response.json(
-          { error: 'Please fill in all guardian details.' },
-          { status: 400 }
-        );
+
+      if (isAdultSelf) {
+        if (!body.phone) {
+          return Response.json(
+            { error: 'Please provide your phone number.' },
+            { status: 400 }
+          );
+        }
+      } else {
+        if (!body.guardianName || !body.phone || !body.relationship) {
+          return Response.json(
+            { error: 'Please fill in all required parent/guardian details.' },
+            { status: 400 }
+          );
+        }
       }
 
       if (!body.students || body.students.length === 0) {
@@ -104,6 +115,29 @@ export async function POST(request: Request) {
           { error: 'Please add at least one student.' },
           { status: 400 }
         );
+      }
+
+      // Check adult self-registration age requirement on server
+      if (isAdultSelf && body.students[0]?.dateOfBirth) {
+        const parts = body.students[0].dateOfBirth.split('-');
+        if (parts.length === 3) {
+          const birthDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+          const now = new Date();
+          let age = now.getFullYear() - birthDate.getFullYear();
+          const m = now.getMonth() - birthDate.getMonth();
+          if (m < 0 || (m === 0 && now.getDate() < birthDate.getDate())) {
+            age--;
+          }
+          if (age < 18) {
+            return Response.json(
+              {
+                error:
+                  'Students under 18 must be registered by a parent or legal guardian. Please select "My child / a student under 18".',
+              },
+              { status: 400 }
+            );
+          }
+        }
       }
 
       const recipient = process.env.CONTACT_EMAIL || 'administration@avenirsouriant.com';

@@ -11,56 +11,71 @@ import {
   formatTime12,
   pad,
 } from '@/lib/appointmentSlots';
+import {
+  FALL_2026_COURSES,
+  SCHOOL_GRADES,
+  EDUCATION_LEVELS,
+  PAYMENT_METHODS,
+  COMMUNICATION_LANGUAGES,
+  calculateAge,
+  getCourseById,
+  checkCourseEligibility,
+  getAssignedSession,
+  type CourseDefinition,
+} from '@/lib/coursesConfig';
+import {
+  I18N_DICTIONARIES,
+  type FormLang,
+} from '@/lib/registrationI18n';
 
 /* ── Types ── */
-interface StudentData {
+export type RegistrationPathway = 'parent' | 'adult';
+
+export interface StudentEntry {
+  id: string;
   fullName: string;
   dateOfBirth: string;
-  gender: string;
-  currentGrade: string;
-  courses: string[];
-  addAnotherStudent?: 'yes' | 'no' | '';
+  gender: 'Female' | 'Male' | '';
+  courseId: string;
+  educationValue: string;
+  educationOther: string;
 }
 
-interface GuardianData {
-  email: string;
-  guardianName: string;
-  phone: string;
+export interface ParentInfo {
+  fullName: string;
   relationship: string;
   relationshipOther: string;
+  email: string;
+  phone: string;
+  preferredLanguage: string;
 }
 
-const emptyStudent: StudentData = {
+export interface AdultInfo {
+  fullName: string;
+  dateOfBirth: string;
+  gender: 'Female' | 'Male' | '';
+  email: string;
+  phone: string;
+  preferredLanguage: string;
+  educationLevel: string;
+  educationOther: string;
+  courseId: string;
+}
+
+const emptyStudent = (id: string): StudentEntry => ({
+  id,
   fullName: '',
   dateOfBirth: '',
   gender: '',
-  currentGrade: '',
-  courses: [],
-  addAnotherStudent: '',
-};
-
-const courseOptions = [
-  'Foundation Course for Students 6-8 years (Tuesday)',
-  'Arabic Language Course for Students 8-12 years (Tuesday)',
-  'Reading Skills Development Course for Girls 8-14 years (Friday)',
-  'Reading Skills Development Course for Boys 12-14 years (Thursday)',
-  'Foundation Course for Non-Arabic Speakers 16+ (Friday for Women, Sunday for Men)',
-  'Cybersecurity for Teens 13-16 years (6 Weeks - August)',
-  'Chess Class for Beginners - Boys 8-10 years (8 Weeks - Oct-Dec)',
-];
-
-const steps = [
-  { number: 1, label: 'Guardian' },
-  { number: 2, label: 'Students' },
-  { number: 3, label: 'Review' },
-  { number: 4, label: 'Appointment' },
-  { number: 5, label: 'Done' },
-];
+  courseId: '',
+  educationValue: '',
+  educationOther: '',
+});
 
 /* ── Animation Variants ── */
 const slideVariants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? 80 : -80,
+    x: direction > 0 ? 60 : -60,
     opacity: 0,
   }),
   center: {
@@ -68,12 +83,12 @@ const slideVariants = {
     opacity: 1,
   },
   exit: (direction: number) => ({
-    x: direction > 0 ? -80 : 80,
+    x: direction > 0 ? -60 : 60,
     opacity: 0,
   }),
 };
 
-/* ── Standalone Form Components (defined outside to prevent remounting and lost input focus) ── */
+/* ── Standalone Form Components ── */
 const InputField = ({
   label,
   name,
@@ -84,6 +99,8 @@ const InputField = ({
   required = false,
   error,
   dir,
+  disabled = false,
+  helperText,
 }: {
   label: string;
   name: string;
@@ -94,6 +111,8 @@ const InputField = ({
   required?: boolean;
   error?: string;
   dir?: string;
+  disabled?: boolean;
+  helperText?: string;
 }) => (
   <div>
     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -106,11 +125,15 @@ const InputField = ({
       onChange={onChange}
       placeholder={placeholder}
       dir={dir}
+      disabled={disabled}
       className={`w-full px-4 py-3 rounded-xl border text-base ${
         error ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-300'
-      } focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none transition-all bg-gray-50 text-gray-900`}
+      } ${
+        disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-50 text-gray-900'
+      } focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none transition-all`}
       required={required}
     />
+    {helperText && !error && <p className="mt-1 text-xs text-gray-500">{helperText}</p>}
     {error && <p className="mt-1 text-sm text-red-500 font-medium">{error}</p>}
   </div>
 );
@@ -121,19 +144,23 @@ const RadioOption = ({
   checked,
   onChange,
   label,
+  description,
+  disabled = false,
 }: {
   name: string;
   value: string;
   checked: boolean;
   onChange: () => void;
   label: string;
+  description?: string;
+  disabled?: boolean;
 }) => (
   <label
-    className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${
+    className={`flex items-start gap-3 p-3.5 rounded-xl border transition-all cursor-pointer ${
       checked
-        ? 'border-secondary bg-secondary/5 ring-2 ring-secondary/20'
-        : 'border-gray-200 hover:border-gray-300 bg-white'
-    }`}
+        ? 'border-secondary bg-secondary/5 ring-2 ring-secondary/20 shadow-xs'
+        : 'border-gray-200 bg-white hover:border-gray-300'
+    } ${disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
   >
     <input
       type="radio"
@@ -141,68 +168,15 @@ const RadioOption = ({
       value={value}
       checked={checked}
       onChange={onChange}
-      className="w-4 h-4 text-secondary accent-[#ff9f43]"
+      disabled={disabled}
+      className="w-4 h-4 mt-0.5 accent-[#ff9f43] shrink-0 cursor-pointer"
     />
-    <span className="text-gray-800 font-medium text-sm sm:text-base">{label}</span>
+    <div className="min-w-0">
+      <span className="text-gray-900 font-semibold text-sm sm:text-base block">{label}</span>
+      {description && <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{description}</p>}
+    </div>
   </label>
 );
-
-const MultiSelectCourses = ({
-  label,
-  selectedCourses,
-  onChange,
-  options,
-  required = false,
-  error,
-}: {
-  label: string;
-  selectedCourses: string[];
-  onChange: (courses: string[]) => void;
-  options: string[];
-  required?: boolean;
-  error?: string;
-}) => {
-  const toggle = (opt: string) => {
-    if (selectedCourses.includes(opt)) {
-      onChange(selectedCourses.filter((c) => c !== opt));
-    } else {
-      onChange([...selectedCourses, opt]);
-    }
-  };
-
-  return (
-    <div>
-      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-        {label} {required && <span className="text-secondary">*</span>}
-      </label>
-      <p className="text-xs text-gray-500 mb-2">Select all that apply</p>
-      <div className="space-y-2">
-        {options.map((opt) => {
-          const checked = selectedCourses.includes(opt);
-          return (
-            <label
-              key={opt}
-              className={`flex items-start gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${
-                checked
-                  ? 'border-secondary bg-secondary/5 ring-2 ring-secondary/20'
-                  : 'border-gray-200 hover:border-gray-300 bg-white'
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={checked}
-                onChange={() => toggle(opt)}
-                className="w-4 h-4 mt-0.5 accent-[#ff9f43] shrink-0"
-              />
-              <span className="text-gray-800 font-medium text-sm sm:text-base leading-snug">{opt}</span>
-            </label>
-          );
-        })}
-      </div>
-      {error && <p className="mt-1 text-sm text-red-500 font-medium">{error}</p>}
-    </div>
-  );
-};
 
 const SelectField = ({
   label,
@@ -212,14 +186,16 @@ const SelectField = ({
   placeholder,
   required = false,
   error,
+  helperText,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
-  options: string[];
+  options: { value: string; label: string }[] | string[];
   placeholder?: string;
   required?: boolean;
   error?: string;
+  helperText?: string;
 }) => (
   <div>
     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -235,11 +211,15 @@ const SelectField = ({
         required={required}
       >
         <option value="">{placeholder || 'Select...'}</option>
-        {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
+        {options.map((opt) => {
+          const optValue = typeof opt === 'string' ? opt : opt.value;
+          const optLabel = typeof opt === 'string' ? opt : opt.label;
+          return (
+            <option key={optValue} value={optValue}>
+              {optLabel}
+            </option>
+          );
+        })}
       </select>
       <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,54 +227,8 @@ const SelectField = ({
         </svg>
       </div>
     </div>
+    {helperText && !error && <p className="mt-1 text-xs text-gray-500">{helperText}</p>}
     {error && <p className="mt-1 text-sm text-red-500 font-medium">{error}</p>}
-  </div>
-);
-
-const StepProgress = ({ currentStep }: { currentStep: number }) => (
-  <div className="flex items-center justify-between mb-6 sm:mb-10 w-full max-w-lg mx-auto px-1">
-    {steps.map((step, i) => {
-      const isActive = currentStep === step.number;
-      const isCompleted = currentStep > step.number;
-
-      return (
-        <div key={step.number} className="flex items-center flex-1 last:flex-none">
-          <div className="flex flex-col items-center flex-shrink-0">
-            <div
-              className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[11px] sm:text-sm font-bold transition-all duration-300 ${
-                isCompleted
-                  ? 'bg-secondary text-white'
-                  : isActive
-                  ? 'bg-secondary text-white ring-2 sm:ring-4 ring-secondary/20'
-                  : 'bg-gray-200 text-gray-500'
-              }`}
-            >
-              {isCompleted ? (
-                <svg className="w-3.5 h-3.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                </svg>
-              ) : (
-                step.number
-              )}
-            </div>
-            <span
-              className={`mt-1 text-[10px] sm:text-xs font-semibold transition-colors text-center tracking-tight sm:tracking-normal ${
-                isActive || isCompleted ? 'text-secondary font-bold' : 'text-gray-400'
-              }`}
-            >
-              {step.label}
-            </span>
-          </div>
-          {i < steps.length - 1 && (
-            <div
-              className={`flex-1 h-0.5 mx-1 sm:mx-3 mb-4 transition-colors duration-300 ${
-                currentStep > step.number ? 'bg-secondary' : 'bg-gray-200'
-              }`}
-            />
-          )}
-        </div>
-      );
-    })}
   </div>
 );
 
@@ -371,7 +305,6 @@ const CalendarMonthPicker = ({
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200/90 p-3.5 sm:p-5 shadow-xs">
-      {/* Month Navigation Header */}
       <div className="flex items-center justify-between mb-3 sm:mb-4 gap-2">
         <div className="min-w-0">
           <h4 className="font-heading font-bold text-gray-900 text-base sm:text-lg truncate">
@@ -413,7 +346,6 @@ const CalendarMonthPicker = ({
         </div>
       </div>
 
-      {/* Days of Week Header */}
       <div className="grid grid-cols-7 gap-1 text-center mb-1.5 sm:mb-2">
         {daysOfWeek.map((day, idx) => (
           <div key={idx} className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider py-0.5 sm:py-1">
@@ -422,7 +354,6 @@ const CalendarMonthPicker = ({
         ))}
       </div>
 
-      {/* Days Grid */}
       <div className="grid grid-cols-7 gap-1 sm:gap-1.5">
         {days.map((day, index) => {
           if (day === null) {
@@ -466,25 +397,54 @@ const CalendarMonthPicker = ({
 };
 
 export default function RegisterNow() {
+  const [uiLang, setUiLang] = useState<FormLang>('en');
+  const t = useMemo(() => I18N_DICTIONARIES[uiLang], [uiLang]);
+  const isRTL = uiLang === 'ar';
+
   const [currentStep, setCurrentStep] = useState(1);
   const [direction, setDirection] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
-  // Guardian data
-  const [guardian, setGuardian] = useState<GuardianData>({
-    email: '',
-    guardianName: '',
-    phone: '',
+  // Section 1: Registration Type (Pathway)
+  const [pathway, setPathway] = useState<RegistrationPathway>('parent');
+
+  // Path A: Parent / Guardian Information
+  const [parentInfo, setParentInfo] = useState<ParentInfo>({
+    fullName: '',
     relationship: '',
     relationshipOther: '',
+    email: '',
+    phone: '',
+    preferredLanguage: 'English',
   });
 
-  // Students data
-  const [students, setStudents] = useState<StudentData[]>([{ ...emptyStudent }]);
-  const [currentStudentIndex, setCurrentStudentIndex] = useState(0);
+  // Path A: Registered Students list (supports multiple students)
+  const [students, setStudents] = useState<StudentEntry[]>([emptyStudent('1')]);
+  const [currentStudentTab, setCurrentStudentTab] = useState(0);
+  const [addAnotherRadio, setAddAnotherRadio] = useState<'yes' | 'no' | ''>('');
 
-  // Appointment data
+  // Path B: Adult Self-Registration
+  const [adultInfo, setAdultInfo] = useState<AdultInfo>({
+    fullName: '',
+    dateOfBirth: '',
+    gender: '',
+    email: '',
+    phone: '',
+    preferredLanguage: 'English',
+    educationLevel: '',
+    educationOther: '',
+    courseId: 'foundation-arabic-16-plus',
+  });
+
+  // Section 5: Payment Method
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [paymentMethodOther, setPaymentMethodOther] = useState('');
+
+  // Section 6: Confirmation Checkbox
+  const [confirmationAgreed, setConfirmationAgreed] = useState(false);
+
+  // Appointment Data
   const [appointmentDate, setAppointmentDate] = useState('');
   const [appointmentTime, setAppointmentTime] = useState('');
   const [appointmentType, setAppointmentType] = useState<'virtual' | 'in-person' | ''>('virtual');
@@ -493,27 +453,28 @@ export default function RegisterNow() {
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [bookedMeetingLink, setBookedMeetingLink] = useState<string | null>(null);
 
-  // Validation errors
+  // Validation Errors
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const formCardRef = useRef<HTMLDivElement>(null);
 
-  /* ── Appointment helpers ── */
-  // Get minimum selectable date (tomorrow)
+  // Derived adult age check
+  const adultAge = useMemo(() => calculateAge(adultInfo.dateOfBirth), [adultInfo.dateOfBirth]);
+  const isAdultUnder18 = pathway === 'adult' && adultAge !== null && adultAge < 18;
+
+  // Appointment Helpers
   const minDate = useMemo(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split('T')[0];
   }, []);
 
-  // Get max selectable date (60 days from now)
   const maxDate = useMemo(() => {
     const max = new Date();
     max.setDate(max.getDate() + 60);
     return max.toISOString().split('T')[0];
   }, []);
 
-  // Check if a date is a valid appointment day (not in the past)
   const isValidAppointmentDate = (dateStr: string): boolean => {
     if (!dateStr) return false;
     const [y, m, d] = dateStr.split('-').map(Number);
@@ -523,7 +484,6 @@ export default function RegisterNow() {
     return dateObj > today;
   };
 
-  // Fetch slots data from API when appointmentDate changes
   useEffect(() => {
     if (!appointmentDate) {
       setSlotsData([]);
@@ -557,36 +517,35 @@ export default function RegisterNow() {
     };
   }, [appointmentDate]);
 
-  // Get day info for display
   const getDateInfo = (dateStr: string): { dayName: string; isWeekend: boolean; hours: string } | null => {
     if (!dateStr) return null;
     const [y, m, d] = dateStr.split('-').map(Number);
     const dateObj = new Date(y, m - 1, d);
     const dayOfWeek = dateObj.getDay();
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-    const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+    const dayName = dateObj.toLocaleDateString(uiLang === 'ar' ? 'ar-SA' : uiLang === 'fr' ? 'fr-CA' : 'en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
     const hours = isWeekend ? '11:00 AM — 5:00 PM' : '6:00 PM — 11:00 PM';
     return { dayName, isWeekend, hours };
   };
 
-  const dateInfo = useMemo(() => getDateInfo(appointmentDate), [appointmentDate]);
+  const dateInfo = useMemo(() => getDateInfo(appointmentDate), [appointmentDate, uiLang]);
 
-  const validateAppointment = (): boolean => {
-    const e: Record<string, string> = {};
-    if (!appointmentType) e.appointmentType = 'Please select a meeting type';
-    if (appointmentType === 'virtual' && virtualOption === 'phone') {
-      if (!guardian.phone || !guardian.phone.trim()) {
-        e.appointmentPhone = 'Please provide your phone number so we can call you';
-      }
-    }
-    if (!appointmentDate) e.appointmentDate = 'Please select a date on the calendar';
-    else if (!isValidAppointmentDate(appointmentDate)) e.appointmentDate = 'Please select an upcoming date';
-    if (!appointmentTime) e.appointmentTime = 'Please select an available 15-minute time slot';
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
+  const stepsList = useMemo(
+    () => [
+      { number: 1, label: t.steps.typeAndContact },
+      { number: 2, label: t.steps.courseAndEdu },
+      { number: 3, label: t.steps.paymentAndReview },
+      { number: 4, label: t.steps.appointment },
+      { number: 5, label: t.steps.done },
+    ],
+    [t]
+  );
 
-  /* ── Helpers ── */
   const goToStep = (step: number) => {
     setDirection(step > currentStep ? 1 : -1);
     setCurrentStep(step);
@@ -596,121 +555,227 @@ export default function RegisterNow() {
     }, 60);
   };
 
-  const isAdultSelf = guardian.relationship === 'Does not apply';
-
-  const validateGuardian = (): boolean => {
+  // Step 1 Validation
+  const validateStep1 = (): boolean => {
     const e: Record<string, string> = {};
-    if (!guardian.email) e.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guardian.email)) e.email = 'Invalid email format';
-    if (!isAdultSelf && !guardian.guardianName) e.guardianName = 'Full name is required';
-    if (!isAdultSelf && !guardian.phone) e.phone = 'Phone number is required';
-    if (!guardian.relationship) e.relationship = 'Please select a relationship';
-    if (guardian.relationship === 'Other' && !guardian.relationshipOther) e.relationshipOther = 'Please specify';
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
 
-  const validateStudent = (): boolean => {
-    const student = students[currentStudentIndex];
-    const e: Record<string, string> = {};
-    if (!student.fullName.trim()) e.fullName = 'Student full name is required';
-    if (!student.dateOfBirth) e.dateOfBirth = 'Date of birth is required';
-    if (!student.gender) e.gender = 'Please select gender';
-    // Current grade level is optional
-    if (!student.courses || student.courses.length === 0) e.course = 'Please select at least one course';
-    if (!student.addAnotherStudent) {
-      e.addAnother = 'Please select whether you would like to add another student';
-    }
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
-
-  const handleNextFromGuardian = () => {
-    if (validateGuardian()) {
-      goToStep(2);
-    }
-  };
-
-  const handleNextFromStudent = () => {
-    if (validateStudent()) {
-      const currentStudent = students[currentStudentIndex];
-
-      if (currentStudent.addAnotherStudent === 'no') {
-        // User does not want to add another student: trim any students after this one and proceed to review
-        const trimmed = students.slice(0, currentStudentIndex + 1);
-        setStudents(trimmed);
-        setErrors({});
-        goToStep(3);
-        return;
+    if (pathway === 'parent') {
+      if (!parentInfo.fullName.trim()) e.parentFullName = 'Parent/Guardian full name is required';
+      if (!parentInfo.relationship) e.relationship = 'Please select your relationship to the student';
+      if (parentInfo.relationship === 'Other' && !parentInfo.relationshipOther.trim()) {
+        e.relationshipOther = 'Please specify your relationship';
       }
-
-      if (currentStudent.addAnotherStudent === 'yes') {
-        if (currentStudentIndex < students.length - 1) {
-          // Next student already exists in array, just advance
-          setCurrentStudentIndex(currentStudentIndex + 1);
-          setErrors({});
-          setTimeout(() => {
-            formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }, 60);
-        } else {
-          // Add new student
-          const newStudents = [...students, { ...emptyStudent }];
-          setStudents(newStudents);
-          setCurrentStudentIndex(newStudents.length - 1);
-          setErrors({});
-          setTimeout(() => {
-            formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }, 60);
+      if (!parentInfo.email.trim()) e.email = 'Email address is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parentInfo.email)) e.email = 'Invalid email format';
+      if (!parentInfo.phone.trim()) e.phone = 'Phone number is required';
+      if (!parentInfo.preferredLanguage) e.preferredLanguage = 'Please select a preferred language';
+    } else {
+      // Adult pathway
+      if (!adultInfo.fullName.trim()) e.adultFullName = 'Full name is required';
+      if (!adultInfo.dateOfBirth) e.adultDob = 'Date of birth is required';
+      else {
+        const age = calculateAge(adultInfo.dateOfBirth);
+        if (age === null || age < 18) {
+          e.adultDob = t.adultUnder18Error;
         }
       }
+      if (!adultInfo.gender) e.adultGender = 'Please select your gender';
+      if (!adultInfo.email.trim()) e.adultEmail = 'Email address is required';
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adultInfo.email)) e.adultEmail = 'Invalid email format';
+      if (!adultInfo.phone.trim()) e.adultPhone = 'Phone number is required';
+      if (!adultInfo.preferredLanguage) e.adultPreferredLanguage = 'Please select a preferred language';
     }
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  const handleBackFromStudent = () => {
-    if (currentStudentIndex > 0) {
-      setCurrentStudentIndex(currentStudentIndex - 1);
-      setErrors({});
-      setTimeout(() => {
-        formCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 60);
+  // Step 2 Validation
+  const validateStep2 = (): boolean => {
+    const e: Record<string, string> = {};
+
+    if (pathway === 'parent') {
+      students.forEach((student, index) => {
+        const prefix = `student_${index}_`;
+        if (!student.fullName.trim()) e[`${prefix}fullName`] = 'Student full name is required';
+        if (!student.dateOfBirth) e[`${prefix}dateOfBirth`] = 'Date of birth is required';
+        if (!student.gender) e[`${prefix}gender`] = 'Please select gender';
+
+        if (!student.courseId) {
+          e[`${prefix}courseId`] = 'Please select a course for this student';
+        } else {
+          const course = getCourseById(student.courseId);
+          if (course) {
+            const age = calculateAge(student.dateOfBirth);
+            const elig = checkCourseEligibility(course, {
+              age,
+              gender: student.gender,
+              pathway: 'parent',
+            });
+            if (!elig.eligible) {
+              e[`${prefix}courseId`] = elig.reason || 'Student is not eligible for this course';
+            }
+
+            // Validate education field based on course type
+            if (!student.educationValue) {
+              e[`${prefix}educationValue`] = course.is16Plus
+                ? 'Please select current level of education'
+                : 'Please select current school grade';
+            } else if (course.is16Plus && student.educationValue === 'Other' && !student.educationOther.trim()) {
+              e[`${prefix}educationOther`] = 'Please specify your education level';
+            }
+          }
+        }
+      });
     } else {
-      goToStep(1);
+      // Adult pathway
+      if (!adultInfo.educationLevel) {
+        e.adultEducationLevel = 'Please select your current level of education';
+      } else if (adultInfo.educationLevel === 'Other' && !adultInfo.educationOther.trim()) {
+        e.adultEducationOther = 'Please specify your level of education';
+      }
+      if (!adultInfo.courseId) {
+        e.adultCourseId = 'Please select a course';
+      }
     }
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  const handleRemoveStudent = (index: number) => {
-    if (students.length <= 1) return;
-    const newStudents = students.filter((_, i) => i !== index);
-    setStudents(newStudents);
-    if (currentStudentIndex >= newStudents.length) {
-      setCurrentStudentIndex(newStudents.length - 1);
+  // Step 3 Validation (Payment & Agreement)
+  const validateStep3 = (): boolean => {
+    const e: Record<string, string> = {};
+    if (!paymentMethod) e.paymentMethod = 'Please select a preferred payment method';
+    if (paymentMethod === 'Other' && !paymentMethodOther.trim()) {
+      e.paymentMethodOther = 'Please specify your payment method';
     }
+    if (!confirmationAgreed) {
+      e.confirmationAgreed = 'You must confirm and agree to proceed';
+    }
+    setErrors(e);
+    return Object.keys(e).length === 0;
   };
 
-  const updateStudent = (field: keyof StudentData, value: string | string[]) => {
-    const updated = [...students];
-    updated[currentStudentIndex] = { ...updated[currentStudentIndex], [field]: value };
+  // Step 4 Validation (Appointment)
+  const validateStep4 = (): boolean => {
+    const e: Record<string, string> = {};
+    if (!appointmentType) e.appointmentType = 'Please select a meeting format';
+    const contactPhone = pathway === 'parent' ? parentInfo.phone : adultInfo.phone;
+    if (appointmentType === 'virtual' && virtualOption === 'phone' && !contactPhone.trim()) {
+      e.appointmentPhone = 'Please provide a valid phone number';
+    }
+    if (!appointmentDate) e.appointmentDate = 'Please select a date on the calendar';
+    else if (!isValidAppointmentDate(appointmentDate)) e.appointmentDate = 'Please select an upcoming date';
+    if (!appointmentTime) e.appointmentTime = 'Please select an available 15-minute time slot';
+
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  // Add & Remove Student Helpers for Path A
+  const handleAddStudent = () => {
+    const newId = (students.length + 1).toString();
+    const updated = [...students, emptyStudent(newId)];
     setStudents(updated);
+    setCurrentStudentTab(updated.length - 1);
+    setAddAnotherRadio('yes');
+    setErrors({});
   };
 
+  const handleRemoveStudent = (indexToRemove: number) => {
+    if (students.length <= 1) return;
+    const updated = students.filter((_, idx) => idx !== indexToRemove);
+    setStudents(updated);
+    setCurrentStudentTab(Math.max(0, indexToRemove - 1));
+  };
+
+  const updateStudentField = (
+    index: number,
+    field: keyof StudentEntry,
+    value: string
+  ) => {
+    setStudents((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
+  };
+
+  // Final Form Submission
   const handleSubmit = async () => {
-    if (!validateAppointment()) return;
+    if (!validateStep4()) return;
 
     setIsSubmitting(true);
     setSubmitError('');
 
     try {
+      let payloadStudents: any[] = [];
+      let registrantName = '';
+      let registrantEmail = '';
+      let registrantPhone = '';
+
+      if (pathway === 'parent') {
+        registrantName = parentInfo.fullName;
+        registrantEmail = parentInfo.email;
+        registrantPhone = parentInfo.phone;
+
+        payloadStudents = students.map((s) => {
+          const course = getCourseById(s.courseId);
+          const assignedSession = course ? getAssignedSession(course, s.gender) : undefined;
+          return {
+            fullName: s.fullName,
+            dateOfBirth: s.dateOfBirth,
+            gender: s.gender,
+            courses: course ? [course.name] : [],
+            courseId: s.courseId,
+            courseName: course?.name,
+            assignedSession,
+            educationType: course?.is16Plus ? 'level' : 'grade',
+            educationValue: s.educationValue,
+            educationOther: s.educationOther,
+          };
+        });
+      } else {
+        registrantName = adultInfo.fullName;
+        registrantEmail = adultInfo.email;
+        registrantPhone = adultInfo.phone;
+
+        const course = getCourseById(adultInfo.courseId);
+        const assignedSession = course ? getAssignedSession(course, adultInfo.gender) : undefined;
+
+        payloadStudents = [
+          {
+            fullName: adultInfo.fullName,
+            dateOfBirth: adultInfo.dateOfBirth,
+            gender: adultInfo.gender,
+            courses: course ? [course.name] : ['Foundation Arabic Course for Non-Arabic Speakers – Ages 16+'],
+            courseId: adultInfo.courseId,
+            courseName: course?.name || 'Foundation Arabic Course for Non-Arabic Speakers – Ages 16+',
+            assignedSession,
+            educationType: 'level',
+            educationValue: adultInfo.educationLevel,
+            educationOther: adultInfo.educationOther,
+          },
+        ];
+      }
+
       const res = await fetch('/api/send-email/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'registration',
-          guardianName: guardian.guardianName,
-          email: guardian.email,
-          phone: guardian.phone,
-          relationship: guardian.relationship,
-          relationshipOther: guardian.relationshipOther,
-          students,
+          registrationPathway: pathway,
+          guardianName: registrantName,
+          email: registrantEmail,
+          phone: registrantPhone,
+          relationship: pathway === 'parent' ? parentInfo.relationship : 'Does not apply',
+          relationshipOther: pathway === 'parent' ? parentInfo.relationshipOther : undefined,
+          preferredLanguage: pathway === 'parent' ? parentInfo.preferredLanguage : adultInfo.preferredLanguage,
+          paymentMethod,
+          paymentMethodOther: paymentMethod === 'Other' ? paymentMethodOther : undefined,
+          confirmationAgreed: true,
+          students: payloadStudents,
           appointmentDate,
           appointmentTime,
           appointmentType,
@@ -722,7 +787,6 @@ export default function RegisterNow() {
 
       if (!res.ok) {
         setSubmitError(data.error || 'Something went wrong. Please try again.');
-        // If slot capacity conflict, re-fetch slots for this date immediately
         if (res.status === 409 && appointmentDate) {
           fetch(`/api/appointments/?date=${appointmentDate}`)
             .then((r) => r.json())
@@ -741,7 +805,7 @@ export default function RegisterNow() {
 
       goToStep(5);
     } catch {
-      setSubmitError('Network error. Please check your connection and try again.');
+      setSubmitError('Network error. Please check your internet connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -750,31 +814,101 @@ export default function RegisterNow() {
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <main className="flex-1" dir={isRTL ? 'rtl' : 'ltr'}>
         {/* Hero Section */}
         <section
-          className="relative py-14 sm:py-20 text-center bg-cover bg-center bg-no-repeat"
+          className="relative py-12 sm:py-16 text-center bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url('/images/register_hero_bg.png')" }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-white/60 to-white/80 z-0"></div>
-          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-4">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading mb-4 sm:mb-6 text-gray-900 drop-shadow-md">
-              Register for Fall 2026 Courses
+          <div className="absolute inset-0 bg-gradient-to-b from-white/75 via-white/65 to-white/85 z-0"></div>
+          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Language Switcher Bar */}
+            <div className="flex justify-center mb-4">
+              <div className="inline-flex items-center gap-1 bg-white/90 backdrop-blur-sm border border-secondary/20 rounded-full p-1 shadow-xs">
+                {(['en', 'fr', 'ar'] as FormLang[]).map((lang) => (
+                  <button
+                    key={lang}
+                    type="button"
+                    onClick={() => setUiLang(lang)}
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                      uiLang === lang
+                        ? 'bg-secondary text-white shadow-xs'
+                        : 'text-gray-700 hover:text-secondary'
+                    }`}
+                  >
+                    {lang === 'en' ? 'English' : lang === 'fr' ? 'Français' : 'العربية'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <span className="inline-block px-3 py-1 mb-2.5 rounded-full text-xs font-bold tracking-wide uppercase bg-secondary/15 text-secondary border border-secondary/20">
+              {t.badgeTitle}
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading mb-3 sm:mb-4 text-gray-900 drop-shadow-xs">
+              {t.heroTitle}
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-gray-800 font-medium drop-shadow-sm">
-              Fill out the form below to enroll your student in our upcoming courses.
+            <p className="text-sm sm:text-base md:text-lg text-gray-700 font-medium max-w-2xl mx-auto drop-shadow-xs">
+              {t.heroSubtitle}
             </p>
           </div>
         </section>
 
-        {/* Registration Form */}
-        <section className="py-8 sm:py-16 bg-gradient-to-b from-secondary-light to-white min-h-[60vh]">
+        {/* Multi-Step Registration Form Container */}
+        <section className="py-8 sm:py-14 bg-gradient-to-b from-secondary-light/40 to-white min-h-[60vh]">
           <div className="max-w-2xl lg:max-w-3xl mx-auto px-3 sm:px-6">
-            <div ref={formCardRef} className="bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-gray-100 p-5 sm:p-8 md:p-10">
-              <StepProgress currentStep={currentStep} />
+            <div
+              ref={formCardRef}
+              className="bg-white rounded-2xl sm:rounded-3xl shadow-lg border border-gray-100 p-5 sm:p-8 md:p-10"
+            >
+              {/* Stepper Progress Bar */}
+              <div className="flex items-center justify-between mb-8 sm:mb-10 w-full max-w-xl mx-auto px-1">
+                {stepsList.map((step, i) => {
+                  const isActive = currentStep === step.number;
+                  const isCompleted = currentStep > step.number;
+
+                  return (
+                    <div key={step.number} className="flex items-center flex-1 last:flex-none">
+                      <div className="flex flex-col items-center flex-shrink-0">
+                        <div
+                          className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-[11px] sm:text-sm font-bold transition-all duration-300 ${
+                            isCompleted
+                              ? 'bg-secondary text-white'
+                              : isActive
+                              ? 'bg-secondary text-white ring-2 sm:ring-4 ring-secondary/20'
+                              : 'bg-gray-200 text-gray-500'
+                          }`}
+                        >
+                          {isCompleted ? (
+                            <svg className="w-3.5 h-3.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                            </svg>
+                          ) : (
+                            step.number
+                          )}
+                        </div>
+                        <span
+                          className={`mt-1 text-[10px] sm:text-xs font-semibold transition-colors text-center tracking-tight sm:tracking-normal ${
+                            isActive || isCompleted ? 'text-secondary font-bold' : 'text-gray-400'
+                          }`}
+                        >
+                          {step.label}
+                        </span>
+                      </div>
+                      {i < stepsList.length - 1 && (
+                        <div
+                          className={`flex-1 h-0.5 mx-1 sm:mx-3 mb-4 transition-colors duration-300 ${
+                            currentStep > step.number ? 'bg-secondary' : 'bg-gray-200'
+                          }`}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
 
               <AnimatePresence mode="wait" custom={direction}>
-                {/* ───── STEP 1: Guardian Details ───── */}
+                {/* ═══════════════ STEP 1: REGISTRATION TYPE & CONTACT ═══════════════ */}
                 {currentStep === 1 && (
                   <motion.div
                     key="step1"
@@ -783,113 +917,355 @@ export default function RegisterNow() {
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
                   >
-                    <div className="mb-6">
-                      <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900 mb-2">
-                        {isAdultSelf ? 'Your Information' : 'Guardian Information'}
-                      </h2>
-                      <p className="text-gray-500 text-sm sm:text-base">
-                        {isAdultSelf
-                          ? 'Welcome! Since you are registering for yourself, just provide your email below.'
-                          : 'So we can contact you about the registration and course details.'}
-                      </p>
-                    </div>
-
-                    <div className="space-y-5">
-                      {/* ── Relationship to Student (always on top) ── */}
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Relationship to Student <span className="text-secondary">*</span>
-                        </label>
-                        <div className="space-y-2">
-                          {['Father', 'Mother', 'Does not apply', 'Other'].map((rel) => (
-                            <RadioOption
-                              key={rel}
-                              name="relationship"
-                              value={rel}
-                              checked={guardian.relationship === rel}
-                              onChange={() => setGuardian({ ...guardian, relationship: rel, relationshipOther: '' })}
-                              label={rel === 'Does not apply' ? 'Does not apply (I am the student)' : rel}
-                            />
-                          ))}
-                        </div>
-                        {errors.relationship && (
-                          <p className="mt-1 text-sm text-red-500 font-medium">{errors.relationship}</p>
-                        )}
-                        {guardian.relationship === 'Other' && (
-                          <div className="mt-3">
-                            <InputField
-                              label="Please specify"
-                              name="relationshipOther"
-                              value={guardian.relationshipOther}
-                              onChange={(e) =>
-                                setGuardian({ ...guardian, relationshipOther: e.target.value })
-                              }
-                              placeholder="e.g. Grandparent, Uncle"
-                              required
-                              error={errors.relationshipOther}
-                            />
-                          </div>
-                        )}
+                    {/* SECTION 1 – REGISTRATION TYPE */}
+                    <div className="mb-8 pb-6 border-b border-gray-100">
+                      <div className="mb-4">
+                        <span className="text-xs font-bold text-secondary uppercase tracking-wider block mb-1">
+                          SECTION 1
+                        </span>
+                        <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900">
+                          {t.section1Title}
+                        </h2>
+                        <p className="text-gray-600 text-sm mt-1">{t.whoAreYouRegistering} <span className="text-secondary">*</span></p>
                       </div>
 
-                      {/* ── Email (always visible) ── */}
-                      <InputField
-                        label="Email Address"
-                        name="email"
-                        type="email"
-                        value={guardian.email}
-                        onChange={(e) => setGuardian({ ...guardian, email: e.target.value })}
-                        placeholder={isAdultSelf ? 'you@example.com' : 'parent@example.com'}
-                        required
-                        error={errors.email}
-                      />
-
-                      {/* ── Fields hidden when adult self-registering ── */}
-                      <AnimatePresence>
-                        {!isAdultSelf && (
-                          <motion.div
-                            key="guardian-extra-fields"
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3, ease: 'easeInOut' }}
-                            className="space-y-5 overflow-hidden"
-                          >
-                            <InputField
-                              label="Guardian Full Name"
-                              name="guardianName"
-                              value={guardian.guardianName}
-                              onChange={(e) => setGuardian({ ...guardian, guardianName: e.target.value })}
-                              placeholder="John Doe"
-                              required
-                              error={errors.guardianName}
-                            />
-
-                            <InputField
-                              label="Phone Number"
-                              name="phone"
-                              type="tel"
-                              value={guardian.phone}
-                              onChange={(e) => setGuardian({ ...guardian, phone: e.target.value })}
-                              placeholder="+1 (555) 000-0000"
-                              required
-                              error={errors.phone}
-                              dir="ltr"
-                            />
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <RadioOption
+                          name="pathway"
+                          value="parent"
+                          checked={pathway === 'parent'}
+                          onChange={() => {
+                            setPathway('parent');
+                            setErrors({});
+                          }}
+                          label={t.childUnder18}
+                          description={t.childUnder18Desc}
+                        />
+                        <RadioOption
+                          name="pathway"
+                          value="adult"
+                          checked={pathway === 'adult'}
+                          onChange={() => {
+                            setPathway('adult');
+                            setErrors({});
+                          }}
+                          label={t.adultSelf}
+                          description={t.adultSelfDesc}
+                        />
+                      </div>
                     </div>
 
-                    <div className="mt-8 flex justify-end">
-                      <button
-                        onClick={handleNextFromGuardian}
-                        className="w-full sm:w-auto px-8 py-3.5 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md cursor-pointer flex items-center justify-center gap-2"
+                    {/* PATH A: SECTION 2A – PARENT / GUARDIAN INFORMATION */}
+                    {pathway === 'parent' && (
+                      <motion.div
+                        key="path-a-parent-fields"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-5"
                       >
-                        Continue
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="mb-2">
+                          <span className="text-xs font-bold text-secondary uppercase tracking-wider block mb-1">
+                            SECTION 2A
+                          </span>
+                          <h3 className="text-xl sm:text-2xl font-bold font-heading text-gray-900">
+                            {t.parentSectionTitle}
+                          </h3>
+                          <p className="text-gray-500 text-xs sm:text-sm mt-0.5">
+                            {t.parentSectionDesc}
+                          </p>
+                        </div>
+
+                        {/* Parent/Guardian Full Name */}
+                        <InputField
+                          label={t.parentFullName}
+                          name="parentFullName"
+                          value={parentInfo.fullName}
+                          onChange={(e) => setParentInfo({ ...parentInfo, fullName: e.target.value })}
+                          placeholder="e.g. Sarah Mansour"
+                          required
+                          error={errors.parentFullName}
+                        />
+
+                        {/* Relationship to Student */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            {t.relationshipLabel} <span className="text-secondary">*</span>
+                          </label>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            {[
+                              { key: 'Mother', label: t.mother },
+                              { key: 'Father', label: t.father },
+                              { key: 'Legal Guardian', label: t.legalGuardian },
+                              { key: 'Other', label: t.other },
+                            ].map((item) => (
+                              <RadioOption
+                                key={item.key}
+                                name="relationship"
+                                value={item.key}
+                                checked={parentInfo.relationship === item.key}
+                                onChange={() =>
+                                  setParentInfo({
+                                    ...parentInfo,
+                                    relationship: item.key,
+                                    relationshipOther: item.key === 'Other' ? parentInfo.relationshipOther : '',
+                                  })
+                                }
+                                label={item.label}
+                              />
+                            ))}
+                          </div>
+                          {errors.relationship && (
+                            <p className="mt-1.5 text-sm text-red-500 font-medium">{errors.relationship}</p>
+                          )}
+                          {parentInfo.relationship === 'Other' && (
+                            <div className="mt-3">
+                              <InputField
+                                label={t.pleaseSpecify}
+                                name="relationshipOther"
+                                value={parentInfo.relationshipOther}
+                                onChange={(e) =>
+                                  setParentInfo({ ...parentInfo, relationshipOther: e.target.value })
+                                }
+                                placeholder="e.g. Grandparent, Aunt, Brother"
+                                required
+                                error={errors.relationshipOther}
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Contact details */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <InputField
+                            label={t.emailLabel}
+                            name="email"
+                            type="email"
+                            value={parentInfo.email}
+                            onChange={(e) => setParentInfo({ ...parentInfo, email: e.target.value })}
+                            placeholder="parent@example.com"
+                            required
+                            error={errors.email}
+                          />
+
+                          <InputField
+                            label={t.phoneLabel}
+                            name="phone"
+                            type="tel"
+                            value={parentInfo.phone}
+                            onChange={(e) => setParentInfo({ ...parentInfo, phone: e.target.value })}
+                            placeholder="+1 (514) 000-0000"
+                            required
+                            error={errors.phone}
+                            dir="ltr"
+                          />
+                        </div>
+
+                        {/* Preferred Language */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            {t.preferredLanguageLabel} <span className="text-secondary">*</span>
+                          </label>
+                          <div className="grid grid-cols-3 gap-2.5">
+                            {COMMUNICATION_LANGUAGES.map((lang) => (
+                              <RadioOption
+                                key={lang}
+                                name="preferredLanguage"
+                                value={lang}
+                                checked={parentInfo.preferredLanguage === lang}
+                                onChange={() => setParentInfo({ ...parentInfo, preferredLanguage: lang })}
+                                label={lang === 'English' ? 'English' : lang === 'French' ? 'Français' : 'العربية'}
+                              />
+                            ))}
+                          </div>
+                          {errors.preferredLanguage && (
+                            <p className="mt-1 text-sm text-red-500 font-medium">{errors.preferredLanguage}</p>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* PATH B: SECTION 2B – ADULT SELF-REGISTRATION */}
+                    {pathway === 'adult' && (
+                      <motion.div
+                        key="path-b-adult-fields"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-5"
+                      >
+                        <div className="mb-2">
+                          <span className="text-xs font-bold text-secondary uppercase tracking-wider block mb-1">
+                            SECTION 2B
+                          </span>
+                          <h3 className="text-xl sm:text-2xl font-bold font-heading text-gray-900">
+                            {t.adultSectionTitle}
+                          </h3>
+                          <p className="text-gray-500 text-xs sm:text-sm mt-0.5">
+                            {t.adultSectionDesc}
+                          </p>
+                        </div>
+
+                        {/* Full Name */}
+                        <InputField
+                          label={t.fullNameLabel}
+                          name="adultFullName"
+                          value={adultInfo.fullName}
+                          onChange={(e) => setAdultInfo({ ...adultInfo, fullName: e.target.value })}
+                          placeholder="e.g. Yassin Khanji"
+                          required
+                          error={errors.adultFullName}
+                        />
+
+                        {/* Date of Birth & 18+ Age Validation */}
+                        <div>
+                          <InputField
+                            label={t.dobLabel}
+                            name="adultDob"
+                            type="date"
+                            value={adultInfo.dateOfBirth}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setAdultInfo({ ...adultInfo, dateOfBirth: val });
+                              const calculated = calculateAge(val);
+                              if (calculated !== null && calculated < 18) {
+                                setErrors((prev) => ({ ...prev, adultDob: t.adultUnder18Error }));
+                              } else {
+                                setErrors((prev) => {
+                                  const next = { ...prev };
+                                  delete next.adultDob;
+                                  return next;
+                                });
+                              }
+                            }}
+                            required
+                            error={errors.adultDob}
+                            helperText={
+                              adultAge !== null
+                                ? `Current age: ${adultAge} ${t.ageYearsOld}`
+                                : 'Must be 18 years of age or older to self-register.'
+                            }
+                          />
+
+                          {/* Mandatory 18+ Warning Banner if under 18 */}
+                          {isAdultUnder18 && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="mt-3 p-4 bg-amber-50 border-2 border-amber-300 rounded-xl text-amber-900 text-sm flex items-start gap-3 shadow-xs"
+                            >
+                              <span className="text-xl shrink-0 mt-0.5">⚠️</span>
+                              <div>
+                                <p className="font-bold text-amber-950 mb-1">Under 18 Age Requirement</p>
+                                <p className="text-xs sm:text-sm leading-relaxed">
+                                  {t.adultUnder18Error}
+                                </p>
+                                <button
+                                  type="button"
+                                  onClick={() => setPathway('parent')}
+                                  className="mt-2.5 px-4 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-bold hover:bg-amber-700 transition-colors shadow-xs cursor-pointer"
+                                >
+                                  Switch to Parent / Guardian Registration
+                                </button>
+                              </div>
+                            </motion.div>
+                          )}
+                        </div>
+
+                        {/* Gender */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            {t.genderLabel} <span className="text-secondary">*</span>
+                          </label>
+                          <div className="grid grid-cols-2 gap-3">
+                            <RadioOption
+                              name="adultGender"
+                              value="Female"
+                              checked={adultInfo.gender === 'Female'}
+                              onChange={() => setAdultInfo({ ...adultInfo, gender: 'Female' })}
+                              label={t.female}
+                              description="Assigned session: Friday"
+                            />
+                            <RadioOption
+                              name="adultGender"
+                              value="Male"
+                              checked={adultInfo.gender === 'Male'}
+                              onChange={() => setAdultInfo({ ...adultInfo, gender: 'Male' })}
+                              label={t.male}
+                              description="Assigned session: Sunday"
+                            />
+                          </div>
+                          {errors.adultGender && (
+                            <p className="mt-1 text-sm text-red-500 font-medium">{errors.adultGender}</p>
+                          )}
+                        </div>
+
+                        {/* Email & Phone */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <InputField
+                            label={t.emailLabel}
+                            name="adultEmail"
+                            type="email"
+                            value={adultInfo.email}
+                            onChange={(e) => setAdultInfo({ ...adultInfo, email: e.target.value })}
+                            placeholder="you@example.com"
+                            required
+                            error={errors.adultEmail}
+                          />
+
+                          <InputField
+                            label={t.phoneLabel}
+                            name="adultPhone"
+                            type="tel"
+                            value={adultInfo.phone}
+                            onChange={(e) => setAdultInfo({ ...adultInfo, phone: e.target.value })}
+                            placeholder="+1 (514) 000-0000"
+                            required
+                            error={errors.adultPhone}
+                            dir="ltr"
+                          />
+                        </div>
+
+                        {/* Preferred Language */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            {t.preferredLanguageLabel} <span className="text-secondary">*</span>
+                          </label>
+                          <div className="grid grid-cols-3 gap-2.5">
+                            {COMMUNICATION_LANGUAGES.map((lang) => (
+                              <RadioOption
+                                key={lang}
+                                name="adultPreferredLanguage"
+                                value={lang}
+                                checked={adultInfo.preferredLanguage === lang}
+                                onChange={() => setAdultInfo({ ...adultInfo, preferredLanguage: lang })}
+                                label={lang === 'English' ? 'English' : lang === 'French' ? 'Français' : 'العربية'}
+                              />
+                            ))}
+                          </div>
+                          {errors.adultPreferredLanguage && (
+                            <p className="mt-1 text-sm text-red-500 font-medium">
+                              {errors.adultPreferredLanguage}
+                            </p>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Step 1 Next Button */}
+                    <div className="mt-8 pt-4 border-t border-gray-100 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (validateStep1()) goToStep(2);
+                        }}
+                        disabled={isAdultUnder18}
+                        className="w-full sm:w-auto px-8 py-3.5 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {t.nextBtn}
+                        <svg className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </button>
@@ -897,7 +1273,7 @@ export default function RegisterNow() {
                   </motion.div>
                 )}
 
-                {/* ───── STEP 2: Student Details ───── */}
+                {/* ═══════════════ STEP 2: COURSE SELECTION & EDUCATION ═══════════════ */}
                 {currentStep === 2 && (
                   <motion.div
                     key="step2"
@@ -906,173 +1282,449 @@ export default function RegisterNow() {
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
                   >
-                    <div className="mb-6">
-                      <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900 mb-2">
-                        Student Details
-                      </h2>
-                      <p className="text-gray-500 text-sm sm:text-base">
-                        Enter the information for the student you would like to register.
-                      </p>
-                    </div>
+                    {/* PATH A: Parent / Guardian Student(s) & Courses */}
+                    {pathway === 'parent' ? (
+                      <div className="space-y-6">
+                        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-4">
+                          <div>
+                            <span className="text-xs font-bold text-secondary uppercase tracking-wider block mb-0.5">
+                              SECTIONS 3A & 4A
+                            </span>
+                            <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900">
+                              Student Information & Course Selection
+                            </h2>
+                          </div>
 
-                    {/* Student tabs if multiple */}
-                    {students.length > 1 && (
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {students.map((s, i) => (
-                          <button
-                            key={i}
-                            onClick={() => {
-                              setCurrentStudentIndex(i);
-                              setErrors({});
+                          {/* Student Tabs if multiple */}
+                          {students.length > 1 && (
+                            <div className="flex flex-wrap gap-1.5 bg-gray-100 p-1 rounded-xl">
+                              {students.map((st, idx) => (
+                                <button
+                                  key={st.id}
+                                  type="button"
+                                  onClick={() => setCurrentStudentTab(idx)}
+                                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                    currentStudentTab === idx
+                                      ? 'bg-white text-secondary shadow-xs'
+                                      : 'text-gray-600 hover:text-gray-900'
+                                  }`}
+                                >
+                                  {st.fullName ? st.fullName.split(' ')[0] : `${t.studentNumber} ${idx + 1}`}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Active Student Card */}
+                        {students.map((student, sIdx) => {
+                          if (sIdx !== currentStudentTab && students.length > 1) return null;
+
+                          const studentAge = calculateAge(student.dateOfBirth);
+                          const prefix = `student_${sIdx}_`;
+                          const selectedCourse = getCourseById(student.courseId);
+
+                          return (
+                            <div key={student.id} className="space-y-6">
+                              <div className="flex items-center justify-between">
+                                <h3 className="font-bold text-gray-800 text-base sm:text-lg flex items-center gap-2">
+                                  <span className="w-6 h-6 rounded-full bg-secondary/15 text-secondary text-xs flex items-center justify-center font-extrabold">
+                                    {sIdx + 1}
+                                  </span>
+                                  {student.fullName ? student.fullName : `${t.studentNumber} ${sIdx + 1}`}
+                                </h3>
+                                {students.length > 1 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveStudent(sIdx)}
+                                    className="text-xs font-semibold text-red-500 hover:text-red-700 hover:bg-red-50 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                                  >
+                                    ✕ {t.removeStudentBtn}
+                                  </button>
+                                )}
+                              </div>
+
+                              {/* Student Name */}
+                              <InputField
+                                label="Student's Full Name"
+                                name={`${prefix}fullName`}
+                                value={student.fullName}
+                                onChange={(e) => updateStudentField(sIdx, 'fullName', e.target.value)}
+                                placeholder="e.g. Zayd Mansour"
+                                required
+                                error={errors[`${prefix}fullName`]}
+                              />
+
+                              {/* Student DOB and Gender */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <InputField
+                                  label={t.dobLabel}
+                                  name={`${prefix}dateOfBirth`}
+                                  type="date"
+                                  value={student.dateOfBirth}
+                                  onChange={(e) => updateStudentField(sIdx, 'dateOfBirth', e.target.value)}
+                                  required
+                                  error={errors[`${prefix}dateOfBirth`]}
+                                  helperText={
+                                    studentAge !== null
+                                      ? `Age: ${studentAge} ${t.ageYearsOld} (used for course eligibility)`
+                                      : 'Date of birth is used to determine course eligibility.'
+                                  }
+                                />
+
+                                <div>
+                                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    {t.genderLabel} <span className="text-secondary">*</span>
+                                  </label>
+                                  <div className="grid grid-cols-2 gap-2.5">
+                                    <RadioOption
+                                      name={`${prefix}gender`}
+                                      value="Female"
+                                      checked={student.gender === 'Female'}
+                                      onChange={() => updateStudentField(sIdx, 'gender', 'Female')}
+                                      label={t.female}
+                                    />
+                                    <RadioOption
+                                      name={`${prefix}gender`}
+                                      value="Male"
+                                      checked={student.gender === 'Male'}
+                                      onChange={() => updateStudentField(sIdx, 'gender', 'Male')}
+                                      label={t.male}
+                                    />
+                                  </div>
+                                  {errors[`${prefix}gender`] && (
+                                    <p className="mt-1 text-sm text-red-500 font-medium">{errors[`${prefix}gender`]}</p>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* SECTION 4A – COURSE SELECTION */}
+                              <div className="pt-2">
+                                <label className="block text-sm font-semibold text-gray-800 mb-1">
+                                  {t.selectCourseTitle} <span className="text-secondary">*</span>
+                                </label>
+                                <p className="text-xs text-gray-500 mb-3">{t.selectCourseSubtitle}</p>
+
+                                <div className="space-y-2.5">
+                                  {FALL_2026_COURSES.filter((c) => c.isActive && c.isChildEligible).map((course) => {
+                                    const elig = checkCourseEligibility(course, {
+                                      age: studentAge,
+                                      gender: student.gender,
+                                      pathway: 'parent',
+                                    });
+                                    const isSelected = student.courseId === course.id;
+                                    const assignedSession = getAssignedSession(course, student.gender);
+
+                                    return (
+                                      <div
+                                        key={course.id}
+                                        onClick={() => {
+                                          if (elig.eligible) {
+                                            updateStudentField(sIdx, 'courseId', course.id);
+                                            // Reset education value when changing course category
+                                            updateStudentField(sIdx, 'educationValue', '');
+                                            updateStudentField(sIdx, 'educationOther', '');
+                                          }
+                                        }}
+                                        className={`p-3.5 sm:p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                                          isSelected
+                                            ? 'border-secondary bg-secondary/5 ring-2 ring-secondary/20 shadow-xs'
+                                            : elig.eligible
+                                            ? 'border-gray-200 bg-white hover:border-gray-300'
+                                            : 'border-gray-100 bg-gray-50/70 opacity-60 cursor-not-allowed'
+                                        }`}
+                                      >
+                                        <div className="flex items-start justify-between gap-3">
+                                          <div className="flex items-start gap-3 min-w-0">
+                                            <input
+                                              type="radio"
+                                              name={`${prefix}courseId`}
+                                              value={course.id}
+                                              checked={isSelected}
+                                              disabled={!elig.eligible}
+                                              onChange={() => {
+                                                if (elig.eligible) {
+                                                  updateStudentField(sIdx, 'courseId', course.id);
+                                                  updateStudentField(sIdx, 'educationValue', '');
+                                                }
+                                              }}
+                                              className="w-4 h-4 mt-1 accent-[#ff9f43] shrink-0"
+                                            />
+                                            <div className="min-w-0">
+                                              <p className="font-bold text-gray-900 text-sm sm:text-base leading-snug">
+                                                {uiLang === 'ar' && course.nameAr
+                                                  ? course.nameAr
+                                                  : uiLang === 'fr' && course.nameFr
+                                                  ? course.nameFr
+                                                  : course.name}
+                                              </p>
+                                              {course.description && (
+                                                <p className="text-xs text-gray-500 mt-0.5">{course.description}</p>
+                                              )}
+                                              {/* Auto Session Badge for 16+ */}
+                                              {course.is16Plus && student.gender && (
+                                                <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold">
+                                                  <span>🗓️</span>
+                                                  <span>
+                                                    {t.assignedSessionLabel}: <strong>{assignedSession}</strong>
+                                                  </span>
+                                                  <span className="text-[11px] text-blue-600 font-normal">
+                                                    ({student.gender === 'Female' ? t.femaleSessionNote : t.maleSessionNote})
+                                                  </span>
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          {/* Eligibility Badge */}
+                                          <div className="shrink-0 text-right">
+                                            <span
+                                              className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                                                elig.eligible
+                                                  ? 'bg-emerald-100 text-emerald-800'
+                                                  : 'bg-rose-100 text-rose-800'
+                                              }`}
+                                            >
+                                              {elig.eligible ? t.eligibleBadge : t.ineligibleBadge}
+                                            </span>
+                                          </div>
+                                        </div>
+
+                                        {!elig.eligible && elig.reason && (
+                                          <p className="mt-2 text-xs text-rose-600 font-medium pl-7">
+                                            ⚠️ {elig.reason}
+                                          </p>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                                {errors[`${prefix}courseId`] && (
+                                  <p className="mt-2 text-sm text-red-500 font-medium">
+                                    {errors[`${prefix}courseId`]}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* CONDITIONAL EDUCATION FIELD */}
+                              {selectedCourse && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  transition={{ duration: 0.2 }}
+                                  className="pt-2"
+                                >
+                                  {selectedCourse.is16Plus ? (
+                                    <div>
+                                      <SelectField
+                                        label={t.educationLevelLabel}
+                                        value={student.educationValue}
+                                        onChange={(val) => {
+                                          updateStudentField(sIdx, 'educationValue', val);
+                                          if (val !== 'Other') updateStudentField(sIdx, 'educationOther', '');
+                                        }}
+                                        options={EDUCATION_LEVELS}
+                                        placeholder={t.selectOption}
+                                        required
+                                        error={errors[`${prefix}educationValue`]}
+                                        helperText="Applicable for 16+ courses."
+                                      />
+                                      {student.educationValue === 'Other' && (
+                                        <div className="mt-3">
+                                          <InputField
+                                            label={t.pleaseSpecify}
+                                            name={`${prefix}educationOther`}
+                                            value={student.educationOther}
+                                            onChange={(e) =>
+                                              updateStudentField(sIdx, 'educationOther', e.target.value)
+                                            }
+                                            placeholder="e.g. Vocational Diploma, Certificate"
+                                            required
+                                            error={errors[`${prefix}educationOther`]}
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <SelectField
+                                      label={t.schoolGradeLabel}
+                                      value={student.educationValue}
+                                      onChange={(val) => updateStudentField(sIdx, 'educationValue', val)}
+                                      options={SCHOOL_GRADES}
+                                      placeholder={t.selectOption}
+                                      required
+                                      error={errors[`${prefix}educationValue`]}
+                                    />
+                                  )}
+                                </motion.div>
+                              )}
+                            </div>
+                          );
+                        })}
+
+                        {/* SECTION 5A – ADD ANOTHER STUDENT */}
+                        <div className="pt-6 border-t border-gray-100">
+                          <label className="block text-sm font-semibold text-gray-800 mb-2">
+                            {t.addAnotherTitle} <span className="text-secondary">*</span>
+                          </label>
+                          <div className="flex flex-wrap items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={handleAddStudent}
+                              className="px-4 py-2.5 bg-secondary/15 hover:bg-secondary/25 text-secondary border border-secondary/30 rounded-xl text-sm font-bold transition-all hover:scale-[1.02] cursor-pointer inline-flex items-center gap-1.5 shadow-xs"
+                            >
+                              <span>➕</span> {t.addAnotherStudentBtn}
+                            </button>
+                            <span className="text-xs text-gray-500">
+                              (Register all your children under your same parent contact information)
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      /* PATH B: Adult Education & Course Selection */
+                      <div className="space-y-6">
+                        <div className="border-b border-gray-100 pb-4">
+                          <span className="text-xs font-bold text-secondary uppercase tracking-wider block mb-0.5">
+                            SECTIONS 3B & 4B
+                          </span>
+                          <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900">
+                            Education & Course Selection
+                          </h2>
+                          <p className="text-gray-500 text-xs sm:text-sm mt-0.5">
+                            Select your education background and confirmed course cohort.
+                          </p>
+                        </div>
+
+                        {/* SECTION 3B – EDUCATION */}
+                        <div>
+                          <SelectField
+                            label={t.educationLevelLabel}
+                            value={adultInfo.educationLevel}
+                            onChange={(val) => {
+                              setAdultInfo({
+                                ...adultInfo,
+                                educationLevel: val,
+                                educationOther: val === 'Other' ? adultInfo.educationOther : '',
+                              });
                             }}
-                            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 ${
-                              currentStudentIndex === i
-                                ? 'bg-secondary text-white shadow-sm'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
-                          >
-                            Student {i + 1}{s.fullName ? `: ${s.fullName}` : ''}
-                            {students.length > 1 && (
-                              <span
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleRemoveStudent(i);
-                                }}
-                                className="ml-1 w-5 h-5 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/40 text-xs"
-                              >
-                                ×
-                              </span>
-                            )}
-                          </button>
-                        ))}
+                            options={EDUCATION_LEVELS}
+                            placeholder={t.selectOption}
+                            required
+                            error={errors.adultEducationLevel}
+                          />
+
+                          {adultInfo.educationLevel === 'Other' && (
+                            <div className="mt-3">
+                              <InputField
+                                label={t.pleaseSpecify}
+                                name="adultEducationOther"
+                                value={adultInfo.educationOther}
+                                onChange={(e) => setAdultInfo({ ...adultInfo, educationOther: e.target.value })}
+                                placeholder="e.g. Master's in Engineering, Self-employed"
+                                required
+                                error={errors.adultEducationOther}
+                              />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* SECTION 4B – COURSE SELECTION */}
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-800 mb-1">
+                            {t.selectCourseTitle} <span className="text-secondary">*</span>
+                          </label>
+                          <p className="text-xs text-gray-500 mb-3">
+                            Adult/Self-registering students are eligible for our 16+ courses:
+                          </p>
+
+                          <div className="space-y-2.5">
+                            {FALL_2026_COURSES.filter((c) => c.isActive && c.isAdultEligible).map((course) => {
+                              const isSelected = adultInfo.courseId === course.id;
+                              const assignedSession = getAssignedSession(course, adultInfo.gender);
+
+                              return (
+                                <div
+                                  key={course.id}
+                                  onClick={() => setAdultInfo({ ...adultInfo, courseId: course.id })}
+                                  className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${
+                                    isSelected
+                                      ? 'border-secondary bg-secondary/5 ring-2 ring-secondary/20 shadow-xs'
+                                      : 'border-gray-200 bg-white hover:border-gray-300'
+                                  }`}
+                                >
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-start gap-3 min-w-0">
+                                      <input
+                                        type="radio"
+                                        name="adultCourseId"
+                                        value={course.id}
+                                        checked={isSelected}
+                                        onChange={() => setAdultInfo({ ...adultInfo, courseId: course.id })}
+                                        className="w-4 h-4 mt-1 accent-[#ff9f43] shrink-0"
+                                      />
+                                      <div className="min-w-0">
+                                        <p className="font-bold text-gray-900 text-sm sm:text-base leading-snug">
+                                          {uiLang === 'ar' && course.nameAr
+                                            ? course.nameAr
+                                            : uiLang === 'fr' && course.nameFr
+                                            ? course.nameFr
+                                            : course.name}
+                                        </p>
+                                        <p className="text-xs text-gray-500 mt-0.5">{course.description}</p>
+
+                                        {/* Automatic Gender Session Badge */}
+                                        <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold">
+                                          <span>🗓️</span>
+                                          <span>
+                                            {t.assignedSessionLabel}: <strong>{assignedSession}</strong>
+                                          </span>
+                                          <span className="text-[11px] text-blue-600 font-normal">
+                                            ({adultInfo.gender === 'Female' ? t.femaleSessionNote : t.maleSessionNote})
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <span className="shrink-0 inline-block px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                                      {t.eligibleBadge}
+                                    </span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          {errors.adultCourseId && (
+                            <p className="mt-2 text-sm text-red-500 font-medium">{errors.adultCourseId}</p>
+                          )}
+                        </div>
                       </div>
                     )}
 
-                    <div className="space-y-5">
-                      <InputField
-                        label="Student Full Name"
-                        name="fullName"
-                        value={students[currentStudentIndex].fullName}
-                        onChange={(e) => updateStudent('fullName', e.target.value)}
-                        placeholder="Jane Doe"
-                        required
-                        error={errors.fullName}
-                      />
-
-                      <InputField
-                        label="Date of Birth"
-                        name="dateOfBirth"
-                        type="date"
-                        value={students[currentStudentIndex].dateOfBirth}
-                        onChange={(e) => updateStudent('dateOfBirth', e.target.value)}
-                        required
-                        error={errors.dateOfBirth}
-                      />
-
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Gender <span className="text-secondary">*</span>
-                        </label>
-                        <div className="grid grid-cols-2 gap-3">
-                          {['Male', 'Female'].map((g) => (
-                            <RadioOption
-                              key={g}
-                              name="gender"
-                              value={g}
-                              checked={students[currentStudentIndex].gender === g}
-                              onChange={() => updateStudent('gender', g)}
-                              label={g}
-                            />
-                          ))}
-                        </div>
-                        {errors.gender && (
-                          <p className="mt-1 text-sm text-red-500 font-medium">{errors.gender}</p>
-                        )}
-                      </div>
-
-                      <InputField
-                        label="Current Grade Level"
-                        name="currentGrade"
-                        value={students[currentStudentIndex].currentGrade}
-                        onChange={(e) => updateStudent('currentGrade', e.target.value)}
-                        placeholder="e.g. Grade 3, Secondary 1 (optional)"
-                        required={false}
-                        error={errors.currentGrade}
-                      />
-
-                      <MultiSelectCourses
-                        label="Programs / Courses You're Interested In Knowing More About"
-                        selectedCourses={students[currentStudentIndex].courses}
-                        onChange={(val) => updateStudent('courses', val)}
-                        options={courseOptions}
-                        required
-                        error={errors.course}
-                      />
-
-                      <div className="pt-2">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">
-                          Would you like to add another student? <span className="text-secondary">*</span>
-                        </label>
-                        <div className="grid grid-cols-2 gap-3">
-                          <RadioOption
-                            name={`addAnotherStudent-${currentStudentIndex}`}
-                            value="no"
-                            checked={students[currentStudentIndex]?.addAnotherStudent === 'no'}
-                            onChange={() => {
-                              updateStudent('addAnotherStudent', 'no');
-                              if (errors.addAnother) {
-                                const e = { ...errors };
-                                delete e.addAnother;
-                                setErrors(e);
-                              }
-                            }}
-                            label="No"
-                          />
-                          <RadioOption
-                            name={`addAnotherStudent-${currentStudentIndex}`}
-                            value="yes"
-                            checked={students[currentStudentIndex]?.addAnotherStudent === 'yes'}
-                            onChange={() => {
-                              updateStudent('addAnotherStudent', 'yes');
-                              if (errors.addAnother) {
-                                const e = { ...errors };
-                                delete e.addAnother;
-                                setErrors(e);
-                              }
-                            }}
-                            label="Yes"
-                          />
-                        </div>
-                        {errors.addAnother && (
-                          <p className="mt-1 text-sm text-red-500 font-medium">{errors.addAnother}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="mt-8 flex flex-col sm:flex-row justify-between gap-3">
+                    {/* Step 2 Navigation Buttons */}
+                    <div className="mt-8 pt-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between gap-3">
                       <button
-                        onClick={handleBackFromStudent}
+                        type="button"
+                        onClick={() => goToStep(1)}
                         className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all cursor-pointer flex items-center justify-center gap-2"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
-                        {currentStudentIndex > 0 ? `Student ${currentStudentIndex}` : 'Back'}
+                        {t.backBtn}
                       </button>
+
                       <button
-                        onClick={handleNextFromStudent}
-                        className="px-8 py-3.5 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md cursor-pointer flex items-center justify-center gap-2"
+                        type="button"
+                        onClick={() => {
+                          if (validateStep2()) goToStep(3);
+                        }}
+                        className="px-8 py-3.5 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md cursor-pointer flex items-center justify-center gap-2"
                       >
-                        {students[currentStudentIndex]?.addAnotherStudent === 'no'
-                          ? 'Continue to Review'
-                          : students[currentStudentIndex]?.addAnotherStudent === 'yes'
-                          ? `Continue to Student ${currentStudentIndex + 2}`
-                          : currentStudentIndex < students.length - 1
-                          ? `Continue to Student ${currentStudentIndex + 2}`
-                          : 'Continue'}
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        {t.nextBtn}
+                        <svg className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </button>
@@ -1080,7 +1732,7 @@ export default function RegisterNow() {
                   </motion.div>
                 )}
 
-                {/* ───── STEP 3: Review & Confirm ───── */}
+                {/* ═══════════════ STEP 3: PAYMENT & CONFIRMATION REVIEW ═══════════════ */}
                 {currentStep === 3 && (
                   <motion.div
                     key="step3"
@@ -1089,136 +1741,182 @@ export default function RegisterNow() {
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="space-y-6"
                   >
-                    <div className="mb-6">
-                      <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900 mb-2">
-                        Review & Submit
+                    <div className="border-b border-gray-100 pb-4">
+                      <span className="text-xs font-bold text-secondary uppercase tracking-wider block mb-0.5">
+                        SECTIONS 5 & 6
+                      </span>
+                      <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900">
+                        {t.paymentSectionTitle}
                       </h2>
-                      <p className="text-gray-500 text-sm sm:text-base">
-                        Please review all details before submitting your registration.
+                      <p className="text-gray-500 text-xs sm:text-sm mt-0.5">
+                        Review your registration summary and select your preferred payment method.
                       </p>
                     </div>
 
-                    {/* Guardian Summary */}
-                    <div className="mb-6 bg-gray-50 rounded-xl p-5 border border-gray-200">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                          <span className="text-xl">👤</span> Guardian Information
-                        </h3>
-                        <button
-                          onClick={() => goToStep(1)}
-                          className="text-secondary text-sm font-semibold hover:underline cursor-pointer"
-                        >
-                          Edit
-                        </button>
+                    {/* SECTION 5 – PAYMENT METHOD */}
+                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 sm:p-5">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        {t.paymentMethodLabel} <span className="text-secondary">*</span>
+                      </label>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {PAYMENT_METHODS.map((pm) => (
+                          <RadioOption
+                            key={pm}
+                            name="paymentMethod"
+                            value={pm}
+                            checked={paymentMethod === pm}
+                            onChange={() => {
+                              setPaymentMethod(pm);
+                              if (pm !== 'Other') setPaymentMethodOther('');
+                            }}
+                            label={pm === 'Cash' ? t.cash : pm === 'e-Transfer' ? t.eTransfer : t.paymentOther}
+                          />
+                        ))}
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                        <div>
-                          <span className="text-gray-500 font-medium">Relationship</span>
-                          <p className="text-gray-900 font-semibold">
-                            {guardian.relationship === 'Does not apply'
-                              ? 'Self (Adult Student)'
-                              : guardian.relationship === 'Other'
-                              ? guardian.relationshipOther
-                              : guardian.relationship}
-                          </p>
+                      {errors.paymentMethod && (
+                        <p className="mt-1.5 text-sm text-red-500 font-medium">{errors.paymentMethod}</p>
+                      )}
+
+                      {paymentMethod === 'Other' && (
+                        <div className="mt-3">
+                          <InputField
+                            label={t.pleaseSpecify}
+                            name="paymentMethodOther"
+                            value={paymentMethodOther}
+                            onChange={(e) => setPaymentMethodOther(e.target.value)}
+                            placeholder="e.g. Cheque, installment plan"
+                            required
+                            error={errors.paymentMethodOther}
+                          />
                         </div>
-                        <div>
-                          <span className="text-gray-500 font-medium">Email</span>
-                          <p className="text-gray-900 font-semibold">{guardian.email}</p>
-                        </div>
-                        {!isAdultSelf && (
-                          <>
-                            <div>
-                              <span className="text-gray-500 font-medium">Full Name</span>
-                              <p className="text-gray-900 font-semibold">{guardian.guardianName}</p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500 font-medium">Phone</span>
-                              <p className="text-gray-900 font-semibold force-ltr" dir="ltr">{guardian.phone}</p>
-                            </div>
-                          </>
-                        )}
-                      </div>
+                      )}
                     </div>
 
-                    {/* Student(s) Summary */}
-                    <div className="space-y-4">
-                      {students.map((student, i) => (
-                        <div key={i} className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                          <div className="flex items-center justify-between mb-3">
-                            <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                              <span className="text-xl">🎓</span> Student {i + 1}
-                            </h3>
-                            <button
-                              onClick={() => {
-                                setCurrentStudentIndex(i);
-                                goToStep(2);
-                              }}
-                              className="text-secondary text-sm font-semibold hover:underline cursor-pointer"
-                            >
-                              Edit
-                            </button>
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                            <div>
-                              <span className="text-gray-500 font-medium">Full Name</span>
-                              <p className="text-gray-900 font-semibold">{student.fullName}</p>
-                            </div>
-                            <div className="sm:col-span-2">
-                              <span className="text-gray-500 font-medium">Date of Birth</span>
-                              <p className="text-gray-900 font-semibold">
-                                {student.dateOfBirth
-                                  ? (() => {
-                                      const [y, m, d] = student.dateOfBirth.split('-');
-                                      return `${d}/${m}/${y}`;
-                                    })()
-                                  : ''}
+                    {/* SUMMARY REVIEW CARD */}
+                    <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 space-y-4 shadow-xs">
+                      <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <h3 className="font-bold text-gray-900 text-sm sm:text-base flex items-center gap-2">
+                          <span>📋</span> Registration Summary
+                        </h3>
+                        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                          {pathway === 'parent' ? 'Parent / Guardian' : 'Adult Student'}
+                        </span>
+                      </div>
+
+                      {/* Contact Overview */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs sm:text-sm">
+                        <div>
+                          <span className="text-gray-500 block">Registrant Name:</span>
+                          <span className="font-bold text-gray-900">
+                            {pathway === 'parent' ? parentInfo.fullName : adultInfo.fullName}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 block">Email:</span>
+                          <span className="font-semibold text-gray-800 break-all">
+                            {pathway === 'parent' ? parentInfo.email : adultInfo.email}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 block">Phone:</span>
+                          <span className="font-semibold text-gray-800">
+                            {pathway === 'parent' ? parentInfo.phone : adultInfo.phone}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 block">Preferred Language:</span>
+                          <span className="font-semibold text-gray-800">
+                            {pathway === 'parent' ? parentInfo.preferredLanguage : adultInfo.preferredLanguage}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Students Overview */}
+                      <div className="border-t border-gray-100 pt-3">
+                        <span className="text-xs font-bold text-gray-700 block mb-2">Registered Students & Courses:</span>
+                        <div className="space-y-2">
+                          {pathway === 'parent' ? (
+                            students.map((st, i) => {
+                              const course = getCourseById(st.courseId);
+                              const assignedSession = course ? getAssignedSession(course, st.gender) : undefined;
+                              return (
+                                <div key={st.id} className="bg-gray-50 rounded-xl p-3 text-xs text-gray-700 space-y-0.5 border border-gray-200/60">
+                                  <p className="font-bold text-gray-900 text-sm">
+                                    {i + 1}. {st.fullName} ({st.gender}, DOB: {st.dateOfBirth})
+                                  </p>
+                                  <p className="text-secondary font-semibold">
+                                    Course: {course?.name || 'None'}
+                                    {assignedSession ? ` — Session: ${assignedSession}` : ''}
+                                  </p>
+                                  <p className="text-gray-500">
+                                    {course?.is16Plus ? 'Education Level' : 'School Grade'}: {st.educationValue}
+                                    {st.educationOther ? ` (${st.educationOther})` : ''}
+                                  </p>
+                                </div>
+                              );
+                            })
+                          ) : (
+                            <div className="bg-gray-50 rounded-xl p-3 text-xs text-gray-700 space-y-0.5 border border-gray-200/60">
+                              <p className="font-bold text-gray-900 text-sm">
+                                1. {adultInfo.fullName} ({adultInfo.gender}, DOB: {adultInfo.dateOfBirth})
+                              </p>
+                              <p className="text-secondary font-semibold">
+                                Course: {getCourseById(adultInfo.courseId)?.name || 'Foundation Arabic 16+'} — Session: {getAssignedSession(getCourseById(adultInfo.courseId)!, adultInfo.gender)}
+                              </p>
+                              <p className="text-gray-500">
+                                Education: {adultInfo.educationLevel}
+                                {adultInfo.educationOther ? ` (${adultInfo.educationOther})` : ''}
                               </p>
                             </div>
-                            <div>
-                              <span className="text-gray-500 font-medium">Gender</span>
-                              <p className="text-gray-900 font-semibold">{student.gender}</p>
-                            </div>
-                            <div>
-                              <span className="text-gray-500 font-medium">Current Grade</span>
-                              <p className="text-gray-900 font-semibold">{student.currentGrade || 'Not provided'}</p>
-                            </div>
-                            <div className="sm:col-span-2">
-                              <span className="text-gray-500 font-medium">Course(s)</span>
-                              {student.courses && student.courses.length > 0 ? (
-                                <ul className="mt-1 space-y-1">
-                                  {student.courses.map((c) => (
-                                    <li key={c} className="text-gray-900 font-semibold text-sm">{c}</li>
-                                  ))}
-                                </ul>
-                              ) : (
-                                <p className="text-gray-400 font-medium">None selected</p>
-                              )}
-                            </div>
-                          </div>
+                          )}
                         </div>
-                      ))}
+                      </div>
                     </div>
 
+                    {/* SECTION 6 – REGISTRATION CONFIRMATION */}
+                    <div className="bg-secondary/5 border-2 border-secondary/30 rounded-2xl p-4 sm:p-5">
+                      <label className="flex items-start gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={confirmationAgreed}
+                          onChange={(e) => setConfirmationAgreed(e.target.checked)}
+                          className="w-5 h-5 mt-0.5 accent-[#ff9f43] shrink-0 cursor-pointer rounded"
+                        />
+                        <div className="text-xs sm:text-sm font-semibold text-gray-900 leading-snug">
+                          {pathway === 'parent' ? t.parentConfirmAgreement : t.adultConfirmAgreement}{' '}
+                          <span className="text-secondary">*</span>
+                        </div>
+                      </label>
+                      {errors.confirmationAgreed && (
+                        <p className="mt-2 text-sm text-red-500 font-medium pl-8">{errors.confirmationAgreed}</p>
+                      )}
+                    </div>
 
-                    <div className="mt-8 flex flex-col sm:flex-row justify-between gap-3">
+                    {/* Step 3 Navigation Buttons */}
+                    <div className="mt-8 pt-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between gap-3">
                       <button
+                        type="button"
                         onClick={() => goToStep(2)}
                         className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all cursor-pointer flex items-center justify-center gap-2"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
-                        Back
+                        {t.backBtn}
                       </button>
+
                       <button
-                        onClick={() => goToStep(4)}
-                        className="px-10 py-3.5 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md cursor-pointer flex items-center justify-center gap-2"
+                        type="button"
+                        onClick={() => {
+                          if (validateStep3()) goToStep(4);
+                        }}
+                        className="px-8 py-3.5 bg-secondary text-white rounded-xl font-bold text-base sm:text-lg hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md cursor-pointer flex items-center justify-center gap-2"
                       >
-                        Continue to Appointment
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        Proceed to Fit Call Scheduling
+                        <svg className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                       </button>
@@ -1226,7 +1924,7 @@ export default function RegisterNow() {
                   </motion.div>
                 )}
 
-                {/* ───── STEP 4: Book Appointment ───── */}
+                {/* ═══════════════ STEP 4: FIT CALL APPOINTMENT SCHEDULING ═══════════════ */}
                 {currentStep === 4 && (
                   <motion.div
                     key="step4"
@@ -1235,25 +1933,23 @@ export default function RegisterNow() {
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
                   >
                     <div className="mb-6">
                       <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900 mb-2">
-                        Book a Fit Assessment
+                        Schedule a Fit Assessment Call
                       </h2>
                       <p className="text-gray-500 text-sm sm:text-base">
-                        Select a date and an available 15-minute time slot for your fit assessment call.
+                        Select a 15-minute consultation with our administration team to finalize registration details and course placement.
                       </p>
                     </div>
 
-                    {/* Availability Info Banner */}
+                    {/* Available Hours Banner */}
                     <div className="mb-6 bg-secondary/5 border border-secondary/20 rounded-2xl p-4 sm:p-5">
                       <div className="flex items-start gap-3.5">
                         <div className="text-2xl sm:text-3xl shrink-0 mt-0.5">📅</div>
                         <div className="text-sm text-gray-700 w-full">
-                          <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                            <p className="font-bold text-gray-900 text-base">Available Hours</p>
-                          </div>
+                          <p className="font-bold text-gray-900 text-base mb-1.5">Available Hours</p>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm">
                             <p className="bg-white/80 rounded-lg px-3 py-1.5 border border-secondary/15">
                               <span className="font-semibold text-gray-900">Weekdays (Mon–Fri):</span> 6:00 PM — 11:00 PM
@@ -1270,7 +1966,7 @@ export default function RegisterNow() {
                     </div>
 
                     <div className="space-y-6">
-                      {/* Meeting Type Selection */}
+                      {/* Meeting Format Selection */}
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">
                           Meeting Format <span className="text-secondary">*</span>
@@ -1384,266 +2080,100 @@ export default function RegisterNow() {
                               </div>
                             </label>
                           </div>
-
-                          {/* Phone number input prompt right below Phone Call option */}
-                          <AnimatePresence>
-                            {virtualOption === 'phone' && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                                animate={{ opacity: 1, height: 'auto', marginTop: 14 }}
-                                exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                                transition={{ duration: 0.25, ease: 'easeInOut' }}
-                                className="overflow-hidden"
-                              >
-                                <div className="bg-white rounded-xl border border-secondary/30 p-3.5 sm:p-4 shadow-xs">
-                                  <label className="block text-sm font-semibold text-gray-800 mb-1">
-                                    Phone Number for Fit Assessment Call <span className="text-secondary">*</span>
-                                  </label>
-                                  <p className="text-xs text-gray-500 mb-2">
-                                    Please enter the best phone number where we can reach you for the 15-minute call.
-                                  </p>
-                                  <div className="relative">
-                                    <input
-                                      type="tel"
-                                      name="appointmentPhone"
-                                      value={guardian.phone}
-                                      onChange={(e) => {
-                                        setGuardian({ ...guardian, phone: e.target.value });
-                                        if (errors.appointmentPhone) {
-                                          const eMap = { ...errors };
-                                          delete eMap.appointmentPhone;
-                                          setErrors(eMap);
-                                        }
-                                      }}
-                                      placeholder="+1 (555) 000-0000"
-                                      dir="ltr"
-                                      className={`w-full px-4 py-2.5 rounded-xl border text-sm sm:text-base ${
-                                        errors.appointmentPhone
-                                          ? 'border-red-400 ring-2 ring-red-100'
-                                          : 'border-gray-300'
-                                      } focus:ring-2 focus:ring-secondary/30 focus:border-secondary outline-none transition-all bg-gray-50 text-gray-900`}
-                                    />
-                                  </div>
-                                  {errors.appointmentPhone && (
-                                    <p className="mt-1 text-xs sm:text-sm text-red-500 font-medium">{errors.appointmentPhone}</p>
-                                  )}
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
                         </motion.div>
                       )}
 
-                      {/* Interactive Calendly-style Calendar and Time Slot Grid */}
+                      {/* Interactive Calendar Date Picker */}
                       <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <label className="block text-sm font-semibold text-gray-700">
-                            Select Date & 15-Minute Slot <span className="text-secondary">*</span>
-                          </label>
-                          {appointmentDate && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setAppointmentDate('');
-                                setAppointmentTime('');
-                              }}
-                              className="text-xs text-secondary hover:underline cursor-pointer font-medium"
-                            >
-                              Clear selection
-                            </button>
-                          )}
-                        </div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-                          {/* Left: Monthly Calendar */}
-                          <div className="lg:col-span-6">
-                            <CalendarMonthPicker
-                              selectedDate={appointmentDate}
-                              onSelectDate={(d) => {
-                                setAppointmentDate(d);
-                                setAppointmentTime('');
-                                if (errors.appointmentDate) {
-                                  const e = { ...errors };
-                                  delete e.appointmentDate;
-                                  setErrors(e);
-                                }
-                              }}
-                              minDateStr={minDate}
-                              maxDateStr={maxDate}
-                            />
-                            {errors.appointmentDate && (
-                              <p className="mt-1.5 text-sm text-red-500 font-medium">{errors.appointmentDate}</p>
-                            )}
-                          </div>
-
-                          {/* Right: Time Slots */}
-                          <div className="lg:col-span-6 bg-gray-50 border border-gray-200/90 rounded-2xl p-3.5 sm:p-5 min-h-[300px] sm:min-h-[340px] flex flex-col justify-between">
-                            {!appointmentDate ? (
-                              <div className="my-auto text-center py-8 sm:py-10 px-3 sm:px-4 text-gray-500">
-                                <span className="text-2xl sm:text-3xl block mb-2">👈</span>
-                                <p className="font-semibold text-gray-800 text-sm mb-1">Pick a date on the calendar</p>
-                                <p className="text-xs text-gray-500 max-w-xs mx-auto">
-                                  Available 15-minute appointment slots with live availability will appear here.
-                                </p>
-                              </div>
-                            ) : (
-                              <div>
-                                <div className="border-b border-gray-200 pb-3 mb-3">
-                                  <div className="flex items-center justify-between gap-2">
-                                    <h4 className="font-heading font-bold text-gray-900 text-xs sm:text-base leading-snug">
-                                      {dateInfo?.dayName}
-                                    </h4>
-                                    <span
-                                      className={`text-[10px] sm:text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
-                                        dateInfo?.isWeekend ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
-                                      }`}
-                                    >
-                                      {dateInfo?.isWeekend ? 'Weekend' : 'Weekday'}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] sm:text-xs text-gray-500 mt-1">
-                                    Available: {dateInfo?.hours} • 15 min per slot
-                                  </p>
-                                </div>
-
-                                {isLoadingSlots ? (
-                                  <div className="py-12 text-center text-gray-500">
-                                    <svg className="animate-spin w-6 h-6 text-secondary mx-auto mb-2" fill="none" viewBox="0 0 24 24">
-                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                    </svg>
-                                    <p className="text-xs font-medium">Checking live slot availability...</p>
-                                  </div>
-                                ) : slotsData.length === 0 ? (
-                                  <div className="py-8 text-center text-gray-500 text-sm">
-                                    No slots available for this date. Please select another date.
-                                  </div>
-                                ) : (
-                                  <div className="space-y-1">
-                                    <div className="max-h-[260px] sm:max-h-[290px] overflow-y-auto pr-1 grid grid-cols-2 gap-1.5 sm:gap-2">
-                                      {slotsData.map((slot) => {
-                                        const isSelected = appointmentTime === slot.time;
-                                        const isFull = !slot.available || slot.spotsLeft <= 0;
-
-                                        return (
-                                          <button
-                                            key={slot.time}
-                                            type="button"
-                                            disabled={isFull}
-                                            onClick={() => {
-                                              if (!isFull) {
-                                                setAppointmentTime(slot.time);
-                                                if (errors.appointmentTime) {
-                                                  const e = { ...errors };
-                                                  delete e.appointmentTime;
-                                                  setErrors(e);
-                                                }
-                                              }
-                                            }}
-                                            className={`p-2 sm:p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between ${
-                                              isFull
-                                                ? 'bg-gray-100/90 border-gray-200 text-gray-400 opacity-50 cursor-not-allowed'
-                                                : isSelected
-                                                ? 'bg-secondary text-white border-secondary ring-2 ring-secondary/30 shadow-sm scale-[1.02] cursor-pointer'
-                                                : 'bg-white border-gray-200 hover:border-secondary hover:bg-secondary/5 text-gray-800 cursor-pointer'
-                                            }`}
-                                          >
-                                            {/* On mobile: row with time and badge side by side. On PC (md+ / lg+): time on top, badge moved down so time is never truncated */}
-                                            <div className="flex md:flex-col items-start md:items-start justify-between md:justify-start gap-1">
-                                              <span className={`text-[11px] sm:text-sm font-bold whitespace-nowrap ${isSelected ? 'text-white' : 'text-gray-900'}`}>
-                                                {slot.label}
-                                              </span>
-                                              <span
-                                                className={`text-[9px] sm:text-[10px] px-1 sm:px-1.5 py-0.5 rounded-full font-semibold shrink-0 md:mt-0.5 ${
-                                                  isFull
-                                                    ? 'bg-gray-200 text-gray-500'
-                                                    : isSelected
-                                                    ? 'bg-white/20 text-white'
-                                                    : slot.spotsLeft === 1
-                                                    ? 'bg-amber-100 text-amber-800'
-                                                    : 'bg-emerald-100 text-emerald-800'
-                                                }`}
-                                              >
-                                                {isFull ? 'Full' : slot.spotsLeft === 1 ? '1 spot' : '2 spots'}
-                                              </span>
-                                            </div>
-                                            <span className={`text-[9px] sm:text-[10px] mt-1 ${isSelected ? 'text-white/80' : 'text-gray-400'}`}>
-                                              {slot.label} – {slot.endLabel}
-                                            </span>
-                                          </button>
-                                        );
-                                      })}
-                                    </div>
-                                    {errors.appointmentTime && (
-                                      <p className="mt-2 text-sm text-red-500 font-medium">{errors.appointmentTime}</p>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                            {appointmentTime && (
-                              <div className="mt-3 pt-2.5 sm:pt-3 border-t border-gray-200 flex flex-wrap items-center justify-between text-xs gap-1">
-                                <span className="text-gray-500">Selected Slot:</span>
-                                <span className="font-bold text-secondary text-[11px] sm:text-xs">
-                                  {slotsData.find((s) => s.time === appointmentTime)?.label} — {slotsData.find((s) => s.time === appointmentTime)?.endLabel} ET
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Select Date <span className="text-secondary">*</span>
+                        </label>
+                        <CalendarMonthPicker
+                          selectedDate={appointmentDate}
+                          onSelectDate={(d) => {
+                            setAppointmentDate(d);
+                            setAppointmentTime('');
+                          }}
+                          minDateStr={minDate}
+                          maxDateStr={maxDate}
+                        />
+                        {errors.appointmentDate && (
+                          <p className="mt-1.5 text-sm text-red-500 font-medium">{errors.appointmentDate}</p>
+                        )}
                       </div>
 
-                      {/* Live Appointment Summary Card */}
-                      <AnimatePresence>
-                        {appointmentDate && appointmentTime && appointmentType && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            className="bg-gradient-to-br from-secondary/10 to-primary/5 border border-secondary/25 rounded-2xl p-5"
-                          >
-                            <h4 className="font-bold text-gray-900 mb-2.5 flex items-center gap-2 text-base">
-                              <span className="text-xl">✅</span> Appointment Summary
-                            </h4>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-700">
-                              <div>
-                                <span className="text-xs text-gray-500 block">Date</span>
-                                <span className="font-semibold text-gray-900">{dateInfo?.dayName}</span>
-                              </div>
-                              <div>
-                                <span className="text-xs text-gray-500 block">Time</span>
-                                <span className="font-semibold text-gray-900">
-                                  {slotsData.find((s) => s.time === appointmentTime)?.label} — {slotsData.find((s) => s.time === appointmentTime)?.endLabel} (15 mins — ET)
-                                </span>
-                              </div>
-                              <div>
-                                <span className="text-xs text-gray-500 block">Meeting Format</span>
-                                <span className="font-semibold text-gray-900">
-                                  {appointmentType === 'in-person'
-                                    ? '🏫 In-Person (8990 Boul. Michel-Chartrand, Anjou)'
-                                    : virtualOption === 'phone'
-                                    ? `📞 Phone Call (${guardian.phone || 'Your Phone'})`
-                                    : '💻 Google Meet Video Call (Automated Link Provided)'}
-                                </span>
-                              </div>
-                              <div>
-                                <span className="text-xs text-gray-500 block">Attendee</span>
-                                <span className="font-semibold text-gray-900">
-                                  {guardian.guardianName || students[0]?.fullName}
-                                </span>
-                              </div>
+                      {/* Time Slot Picker */}
+                      {appointmentDate && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="space-y-2"
+                        >
+                          <div className="flex items-center justify-between">
+                            <label className="block text-sm font-semibold text-gray-700">
+                              Available Time Slots (15-min sessions, ET) <span className="text-secondary">*</span>
+                            </label>
+                            {dateInfo && (
+                              <span className="text-xs font-medium text-gray-500">
+                                {dateInfo.hours}
+                              </span>
+                            )}
+                          </div>
+
+                          {isLoadingSlots ? (
+                            <div className="py-8 text-center text-sm text-gray-500 flex items-center justify-center gap-2">
+                              <svg className="animate-spin w-5 h-5 text-secondary" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                              </svg>
+                              Checking real-time slot availability...
                             </div>
-                            <p className="mt-3 text-xs text-gray-500 border-t border-secondary/15 pt-2">
-                              {appointmentType === 'virtual' && virtualOption === 'meet'
-                                ? 'An automated Google Meet video meeting link will be sent directly with your calendar invite.'
-                                : appointmentType === 'virtual' && virtualOption === 'phone'
-                                ? `We will call ${guardian.phone || 'your phone'} at the scheduled time.`
-                                : 'Please arrive 5 minutes before your scheduled appointment time.'}
-                            </p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                          ) : slotsData.length === 0 ? (
+                            <div className="p-4 bg-gray-50 rounded-xl border text-center text-sm text-gray-500">
+                              No available slots on this date. Please select another date.
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                              {slotsData.map((slot) => {
+                                const isSelected = appointmentTime === slot.time;
+                                const isFull = !slot.available;
+
+                                return (
+                                  <button
+                                    key={slot.time}
+                                    type="button"
+                                    disabled={isFull}
+                                    onClick={() => setAppointmentTime(slot.time)}
+                                    className={`py-2.5 px-3 rounded-xl border text-xs sm:text-sm font-semibold transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
+                                      isSelected
+                                        ? 'bg-secondary text-white border-secondary shadow-sm ring-2 ring-secondary/20 scale-[1.02]'
+                                        : isFull
+                                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
+                                        : 'bg-white hover:border-secondary/50 text-gray-800 border-gray-200'
+                                    }`}
+                                  >
+                                    <span>{slot.label}</span>
+                                    <span
+                                      className={`text-[10px] ${
+                                        isSelected
+                                          ? 'text-white/90'
+                                          : isFull
+                                          ? 'text-gray-400'
+                                          : 'text-emerald-600 font-medium'
+                                      }`}
+                                    >
+                                      {isFull ? 'Full' : `${slot.spotsLeft} spot${slot.spotsLeft > 1 ? 's' : ''}`}
+                                    </span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                          {errors.appointmentTime && (
+                            <p className="mt-1 text-sm text-red-500 font-medium">{errors.appointmentTime}</p>
+                          )}
+                        </motion.div>
+                      )}
                     </div>
 
                     {submitError && (
@@ -1652,17 +2182,21 @@ export default function RegisterNow() {
                       </div>
                     )}
 
-                    <div className="mt-8 flex flex-col sm:flex-row justify-between gap-3">
+                    {/* Step 4 Submission Buttons */}
+                    <div className="mt-8 pt-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between gap-3">
                       <button
+                        type="button"
                         onClick={() => goToStep(3)}
                         className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all cursor-pointer flex items-center justify-center gap-2"
                       >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
-                        Back to Review
+                        {t.backBtn}
                       </button>
+
                       <button
+                        type="button"
                         onClick={handleSubmit}
                         disabled={isSubmitting}
                         className="px-10 py-3.5 bg-secondary text-white rounded-xl font-bold text-lg hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
@@ -1673,12 +2207,12 @@ export default function RegisterNow() {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                             </svg>
-                            Submitting...
+                            {t.submittingBtn}
                           </>
                         ) : (
                           <>
-                            Submit Registration
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {t.submitBtn}
+                            <svg className={`w-5 h-5 ${isRTL ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                           </>
@@ -1688,7 +2222,7 @@ export default function RegisterNow() {
                   </motion.div>
                 )}
 
-                {/* ───── STEP 5: Confirmation (Done) ───── */}
+                {/* ═══════════════ STEP 5: CONFIRMATION (DONE) ═══════════════ */}
                 {currentStep === 5 && (
                   <motion.div
                     key="step5"
@@ -1697,7 +2231,7 @@ export default function RegisterNow() {
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
                   >
                     <div className="py-6 text-center">
                       <motion.div
@@ -1718,81 +2252,106 @@ export default function RegisterNow() {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                         </motion.svg>
                       </motion.div>
+
                       <h2 className="text-2xl sm:text-3xl font-bold font-heading text-gray-900 mb-2">
-                        Registration & Fit Call Confirmed!
+                        {t.regReceivedTitle}
                       </h2>
-                      <p className="text-gray-600 text-sm sm:text-base mb-1 max-w-md mx-auto">
-                        Thank you for registering with <strong>Avenir Souriant</strong>.
-                      </p>
-                      <p className="text-gray-500 text-xs sm:text-sm mb-6 max-w-md mx-auto">
-                        A confirmation receipt and calendar invite (.ics) have been emailed to{' '}
-                        <strong className="text-gray-800 break-all">{guardian.email}</strong>.
+                      <p className="text-gray-700 text-sm sm:text-base mb-3 max-w-lg mx-auto font-medium leading-relaxed">
+                        {t.thankYouMessage}
                       </p>
 
-                      {/* Prominent Attendee & Student Information Display */}
+                      {/* Official Disclaimer Banner as specified */}
+                      <div className="my-5 p-4 max-w-xl mx-auto bg-amber-50/90 border border-amber-300 rounded-2xl text-amber-950 text-xs sm:text-sm text-left shadow-xs">
+                        <div className="flex items-start gap-2.5">
+                          <span className="text-base shrink-0 mt-0.5">ℹ️</span>
+                          <p className="leading-relaxed">
+                            {t.disclaimerNotice}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Prominent Attendee & Student Details Card */}
                       <div className="my-6 max-w-xl mx-auto bg-white border border-gray-200/90 rounded-2xl p-4 sm:p-6 text-left shadow-xs space-y-4">
                         <div className="flex flex-wrap items-center justify-between border-b border-gray-100 pb-3 gap-1">
                           <h3 className="font-bold text-gray-900 text-sm sm:text-base flex items-center gap-2">
-                            <span>👤</span> Registrant Details
+                            <span>👤</span> {t.attendeeSummary}
                           </h3>
-                          <span className="text-xs text-gray-500">
-                            {guardian.relationship === 'Does not apply'
-                              ? 'Self (Adult Student)'
-                              : guardian.relationshipOther || guardian.relationship}
+                          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                            {pathway === 'parent' ? 'Parent / Guardian' : 'Adult Student'}
                           </span>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                           <div>
-                            <span className="text-xs text-gray-500 block">Full Name</span>
+                            <span className="text-xs text-gray-500 block">Name</span>
                             <span className="font-bold text-gray-900 text-sm sm:text-base">
-                              {guardian.guardianName || students[0]?.fullName || 'Registrant'}
+                              {pathway === 'parent' ? parentInfo.fullName : adultInfo.fullName}
                             </span>
                           </div>
                           <div>
                             <span className="text-xs text-gray-500 block">Email</span>
-                            <span className="font-semibold text-gray-800 break-all text-xs sm:text-sm">{guardian.email}</span>
+                            <span className="font-semibold text-gray-800 break-all text-xs sm:text-sm">
+                              {pathway === 'parent' ? parentInfo.email : adultInfo.email}
+                            </span>
                           </div>
-                          {guardian.phone && (
-                            <div>
-                              <span className="text-xs text-gray-500 block">Phone</span>
-                              <span className="font-semibold text-gray-800 text-xs sm:text-sm">{guardian.phone}</span>
-                            </div>
-                          )}
+                          <div>
+                            <span className="text-xs text-gray-500 block">Phone</span>
+                            <span className="font-semibold text-gray-800 text-xs sm:text-sm">
+                              {pathway === 'parent' ? parentInfo.phone : adultInfo.phone}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-xs text-gray-500 block">Payment Method</span>
+                            <span className="font-semibold text-gray-800 text-xs sm:text-sm">
+                              {paymentMethod}{paymentMethodOther ? ` (${paymentMethodOther})` : ''}
+                            </span>
+                          </div>
                         </div>
 
-                        {/* Student Details with Name and Date of Birth */}
+                        {/* Registered Students Details */}
                         <div className="border-t border-gray-100 pt-3">
                           <h4 className="font-bold text-gray-900 text-xs sm:text-sm mb-2.5 flex items-center gap-1.5">
-                            <span>🎓</span> Registered Student(s)
+                            <span>🎓</span> {t.studentSummary}
                           </h4>
                           <div className="space-y-3">
-                            {students.map((st, idx) => {
-                              const [y, m, d] = (st.dateOfBirth || '').split('-');
-                              const formattedDob = y && m && d ? `${d}/${m}/${y}` : st.dateOfBirth || 'N/A';
-                              return (
-                                <div key={idx} className="bg-gray-50 rounded-xl p-3 sm:p-3.5 border border-gray-200/60">
-                                  <div className="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
-                                    <span className="font-bold text-gray-900 text-sm sm:text-base">{st.fullName}</span>
-                                    <span className="text-[11px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 shrink-0">
-                                      Birth Date: {formattedDob}
-                                    </span>
+                            {pathway === 'parent' ? (
+                              students.map((st, idx) => {
+                                const course = getCourseById(st.courseId);
+                                const assignedSession = course ? getAssignedSession(course, st.gender) : undefined;
+                                return (
+                                  <div key={idx} className="bg-gray-50 rounded-xl p-3 sm:p-3.5 border border-gray-200/60 text-xs space-y-1">
+                                    <div className="flex flex-wrap items-center justify-between gap-1.5">
+                                      <span className="font-bold text-gray-900 text-sm">{st.fullName}</span>
+                                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">
+                                        DOB: {st.dateOfBirth}
+                                      </span>
+                                    </div>
+                                    <p className="text-secondary font-semibold">
+                                      Course: {course?.name || 'Selected'}
+                                      {assignedSession ? ` — Session: ${assignedSession}` : ''}
+                                    </p>
+                                    <p className="text-gray-600">
+                                      Education: {st.educationValue}{st.educationOther ? ` (${st.educationOther})` : ''}
+                                    </p>
                                   </div>
-                                  <div className="text-xs text-gray-600 space-y-0.5 mt-1">
-                                    <p><span className="font-medium text-gray-500">Gender:</span> {st.gender}</p>
-                                    {st.currentGrade && (
-                                      <p><span className="font-medium text-gray-500">Grade:</span> {st.currentGrade}</p>
-                                    )}
-                                    {st.courses && st.courses.length > 0 && (
-                                      <p>
-                                        <span className="font-medium text-gray-500">Interested in:</span>{' '}
-                                        <span className="font-semibold text-gray-800">{st.courses.join(', ')}</span>
-                                      </p>
-                                    )}
-                                  </div>
+                                );
+                              })
+                            ) : (
+                              <div className="bg-gray-50 rounded-xl p-3 sm:p-3.5 border border-gray-200/60 text-xs space-y-1">
+                                <div className="flex flex-wrap items-center justify-between gap-1.5">
+                                  <span className="font-bold text-gray-900 text-sm">{adultInfo.fullName}</span>
+                                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">
+                                    DOB: {adultInfo.dateOfBirth}
+                                  </span>
                                 </div>
-                              );
-                            })}
+                                <p className="text-secondary font-semibold">
+                                  Course: {getCourseById(adultInfo.courseId)?.name || 'Foundation Arabic 16+'} — Session: {getAssignedSession(getCourseById(adultInfo.courseId)!, adultInfo.gender)}
+                                </p>
+                                <p className="text-gray-600">
+                                  Education: {adultInfo.educationLevel}{adultInfo.educationOther ? ` (${adultInfo.educationOther})` : ''}
+                                </p>
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -1800,7 +2359,7 @@ export default function RegisterNow() {
                         {appointmentDate && appointmentTime && (
                           <div className="border-t border-gray-100 pt-3 bg-secondary/5 rounded-xl p-3.5 sm:p-4 border border-secondary/20">
                             <h4 className="font-bold text-gray-900 text-xs sm:text-sm mb-2 flex items-center gap-2">
-                              <span>📅</span> Scheduled Fit Assessment Call
+                              <span>📅</span> {t.scheduledCallTitle}
                             </h4>
                             <div className="text-xs sm:text-sm text-gray-800 space-y-1.5">
                               <p>
@@ -1815,13 +2374,14 @@ export default function RegisterNow() {
                                 {appointmentType === 'in-person' ? (
                                   '🏫 In-Person at 8990 Boul. Michel-Chartrand, Anjou, QC'
                                 ) : virtualOption === 'phone' ? (
-                                  `📞 Phone Call (We will call ${guardian.phone || 'your phone'})`
+                                  `📞 Phone Call (We will call ${pathway === 'parent' ? parentInfo.phone : adultInfo.phone})`
                                 ) : (
                                   '💻 Google Meet Video Call'
                                 )}
                               </p>
                             </div>
 
+                            {/* Google Meet Button if virtual */}
                             {appointmentType === 'virtual' && virtualOption === 'meet' && (
                               <div className="mt-3 pt-3 border-t border-secondary/20">
                                 {bookedMeetingLink ? (
@@ -1830,9 +2390,9 @@ export default function RegisterNow() {
                                       href={bookedMeetingLink}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-white rounded-xl text-xs font-bold hover:bg-opacity-90 shadow-xs transition-all hover:scale-[1.02] w-full sm:w-auto"
+                                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-white rounded-xl text-xs font-bold hover:bg-opacity-90 shadow-xs transition-all hover:scale-[1.02] w-full sm:w-auto cursor-pointer"
                                     >
-                                      📹 Open Google Meet Link
+                                      📹 {t.openMeetBtn}
                                       <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                       </svg>
@@ -1851,27 +2411,25 @@ export default function RegisterNow() {
                             )}
 
                             <p className="text-[11px] sm:text-xs text-gray-500 mt-2.5">
-                              📎 A calendar invitation (.ics) is attached to your email. Click it in your email to sync it directly to Google Calendar, Apple Calendar, or Outlook.
+                              📎 {t.meetLinkNote}
                             </p>
                           </div>
                         )}
                       </div>
 
+                      {/* Action Links */}
                       <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
                         <TransitionLink
                           href="/"
-                          className="px-8 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-opacity-90 transition-all hover:scale-[1.02] shadow-md inline-flex items-center justify-center gap-2"
+                          className="px-6 py-2.5 bg-gray-900 text-white rounded-xl font-semibold text-sm hover:bg-gray-800 transition-all text-center"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                          </svg>
-                          Back to Home
+                          Return to Home
                         </TransitionLink>
                         <TransitionLink
                           href="/programs"
-                          className="px-8 py-3 border-2 border-primary text-primary rounded-xl font-semibold hover:bg-primary/5 transition-all inline-flex items-center justify-center gap-2"
+                          className="px-6 py-2.5 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-all text-center"
                         >
-                          Explore Programs
+                          Browse Programs
                         </TransitionLink>
                       </div>
                     </div>

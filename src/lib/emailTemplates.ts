@@ -5,15 +5,26 @@ export interface StudentData {
   currentGrade?: string;
   courses: string[];
   addAnotherStudent?: string;
+  courseId?: string;
+  courseName?: string;
+  assignedSession?: string;
+  educationType?: 'grade' | 'level';
+  educationValue?: string;
+  educationOther?: string;
 }
 
 export interface RegistrationBody {
   type: 'registration';
+  registrationPathway?: 'parent' | 'adult';
   guardianName?: string;
   email: string;
   phone?: string;
   relationship: string;
   relationshipOther?: string;
+  preferredLanguage?: 'English' | 'French' | 'Arabic' | string;
+  paymentMethod?: string;
+  paymentMethodOther?: string;
+  confirmationAgreed?: boolean;
   students: StudentData[];
   appointmentDate?: string;
   appointmentTime?: string;
@@ -35,23 +46,34 @@ export interface ContactBody {
  * Designed strictly following free-html-email-template
  */
 export function generateConfirmationEmail(body: RegistrationBody): string {
-  const isAdultSelf = body.relationship === 'Does not apply';
+  const isAdultSelf = body.registrationPathway === 'adult' || body.relationship === 'Does not apply';
   const recipientGreetingName = isAdultSelf
     ? (body.students[0]?.fullName || 'Student')
     : (body.guardianName || 'Parent / Guardian');
 
   const relationshipDisplay = isAdultSelf
-    ? 'Self (Adult Student)'
+    ? 'Self (Adult Student 18+)'
     : body.relationship === 'Other' && body.relationshipOther
     ? body.relationshipOther
     : body.relationship;
 
+  const pathwayLabel = isAdultSelf
+    ? 'Adult Self-Registration (Path B)'
+    : 'Parent / Guardian Registration (Path A)';
+
   const studentsHtml = body.students.map((student, index) => {
     const [y, m, d] = (student.dateOfBirth || '').split('-');
     const formattedDob = y && m && d ? `${d}/${m}/${y}` : student.dateOfBirth || '';
-    const coursesDisplay = Array.isArray(student.courses)
-      ? student.courses.join(', ')
-      : (student as unknown as { course?: string }).course || '';
+    const coursesDisplay = student.courseName || (
+      Array.isArray(student.courses) && student.courses.length > 0
+        ? student.courses.join(', ')
+        : (student as unknown as { course?: string }).course || 'None selected'
+    );
+    const educationLabel = student.educationType === 'level' ? 'Level of Education' : 'Current Grade';
+    const educationDisplay = student.educationValue
+      ? `${student.educationValue}${student.educationOther ? ` (${student.educationOther})` : ''}`
+      : student.currentGrade || '';
+
     return `
     <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 16px; border: 1px solid #e5e5e5; background-color: #ffffff;">
       <tbody>
@@ -61,25 +83,31 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
           </td>
         </tr>
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Full Name</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px; border-bottom: 1px solid #eeeeee;">Full Name</td>
           <td style="padding: 10px 14px; font-weight: 700; color: #000000; border-bottom: 1px solid #eeeeee;">${student.fullName}</td>
         </tr>
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Course(s)</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px; border-bottom: 1px solid #eeeeee;">Selected Course</td>
           <td style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #eeeeee;">${coursesDisplay}</td>
         </tr>
+        ${student.assignedSession ? `
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Date of Birth</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px; border-bottom: 1px solid #eeeeee;">Assigned Session</td>
+          <td style="padding: 10px 14px; color: #1e40af; font-weight: 700; border-bottom: 1px solid #eeeeee;">${student.assignedSession}</td>
+        </tr>
+        ` : ''}
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px; border-bottom: 1px solid #eeeeee;">Date of Birth</td>
           <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${formattedDob}</td>
         </tr>
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Gender</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px; border-bottom: 1px solid #eeeeee;">Gender</td>
           <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${student.gender}</td>
         </tr>
-        ${student.currentGrade ? `
+        ${educationDisplay ? `
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px;">Current Grade</td>
-          <td style="padding: 10px 14px; color: #000000;">${student.currentGrade}</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px;">${educationLabel}</td>
+          <td style="padding: 10px 14px; color: #000000;">${educationDisplay}</td>
         </tr>
         ` : ''}
       </tbody>
@@ -174,9 +202,21 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
               Dear ${recipientGreetingName},
             </p>
 
-            <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #555555; text-align: left; margin: 0 0 20px;">
-              Thank you for registering with <strong>Avenir Souriant</strong>! We have successfully received your registration details.
+            <p style="font-size: 15px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; text-decoration: none; color: #555555; text-align: left; margin: 0 0 16px;">
+              Thank you for registering with <strong>Avenir Souriant</strong>. We have received your registration information. Our team will contact you with confirmation and payment details.
             </p>
+
+            <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; margin: 0 0 20px; background-color: #eff6ff; border-left: 4px solid #3b82f6;">
+              <tbody>
+                <tr>
+                  <td style="padding: 12px 16px;">
+                    <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 500; color: #1e40af; margin: 0;">
+                      ℹ️ <strong>Please note:</strong> Submitting this form does not guarantee a place in the selected course. Registration is confirmed once you receive confirmation from Avenir Souriant.
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
             ${body.appointmentDate && body.appointmentTime ? (() => {
               const [ay, am, ad] = body.appointmentDate!.split('-');
@@ -276,35 +316,51 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
 
             ${studentsHtml}
 
-            <!-- Guardian Details Heading -->
+            <!-- Guardian / Registrant Details Heading -->
             <h2 style="font-size: 17px; line-height: 24px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 600; text-decoration: none; color: #000000; text-align: left; margin: 28px 0 12px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px;">
               ${isAdultSelf ? 'Registrant Information' : 'Guardian Information'}
             </h2>
 
             <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 24px; border: 1px solid #e5e5e5; background-color: #ffffff;">
               <tbody>
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Registration Type</td>
+                  <td style="padding: 10px 14px; color: #000000; font-weight: 700; border-bottom: 1px solid #eeeeee;">${pathwayLabel}</td>
+                </tr>
                 ${!isAdultSelf ? `
                 <tr>
-                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Full Name</td>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Full Name</td>
                   <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${body.guardianName || ''}</td>
                 </tr>
                 ` : ''}
                 <tr>
-                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Email</td>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Email</td>
                   <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">
                     <a href="mailto:${body.email}" style="color: #0000EE; text-decoration: underline;">${body.email}</a>
                   </td>
                 </tr>
-                ${!isAdultSelf && body.phone ? `
+                ${body.phone ? `
                 <tr>
-                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Phone</td>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Phone</td>
                   <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${body.phone}</td>
                 </tr>
                 ` : ''}
                 <tr>
-                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px;">Relationship</td>
-                  <td style="padding: 10px 14px; color: #000000;">${relationshipDisplay}</td>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Relationship</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${relationshipDisplay}</td>
                 </tr>
+                ${body.preferredLanguage ? `
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Preferred Language</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${body.preferredLanguage}</td>
+                </tr>
+                ` : ''}
+                ${body.paymentMethod ? `
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px;">Payment Method</td>
+                  <td style="padding: 10px 14px; color: #000000;">${body.paymentMethod}${body.paymentMethodOther ? ` (${body.paymentMethodOther})` : ''}</td>
+                </tr>
+                ` : ''}
               </tbody>
             </table>
 
@@ -386,23 +442,34 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
  * Designed strictly following free-html-email-template
  */
 export function generateAdminRegistrationEmail(body: RegistrationBody): string {
-  const isAdultSelf = body.relationship === 'Does not apply';
+  const isAdultSelf = body.registrationPathway === 'adult' || body.relationship === 'Does not apply';
   const subjectName = isAdultSelf
     ? (body.students[0]?.fullName || 'Adult Student')
     : (body.guardianName || 'Registrant');
 
   const relationshipDisplay = isAdultSelf
-    ? 'Self (Adult Student)'
+    ? 'Self (Adult Student 18+)'
     : body.relationship === 'Other' && body.relationshipOther
     ? body.relationshipOther
     : body.relationship;
 
+  const pathwayLabel = isAdultSelf
+    ? 'Adult Self-Registration (Path B)'
+    : 'Parent / Guardian Registration (Path A)';
+
   const studentsHtml = body.students.map((student, index) => {
     const [y, m, d] = (student.dateOfBirth || '').split('-');
     const formattedDob = y && m && d ? `${d}/${m}/${y}` : student.dateOfBirth || '';
-    const coursesDisplay = Array.isArray(student.courses)
-      ? student.courses.join(', ')
-      : (student as unknown as { course?: string }).course || '';
+    const coursesDisplay = student.courseName || (
+      Array.isArray(student.courses) && student.courses.length > 0
+        ? student.courses.join(', ')
+        : (student as unknown as { course?: string }).course || 'None selected'
+    );
+    const educationLabel = student.educationType === 'level' ? 'Level of Education' : 'Current Grade';
+    const educationDisplay = student.educationValue
+      ? `${student.educationValue}${student.educationOther ? ` (${student.educationOther})` : ''}`
+      : student.currentGrade || '';
+
     return `
     <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 16px; border: 1px solid #e5e5e5; background-color: #ffffff;">
       <tbody>
@@ -412,25 +479,31 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
           </td>
         </tr>
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Full Name</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px; border-bottom: 1px solid #eeeeee;">Full Name</td>
           <td style="padding: 10px 14px; font-weight: 700; color: #000000; border-bottom: 1px solid #eeeeee;">${student.fullName}</td>
         </tr>
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Course(s)</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px; border-bottom: 1px solid #eeeeee;">Course</td>
           <td style="padding: 10px 14px; font-weight: 600; color: #000000; border-bottom: 1px solid #eeeeee;">${coursesDisplay}</td>
         </tr>
+        ${student.assignedSession ? `
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Date of Birth</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px; border-bottom: 1px solid #eeeeee;">Assigned Session</td>
+          <td style="padding: 10px 14px; color: #1e40af; font-weight: 700; border-bottom: 1px solid #eeeeee;">${student.assignedSession}</td>
+        </tr>
+        ` : ''}
+        <tr>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px; border-bottom: 1px solid #eeeeee;">Date of Birth</td>
           <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${formattedDob}</td>
         </tr>
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Gender</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px; border-bottom: 1px solid #eeeeee;">Gender</td>
           <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${student.gender}</td>
         </tr>
-        ${student.currentGrade ? `
+        ${educationDisplay ? `
         <tr>
-          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px;">Current Grade</td>
-          <td style="padding: 10px 14px; color: #000000;">${student.currentGrade}</td>
+          <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 140px;">${educationLabel}</td>
+          <td style="padding: 10px 14px; color: #000000;">${educationDisplay}</td>
         </tr>
         ` : ''}
       </tbody>
@@ -530,14 +603,28 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
                       📋 Registration Overview
                     </p>
                     <p style="font-size: 14px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; color: #334155; margin: 0 0 6px;">
+                      <strong>Pathway:</strong> <span style="background-color: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-weight: 700;">${pathwayLabel}</span>
+                    </p>
+                    <p style="font-size: 14px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; color: #334155; margin: 0 0 6px;">
                       <strong>Registrant / Contact:</strong> ${subjectName} (${body.email}${body.phone ? ` • ${body.phone}` : ''})
                     </p>
+                    ${body.preferredLanguage ? `
+                    <p style="font-size: 14px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; color: #334155; margin: 0 0 6px;">
+                      <strong>Preferred Language:</strong> ${body.preferredLanguage}
+                    </p>
+                    ` : ''}
+                    ${body.paymentMethod ? `
+                    <p style="font-size: 14px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; color: #334155; margin: 0 0 6px;">
+                      <strong>Payment Method:</strong> ${body.paymentMethod}${body.paymentMethodOther ? ` (${body.paymentMethodOther})` : ''}
+                    </p>
+                    ` : ''}
                     <p style="font-size: 14px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; color: #334155; margin: 0;">
                       <strong>Student(s) Registered (${body.students.length}):</strong><br />
                       ${body.students.map((s) => {
                         const [y, m, d] = (s.dateOfBirth || '').split('-');
                         const fDob = y && m && d ? `${d}/${m}/${y}` : s.dateOfBirth || 'Not specified';
-                        return `• <strong>${s.fullName}</strong> — Date of Birth: <span style="background-color: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${fDob}</span>`;
+                        const cName = s.courseName || (Array.isArray(s.courses) ? s.courses.join(', ') : 'No course');
+                        return `• <strong>${s.fullName}</strong> — DOB: <span style="background-color: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${fDob}</span> — Course: <strong>${cName}</strong>${s.assignedSession ? ` (${s.assignedSession})` : ''}`;
                       }).join('<br />')}
                     </p>
                   </td>
@@ -623,26 +710,46 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
             <table align="center" style="width: 100%; border-collapse: collapse; text-align: left; font-family: 'Helvetica', Arial, sans-serif; font-size: 14px; margin-bottom: 24px; border: 1px solid #e5e5e5; background-color: #ffffff;">
               <tbody>
                 <tr>
-                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Full Name</td>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Registration Type</td>
+                  <td style="padding: 10px 14px; color: #000000; font-weight: 700; border-bottom: 1px solid #eeeeee;">${pathwayLabel}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Full Name</td>
                   <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${subjectName}</td>
                 </tr>
                 <tr>
-                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Email</td>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Email</td>
                   <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">
                     <a href="mailto:${body.email}" style="color: #0000EE; text-decoration: underline;">${body.email}</a>
                   </td>
                 </tr>
                 ${body.phone ? `
                 <tr>
-                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px; border-bottom: 1px solid #eeeeee;">Phone</td>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Phone</td>
                   <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">
                     <a href="tel:${body.phone}" style="color: #000000; text-decoration: none;">${body.phone}</a>
                   </td>
                 </tr>
                 ` : ''}
                 <tr>
-                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 130px;">Relationship</td>
-                  <td style="padding: 10px 14px; color: #000000;">${relationshipDisplay}</td>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Relationship</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${relationshipDisplay}</td>
+                </tr>
+                ${body.preferredLanguage ? `
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Preferred Language</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${body.preferredLanguage}</td>
+                </tr>
+                ` : ''}
+                ${body.paymentMethod ? `
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px; border-bottom: 1px solid #eeeeee;">Payment Method</td>
+                  <td style="padding: 10px 14px; color: #000000; border-bottom: 1px solid #eeeeee;">${body.paymentMethod}${body.paymentMethodOther ? ` (${body.paymentMethodOther})` : ''}</td>
+                </tr>
+                ` : ''}
+                <tr>
+                  <td style="padding: 10px 14px; font-weight: 600; color: #495057; width: 150px;">Authorization Agreed</td>
+                  <td style="padding: 10px 14px; color: #059669; font-weight: 700;">${body.confirmationAgreed ? '✅ Confirmed by registrant' : 'Not recorded'}</td>
                 </tr>
               </tbody>
             </table>
