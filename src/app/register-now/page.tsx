@@ -824,9 +824,8 @@ export default function RegisterNow() {
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
 
-            <span className="inline-block px-3 py-1 mb-2.5 rounded-full text-xs font-bold tracking-wide uppercase bg-secondary/15 text-secondary border border-secondary/20">
-              {t.badgeTitle}
-            </span>
+
+
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-heading mb-3 sm:mb-4 text-gray-900 drop-shadow-xs">
               {t.heroTitle}
             </h1>
