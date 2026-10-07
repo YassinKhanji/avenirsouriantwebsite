@@ -2,12 +2,15 @@ import fs from 'fs';
 import path from 'path';
 import {
   type SlotInfo,
-  type StudentSummary,
   type BookingRecord,
   CAPACITY_PER_SLOT,
   generateBaseSlots,
   pad,
 } from './appointmentSlots';
+import {
+  createGoogleCalendarAppointment,
+  type CalendarAppointmentParams,
+} from './googleCalendar';
 
 export * from './appointmentSlots';
 
@@ -131,13 +134,42 @@ export function getMonthAvailability(yearMonth: string): Record<string, { totalS
 }
 
 /**
- * Generates an automated Google Meet link for virtual appointments
+ * Synchronous helper: returns configured GOOGLE_MEET_URL fallback if set
  */
-export function generateGoogleMeetLink(): string {
+export function generateGoogleMeetLink(): string | undefined {
   if (process.env.GOOGLE_MEET_URL) {
     return process.env.GOOGLE_MEET_URL;
   }
-  return 'https://meet.google.com/asf-wytq-fit';
+  return undefined;
+}
+
+/**
+ * Asynchronously resolves a real, working Google Meet link:
+ * 1. Calls Google Calendar API with conferenceDataVersion=1 to generate an active Meet room
+ * 2. Falls back to process.env.GOOGLE_MEET_URL if set
+ * 3. Returns undefined if neither is configured (avoiding broken dummy links)
+ */
+export async function resolveAppointmentMeetingLink(
+  params: CalendarAppointmentParams
+): Promise<{ meetingLink?: string; calendarEventId?: string }> {
+  try {
+    const calendarResult = await createGoogleCalendarAppointment(params);
+    if (calendarResult.success && calendarResult.meetingLink) {
+      return {
+        meetingLink: calendarResult.meetingLink,
+        calendarEventId: calendarResult.calendarEventId,
+      };
+    }
+  } catch (err) {
+    console.warn('[Appointments] Google Calendar appointment creation failed:', err);
+  }
+
+  // Fallback to static URL if configured
+  if (process.env.GOOGLE_MEET_URL) {
+    return { meetingLink: process.env.GOOGLE_MEET_URL };
+  }
+
+  return {};
 }
 
 /**

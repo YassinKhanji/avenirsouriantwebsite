@@ -200,7 +200,7 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
 
               const isVirtual = body.appointmentType === 'virtual';
               const isPhone = isVirtual && body.virtualOption === 'phone';
-              const meetLink = body.meetingLink || 'https://meet.google.com/asf-wytq-fit';
+              const meetLink = body.meetingLink;
 
               const studentNamesAndDobs = body.students.map((s) => {
                 const [y, m, d] = (s.dateOfBirth || '').split('-');
@@ -230,7 +230,8 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
                           : `💻 Google Meet Video Call`
                       }
                     </p>
-                    ${isVirtual && !isPhone ? `
+                    ${isVirtual && !isPhone ? (
+                      meetLink ? `
                     <div style="margin: 12px 0 8px;">
                       <a href="${meetLink}" target="_blank" style="background-color: #ff9f43; color: #ffffff; padding: 10px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; text-decoration: none; display: inline-block;">
                         📹 Join Google Meet Call
@@ -239,7 +240,14 @@ export function generateConfirmationEmail(body: RegistrationBody): string {
                         Meeting link: <a href="${meetLink}" style="color: #ff9f43; text-decoration: underline;">${meetLink}</a>
                       </p>
                     </div>
-                    ` : ''}
+                    ` : `
+                    <div style="margin: 12px 0 8px; background-color: #f8f9fa; border-left: 3px solid #ff9f43; padding: 10px 14px; border-radius: 4px;">
+                      <p style="font-size: 13px; line-height: 20px; color: #555555; margin: 0;">
+                        📹 <strong>Google Meet Call:</strong> A video call link will be provided in your calendar invite and emailed prior to your scheduled session.
+                      </p>
+                    </div>
+                    `
+                    ) : ''}
                     <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #666666; margin: 8px 0 0;">
                       A calendar invite (.ics) is attached to this email. You can add it directly to Google Calendar, Apple Calendar, or Outlook.
                     </p>
@@ -526,7 +534,7 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
                     </p>
                     <p style="font-size: 14px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; color: #334155; margin: 0;">
                       <strong>Student(s) Registered (${body.students.length}):</strong><br />
-                      ${body.students.map((s, idx) => {
+                      ${body.students.map((s) => {
                         const [y, m, d] = (s.dateOfBirth || '').split('-');
                         const fDob = y && m && d ? `${d}/${m}/${y}` : s.dateOfBirth || 'Not specified';
                         return `• <strong>${s.fullName}</strong> — Date of Birth: <span style="background-color: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${fDob}</span>`;
@@ -559,7 +567,7 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
 
               const isVirtual = body.appointmentType === 'virtual';
               const isPhone = isVirtual && body.virtualOption === 'phone';
-              const meetLink = body.meetingLink || 'https://meet.google.com/asf-wytq-fit';
+              const meetLink = body.meetingLink;
 
               const studentNamesAndDobs = body.students.map((s) => {
                 const [y, m, d] = (s.dateOfBirth || '').split('-');
@@ -591,7 +599,11 @@ export function generateAdminRegistrationEmail(body: RegistrationBody): string {
                     </p>
                     ${isVirtual && !isPhone ? `
                     <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; margin: 8px 0 0;">
-                      <strong>Google Meet Link:</strong> <a href="${meetLink}" style="color: #ff9f43; text-decoration: underline;">${meetLink}</a>
+                      <strong>Google Meet Link:</strong> ${
+                        meetLink
+                          ? `<a href="${meetLink}" style="color: #ff9f43; text-decoration: underline;">${meetLink}</a>`
+                          : `<span style="color: #888888;">Pending configuration (will be generated or provided manually)</span>`
+                      }
                     </p>
                     ` : ''}
                     <p style="font-size: 13px; line-height: 20px; font-family: 'Helvetica', Arial, sans-serif; font-weight: 400; color: #666666; margin: 8px 0 0;">

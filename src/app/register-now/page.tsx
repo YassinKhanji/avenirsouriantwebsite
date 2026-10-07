@@ -491,6 +491,7 @@ export default function RegisterNow() {
   const [virtualOption, setVirtualOption] = useState<'meet' | 'phone'>('meet');
   const [slotsData, setSlotsData] = useState<SlotInfo[]>([]);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+  const [bookedMeetingLink, setBookedMeetingLink] = useState<string | null>(null);
 
   // Validation errors
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -732,6 +733,10 @@ export default function RegisterNow() {
         }
         setIsSubmitting(false);
         return;
+      }
+
+      if (data.meetingLink) {
+        setBookedMeetingLink(data.meetingLink);
       }
 
       goToStep(5);
@@ -1819,20 +1824,29 @@ export default function RegisterNow() {
 
                             {appointmentType === 'virtual' && virtualOption === 'meet' && (
                               <div className="mt-3 pt-3 border-t border-secondary/20">
-                                <a
-                                  href="https://meet.google.com/asf-wytq-fit"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-white rounded-xl text-xs font-bold hover:bg-opacity-90 shadow-xs transition-all hover:scale-[1.02] w-full sm:w-auto"
-                                >
-                                  📹 Open Google Meet Link
-                                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                  </svg>
-                                </a>
-                                <p className="text-[11px] text-gray-500 mt-1 break-all">
-                                  Link: <span className="text-secondary font-medium">https://meet.google.com/asf-wytq-fit</span>
-                                </p>
+                                {bookedMeetingLink ? (
+                                  <>
+                                    <a
+                                      href={bookedMeetingLink}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-white rounded-xl text-xs font-bold hover:bg-opacity-90 shadow-xs transition-all hover:scale-[1.02] w-full sm:w-auto"
+                                    >
+                                      📹 Open Google Meet Link
+                                      <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                      </svg>
+                                    </a>
+                                    <p className="text-[11px] text-gray-500 mt-1 break-all">
+                                      Link: <a href={bookedMeetingLink} target="_blank" rel="noopener noreferrer" className="text-secondary font-medium underline">{bookedMeetingLink}</a>
+                                    </p>
+                                  </>
+                                ) : (
+                                  <div className="bg-amber-50/80 border border-amber-200/80 text-amber-900 rounded-xl p-3 text-xs">
+                                    <p className="font-semibold mb-0.5">📹 Google Meet Video Call</p>
+                                    <p className="text-gray-600">Your video meeting link will be attached to your calendar invite and confirmation email before the call.</p>
+                                  </div>
+                                )}
                               </div>
                             )}
 

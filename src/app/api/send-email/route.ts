@@ -9,7 +9,7 @@ import {
   type ContactBody,
 } from '@/lib/emailTemplates';
 import { generateICS } from '@/lib/icsGenerator';
-import { bookSlot, generateGoogleMeetLink } from '@/lib/appointments';
+import { bookSlot, resolveAppointmentMeetingLink } from '@/lib/appointments';
 
 type RequestBody = RegistrationBody | ContactBody;
 
@@ -121,9 +121,27 @@ export async function POST(request: Request) {
       let icalEvent: { filename: string; method: string; content: string } | undefined = undefined;
 
       if (body.appointmentDate && body.appointmentTime && body.appointmentType) {
+        const studentDetailsStr = body.students
+          .map((s) => {
+            const [y, m, d] = (s.dateOfBirth || '').split('-');
+            const fDob = y && m && d ? `${d}/${m}/${y}` : s.dateOfBirth || '';
+            return `${s.fullName}${fDob ? ` (DOB: ${fDob})` : ''}`;
+          })
+          .join(', ');
+
         let meetingLink: string | undefined = undefined;
         if (body.appointmentType === 'virtual' && body.virtualOption !== 'phone') {
-          meetingLink = generateGoogleMeetLink();
+          const resolved = await resolveAppointmentMeetingLink({
+            date: body.appointmentDate,
+            time: body.appointmentTime,
+            registrantName: subjectName,
+            registrantEmail: body.email,
+            registrantPhone: body.phone,
+            studentDetails: studentDetailsStr,
+            type: body.appointmentType,
+            virtualOption: body.virtualOption,
+          });
+          meetingLink = resolved.meetingLink;
           body.meetingLink = meetingLink;
         }
 
@@ -149,14 +167,6 @@ export async function POST(request: Request) {
             { status: 409 }
           );
         }
-
-        const studentDetailsStr = body.students
-          .map((s) => {
-            const [y, m, d] = (s.dateOfBirth || '').split('-');
-            const fDob = y && m && d ? `${d}/${m}/${y}` : s.dateOfBirth || '';
-            return `${s.fullName}${fDob ? ` (DOB: ${fDob})` : ''}`;
-          })
-          .join(', ');
 
         const icsContent = generateICS({
           date: body.appointmentDate,
@@ -220,7 +230,11 @@ export async function POST(request: Request) {
         // Note: logged, admin notification was already sent
       }
 
-      return Response.json({ success: true, message: 'Registration submitted successfully!' });
+      return Response.json({
+        success: true,
+        message: 'Registration submitted successfully!',
+        meetingLink: body.meetingLink,
+      });
 
     } else {
       return Response.json(

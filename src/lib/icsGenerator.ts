@@ -77,10 +77,15 @@ export function generateICS(appointment: AppointmentData): string {
       location = `Phone Call${phoneText}`;
       description += `\\nMeeting Type: Phone Call\\nWe will call you at ${appointment.registrantPhone || 'your contact number'} at the scheduled time.`;
     } else {
-      // Default to Google Meet video meeting
-      const meetLink = appointment.meetingLink || 'https://meet.google.com/asf-wytq-fit';
-      location = meetLink;
-      description += `\\nMeeting Type: Google Meet Video Call\\nJoin Google Meet: ${meetLink}`;
+      // Google Meet video meeting
+      const meetLink = appointment.meetingLink;
+      if (meetLink) {
+        location = meetLink;
+        description += `\\nMeeting Type: Google Meet Video Call\\nJoin Google Meet: ${meetLink}`;
+      } else {
+        location = 'Google Meet Video Call (Link provided via email)';
+        description += `\\nMeeting Type: Google Meet Video Call\\nA Google Meet video link will be sent prior to the session.`;
+      }
     }
   } else {
     description += `\\nMeeting Type: In-Person Fit Assessment\\nLocation: 8990 Boul. Michel-Chartrand, Anjou, QC`;
