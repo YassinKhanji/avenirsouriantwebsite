@@ -822,25 +822,7 @@ export default function RegisterNow() {
         >
           <div className="absolute inset-0 bg-gradient-to-b from-white/75 via-white/65 to-white/85 z-0"></div>
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Language Switcher Bar */}
-            <div className="flex justify-center mb-4">
-              <div className="inline-flex items-center gap-1 bg-white/90 backdrop-blur-sm border border-secondary/20 rounded-full p-1 shadow-xs">
-                {(['en', 'fr', 'ar'] as FormLang[]).map((lang) => (
-                  <button
-                    key={lang}
-                    type="button"
-                    onClick={() => setUiLang(lang)}
-                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                      uiLang === lang
-                        ? 'bg-secondary text-white shadow-xs'
-                        : 'text-gray-700 hover:text-secondary'
-                    }`}
-                  >
-                    {lang === 'en' ? 'English' : lang === 'fr' ? 'Français' : 'العربية'}
-                  </button>
-                ))}
-              </div>
-            </div>
+
 
             <span className="inline-block px-3 py-1 mb-2.5 rounded-full text-xs font-bold tracking-wide uppercase bg-secondary/15 text-secondary border border-secondary/20">
               {t.badgeTitle}
