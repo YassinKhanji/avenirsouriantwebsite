@@ -156,20 +156,20 @@ export const HOME_TRANSLATIONS: Record<Language, HomeTranslations> = {
         headingHighlight2: 'Enfant',
         subtitle: "De la maîtrise de la langue arabe aux STIM et à la robotique, nos cours sont conçus pour éveiller la curiosité, renforcer la confiance et faire de chaque leçon une véritable aventure.",
         cta1: 'Voir les programmes',
-        cta2: 'Enregistrer vous',
+        cta2: "S'inscrire maintenant",
       },
       slide2: {
         headingPart1: 'Découvrez le',
         headingHighlight1: 'Plaisir',
         headingPart2: "d'apprendre",
         headingHighlight2: "l'Arabe",
-        cta: 'Enregistrer vous',
+        cta: "S'inscrire",
         or: 'ou',
       },
       slide3: {
         heading: "Rejoignez la famille de l'Avenir Souriant dès aujourd'hui",
         subtitle: "Inscrivez votre enfant dans le centre d'apprentissage de l'arabe le plus stimulant et chaleureux de Montréal. Places limitées — réservez dès maintenant !",
-        cta1: 'Enregistrer vous',
+        cta1: "S'inscrire maintenant",
         cta2: 'Voir les programmes',
       },
     },
@@ -182,7 +182,7 @@ export const HOME_TRANSLATIONS: Record<Language, HomeTranslations> = {
         'Activités stimulantes : robotique, programmation, soccer et ateliers créatifs',
       ],
       ctaPrograms: 'Voir les programmes',
-      ctaRegister: 'Enregistrer vous',
+      ctaRegister: "S'inscrire",
     },
     programsSection: {
       title: 'Nos Programmes',
@@ -224,7 +224,7 @@ export const HOME_TRANSLATIONS: Record<Language, HomeTranslations> = {
     ctaBanner: {
       title: "Prêt à rejoindre l'Avenir Souriant ?",
       body: "Offrez à votre enfant le précieux bagage de la langue, de la pensée logique et de la créativité. Rejoignez la communauté de l'Avenir Souriant et voyez-le s'épanouir, nouer de belles amitiés et aimer l'arabe grâce à nos ateliers interactifs.",
-      button: 'Enregistrer vous',
+      button: "S'inscrire maintenant",
     },
   },
 

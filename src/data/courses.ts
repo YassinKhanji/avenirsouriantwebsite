@@ -261,64 +261,64 @@ export const courses: CourseData[] = [
   },
   {
     slug: "cybersecurity-for-teens",
-    title: "Cybersecurity for Teens (Ages 13–16)",
-    category: "Cybersecurity & Tech (13–16)",
-    price: "$35/session",
-    desc: "A 6-week hands-on cybersecurity course for ages 13–16. Real skills, real tools, real confidence. Master networking, Linux, ethical hacking, AI tools, and CTF challenges.",
+    title: "Cybersecurity Fundamentals (Ages 14+)",
+    category: "Cybersecurity & Tech (Ages 14+)",
+    price: "$150",
+    desc: "Ever wondered what’s really happening behind the screen? Our Cybersecurity Fundamentals course is designed for beginners who want to understand how computers, networks, and online security really work through practical, hands-on learning. No previous experience required.",
     image: "/images/cybersecurity-teens.png",
     active: true,
-    subtitle: "Ages 13 to 16 • 6-Week Cohort (2 hrs/week) • Starting August",
-    tagline: "CYBERSECURITY FOR TEENS",
-    subTagline: "A 6-week hands-on course for ages 13–16. Real skills. Real tools. Real confidence.",
+    subtitle: "Ages 14+ • 6-Week Cohort (Thursdays 6:30–8:30 PM) • Starts Oct 29",
+    tagline: "CYBERSECURITY FUNDAMENTALS",
+    subTagline: "You use technology every day... but do you really know how it works? Look beyond the screen with hands-on, practical learning.",
     teacher: {
       name: "Cyber Defense & Tech Mentors",
       title: "Cybersecurity & Technology Educators",
-      bio: "Experienced tech educators and mentors passionate about empowering youth with real-world digital safety, ethical hacking concepts, Linux, and responsible AI navigation."
+      bio: "Experienced tech educators and mentors passionate about empowering youth and beginners with real-world digital safety, ethical hacking concepts, Linux, networks, and responsible technology navigation."
     },
-    objectiveHeadline: "Real Skills, Tools & Confidence",
-    objective: "Understand how technology and networks work, master real cyber safety habits, explore AI and IT career paths, and solve hands-on security challenges.",
-    scheduleHeadline: "6 Weeks · 2 Hours per Week",
-    scheduleDetails: "Hands-on 2-hour lab sessions weekly starting the first week of August. In-person at our Saint-Laurent center (1325 Rue Cartier). Exact cohort schedule sent after registration.",
-    targetAudienceHeadline: "Teens Ages 13–16",
-    targetAudience: "Designed for youth ages 13 to 16. No prior coding or technical experience needed — beginners are warmly welcome! Safe, supervised, and ethical.",
+    objectiveHeadline: "Practical, Hands-On Learning",
+    objective: "Understand how computers, networks, and online security really work through practical, hands-on learning. Gain real cyber safety habits and explore tech & IT career paths.",
+    scheduleHeadline: "6 Weeks · Thursdays 6:30 PM to 8:30 PM",
+    scheduleDetails: "Starts Thursday, October 29th. Weekly 2-hour interactive sessions every Thursday from 6:30 PM to 8:30 PM for 6 weeks. In-person at our Saint-Laurent center (1325 Rue Cartier). Registration is now open.",
+    targetAudienceHeadline: "Beginners Ages 14+",
+    targetAudience: "Designed for beginners ages 14 and up. No previous cybersecurity or technical experience required — beginners are warmly welcome! Safe, supervised, and ethical.",
     contactPhones: ["(514) 515-4492", "(514) 581-5305", "(514) 808-5216"],
     address: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6",
-    introHeadline: "Why Cybersecurity Matters for Teens",
-    registerSubtext: "Ready to give your teen real-world digital skills that will last a lifetime? Register online or contact us directly by phone:",
-    enrollmentNotice: "Tuition is $35/session ($200 for the complete 6-week program). Pay per session or full cohort package! 10% sibling & family discount. Spots are limited.",
+    introHeadline: "You Use Technology Every Day... But Do You Really Know How It Works?",
+    registerSubtext: "Registration is now open! Send us a DM or call (514) 515-4492 to register:",
+    enrollmentNotice: "Registration is now open! $150 for the complete 6-week cohort (Thursdays 6:30 PM – 8:30 PM, starting October 29th). Spots are limited. DM or call (514) 515-4492 to secure your place.",
     longDescription: [
-      "Teens use technology every single day — from online multiplayer gaming and streaming to social media platforms and generative AI assistants. Yet very few understand how the underlying systems work or how to safeguard their digital privacy. Avenir Souriant's Cybersecurity for Teens course changes that.",
-      "Designed specifically for youth aged 13 to 16, this 6-week hands-on course takes teens behind the scenes of modern digital technology. Students don't just sit through passive lectures; they work with real tools used by IT professionals: inspecting live network packets with Wireshark, spinning up virtual machines with Linux and VirtualBox, learning AI-assisted problem solving, and understanding ethical hacking principles in a safe, fully supervised environment.",
-      "Tuition is set at an accessible $35 per session (or $200 for the complete 6-week cohort package). Whether your teen is an avid gamer curious about online safety, interested in future careers in cybersecurity and AI, or simply looking to level up their digital literacy, this course builds lasting technical skills and confidence."
+      "Ever wondered what’s really happening behind the screen? You use technology every single day — from websites, servers, and routers to applications, data, and social media. But do you really know how it works?",
+      "Our Cybersecurity Fundamentals course is designed specifically for beginners (ages 14+) who want to understand how computers, networks, and online security really work through practical, hands-on learning. No previous cybersecurity experience is required.",
+      "Students work in interactive lab sessions exploring how data travels across the internet (IP addresses, DNS lookups, routers, encrypted HTTPS communication, servers, and applications), working with Linux, understanding defensive security, and tackling engaging security challenges in a safe, fully supervised environment.",
+      "Tuition is $150 for the complete 6-week cohort (Thursdays 6:30 PM to 8:30 PM, starting Thursday, October 29th). Registration is open now — send us a DM or call (514) 515-4492 to register."
     ],
     programDescription: [
-      "Through active, project-based laboratory sessions, students progress through a structured 6-week journey: from networking fundamentals and operating systems to web security concepts and defensive hacking.",
+      "Through active, project-based laboratory sessions, students progress through a structured 6-week journey: from understanding how computers, networks, and internet traffic work to operating systems, defensive cyber practices, and web security fundamentals.",
       "The course culminates in an exhilarating Capture-The-Flag (CTF) cyber lab challenge. Working in teams, students investigate digital clues, crack security puzzles, analyze network logs, and defend systems — putting everything they've learned to the ultimate test in a fun, collaborative atmosphere."
     ],
     programDetails: [
-      { label: "Tuition", value: "$35 / session ($200 for 6-week cohort)" },
-      { label: "Payment Model", value: "Pay per session or full 6-week course package ($200)" },
+      { label: "Tuition", value: "$150 (complete 6-week cohort)" },
       { label: "Duration", value: "6 weeks · 2 hours per week (12 hours total)" },
-      { label: "Start Date", value: "First week of August — exact schedule sent upon registration" },
-      { label: "Age Group", value: "Teens 13–16 years old" },
-      { label: "Prerequisites", value: "No experience needed — beginners welcome!" },
-      { label: "Format", value: "Hands-on tech lab (Linux, Wireshark, AI, CTF challenges)" },
-      { label: "Family Discount", value: "10% OFF for siblings & family members" },
+      { label: "Schedule", value: "Thursdays, 6:30 PM to 8:30 PM" },
+      { label: "Start Date", value: "Thursday, October 29th" },
+      { label: "Age Group", value: "Ages 14+ (Beginners welcome)" },
+      { label: "Prerequisites", value: "No previous cybersecurity experience required" },
+      { label: "Format", value: "Practical hands-on tech lab (Networks, Linux, Defense, CTF)" },
+      { label: "Registration", value: "Open now — DM or call 514-515-4492" },
       { label: "Location", value: "1325 Rue Cartier, Saint-Laurent, QC H4L 2N6" }
     ],
     schedule: [
-      { day: "Weekly Lab Session", time: "2 Hours / Week (Starting First Week of August)" },
-      { day: "Cohort Details", time: "Exact days & times sent to parents after registration" }
+      { day: "Thursdays (Weekly)", time: "6:30 PM – 8:30 PM (Starts October 29th)" },
+      { day: "Cohort Duration", time: "6 Weeks (12 total hours of training)" }
     ],
     highlights: [
-      "Real-world tech & internet safety: learn how to stay safe while gaming and on social media",
-      "Networking fundamentals: inspect live traffic with Wireshark, explore IP addresses, DNS, and routers",
-      "Computer fundamentals & virtualization: set up Linux virtual machines with VirtualBox",
-      "Ethical hacking principles & cyber basics: CIA triad, password security, and phishing defense",
-      "Web security concepts: understanding SQL injection, XSS, and DDoS in safe demonstrations",
-      "AI learning skills: accelerate problem-solving and explore high-demand cybersecurity and AI careers",
-      "The CTF Lab finale: investigate clues, crack security puzzles, and compete in team-based challenges",
-      "Flexible pay-per-session pricing ($35/session or $200 for 6 weeks) with 10% sibling discount"
+      "Designed for beginners: no previous cybersecurity experience required",
+      "Understand how technology works: routers, IP addresses, DNS lookups, servers, and encrypted HTTPS",
+      "Computer fundamentals & systems: understand how hardware, operating systems, and Linux work",
+      "Cybersecurity defense: password security, phishing detection, data protection, and online safety",
+      "Websites, servers & applications: see what really happens behind the screen",
+      "Hands-on collaborative security challenges and team problem-solving",
+      "Affordable $150 for the complete 6-week cohort with certificate of completion"
     ],
     curriculumTracks: [
       {
@@ -326,10 +326,10 @@ export const courses: CourseData[] = [
         subtitle: "How the Internet Really Works",
         badge: "Week 1",
         items: [
-          "IP addresses & DNS resolution",
+          "IP addresses & DNS lookup resolution",
           "Routers and internet traffic flow",
           "Inspecting live network packets with Wireshark",
-          "Understanding how data travels safely"
+          "Understanding how data travels safely (HTTPS encryption)"
         ]
       },
       {
@@ -344,25 +344,25 @@ export const courses: CourseData[] = [
         ]
       },
       {
-        title: "Week 3 — Virtualization & AI Assistance",
+        title: "Week 3 — Virtualization & Safe Lab Environments",
         subtitle: "Building Your Lab Environment",
         badge: "Week 3",
         items: [
           "Setting up VirtualBox on your system",
           "Creating an isolated virtual machine sandbox",
-          "Leveraging AI tools ethically to accelerate tech learning",
-          "Prompting AI for code explanations and debugging"
+          "Understanding servers, applications, and network isolation",
+          "Safe exploration tools and practical techniques"
         ]
       },
       {
-        title: "Week 4 — Cybersecurity Basics & Defense",
+        title: "Week 4 — Cybersecurity Fundamentals & Defense",
         subtitle: "Core Defensive Principles",
         badge: "Week 4",
         items: [
           "The CIA Triad: Confidentiality, Integrity, Availability",
           "Password strength, hashing, and password managers",
           "Phishing awareness, social engineering, and fake links",
-          "Protecting personal privacy on gaming and social platforms"
+          "Protecting personal privacy on gaming, apps, and social platforms"
         ]
       },
       {
@@ -400,18 +400,18 @@ export const courses: CourseData[] = [
         icon: "🐧"
       },
       {
-        title: "AI Tools",
-        desc: "Learn faster with modern AI assistance for research, coding, and debugging.",
-        icon: "🤖"
+        title: "Defense & Security",
+        desc: "Learn password safety, encryption, phishing prevention, and data defense.",
+        icon: "🛡️"
       },
       {
         title: "CTF Challenges",
         desc: "Team-based cybersecurity games: investigate clues, crack puzzles, and capture flags.",
-        icon: "🛡️"
+        icon: "🏆"
       }
     ],
-    metaTitle: "Cybersecurity for Teens (Ages 13–16) Montreal | Avenir Souriant",
-    metaDescription: "Hands-on 6-week cybersecurity course for teens (ages 13–16) in Saint-Laurent, Montreal. Real tools, Linux, Wireshark, ethical hacking, CTF challenges. $35/session ($200 full course)."
+    metaTitle: "Cybersecurity Fundamentals (Ages 14+) Montreal | Avenir Souriant",
+    metaDescription: "Hands-on 6-week cybersecurity fundamentals course for beginners (ages 14+) in Saint-Laurent, Montreal. Starts Thursday Oct 29, 6:30–8:30 PM. $150 full course. Call 514-515-4492."
   },
   {
     slug: "homeschooling-support",

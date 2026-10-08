@@ -16,6 +16,8 @@ export interface CourseDefinition {
   };
   isActive: boolean;
   description?: string;
+  descriptionFr?: string;
+  descriptionAr?: string;
 }
 
 /**
@@ -37,6 +39,8 @@ export const FALL_2026_COURSES: CourseDefinition[] = [
     is16Plus: false,
     isActive: true,
     description: 'Foundational Arabic letters, phonetics, and early reading for young learners.',
+    descriptionFr: 'Apprentissage fondamental des lettres arabes, de la phonétique et initiation à la lecture pour les jeunes élèves.',
+    descriptionAr: 'التعرف على الحروف العربية، مخارج الأصوات، وبدايات القراءة السليمة للناشئة.',
   },
   {
     id: 'arabic-language-8-12',
@@ -51,6 +55,8 @@ export const FALL_2026_COURSES: CourseDefinition[] = [
     is16Plus: false,
     isActive: true,
     description: 'Structured Arabic vocabulary, sentence formation, grammar, and reading comprehension.',
+    descriptionFr: 'Enrichissement du vocabulaire arabe, construction de phrases, grammaire et compréhension de texte.',
+    descriptionAr: 'تنمية المفردات اللغوية، تركيب الجمل، القواعد الأساسية، واستيعاب المقروء.',
   },
   {
     id: 'reading-skills-girls-8-14',
@@ -65,6 +71,8 @@ export const FALL_2026_COURSES: CourseDefinition[] = [
     is16Plus: false,
     isActive: true,
     description: 'Dedicated female cohort focusing on fluent Arabic literacy and textual recitation.',
+    descriptionFr: 'Cohorte féminine dédiée au perfectionnement de la lecture fluide et de la récitation en langue arabe.',
+    descriptionAr: 'مجموعة مخصصة للفتيات للتمكن من طلاقة القراءة باللغة العربية وتلاوة النصوص.',
   },
   {
     id: 'reading-skills-boys-12-14',
@@ -79,11 +87,14 @@ export const FALL_2026_COURSES: CourseDefinition[] = [
     is16Plus: false,
     isActive: true,
     description: 'Dedicated male cohort developing independent Arabic reading, pronunciation, and fluency.',
+    descriptionFr: 'Cohorte masculine dédiée au développement de l’autonomie en lecture arabe, de la prononciation et de la fluidité.',
+    descriptionAr: 'مجموعة مخصصة للفتيان لتطوير الاستقلالية في القراءة العربية، ضبط النطق، والطلاقة اللغوية.',
   },
   {
     id: 'chess-beginners-9-14',
-    name: 'Chess Program for Beginners \u2013 Boys Ages 9\u201314',
-    nameFr: 'Programme d\u2019\u00e9checs pour d\u00e9butants \u2013 Gar\u00e7ons de 9 \u00e0 14 ans',
+    name: 'Chess Program for Beginners – Boys Ages 9–14',
+    nameFr: 'Programme d’échecs pour débutants – Garçons de 9 à 14 ans',
+    nameAr: 'برنامج الشطرنج للمبتدئين – الفتيان من 9 إلى 14 سنة',
     minAge: 9,
     maxAge: 14,
     genderEligibility: 'male',
@@ -91,10 +102,31 @@ export const FALL_2026_COURSES: CourseDefinition[] = [
     isAdultEligible: false,
     is16Plus: false,
     sessions: {
-      default: 'Sundays 10:00 AM \u2013 12:00 PM (Oct 18 \u2013 Dec 6, 2026)',
+      default: 'Sundays 10:00 AM – 12:00 PM (Oct 18 – Dec 6, 2026)',
     },
     isActive: true,
-    description: '8-week chess program for boys ages 9\u201314. Sundays 10AM\u201312PM, Oct 18 \u2013 Dec 6, 2026. $15/session ($120 total). Limited to 10 students.',
+    description: '8-week chess program for boys ages 9–14. Sundays 10AM–12PM, Oct 18 – Dec 6, 2026. $15/session ($120 total). Limited to 10 students.',
+    descriptionFr: 'Programme d’échecs structuré de 8 semaines pour garçons de 9 à 14 ans. Dimanches 10h00–12h00, 18 oct. – 6 déc. 2026. 15 $/séance (120 $ au total). Limité à 10 élèves.',
+    descriptionAr: 'برنامج تدريبي منظم في الشطرنج لمدة 8 أسابيع للفتيان من 9 إلى 14 سنة. الأحد 10:00 ص – 12:00 ظ، 18 أكتوبر – 6 ديسمبر 2026. 15$/جلسة (120$ إجمالي). مقصور على 10 طلاب.',
+  },
+  {
+    id: 'cybersecurity-14-plus',
+    name: 'Cybersecurity Fundamentals – Ages 14+',
+    nameFr: 'Fondamentaux de la cybersécurité – 14 ans et plus',
+    nameAr: 'أساسيات الأمن السيبراني – 14 سنة فما فوق',
+    minAge: 14,
+    maxAge: 99,
+    genderEligibility: 'all',
+    isChildEligible: true,
+    isAdultEligible: true,
+    is16Plus: false,
+    sessions: {
+      default: 'Thursdays 6:30 PM – 8:30 PM (Starts Oct 29)',
+    },
+    isActive: true,
+    description: 'Hands-on 6-week cybersecurity fundamentals course for beginners. Practical learning with networks, Linux, and digital safety. Starts Thursday Oct 29 ($150 total).',
+    descriptionFr: 'Formation pratique de 6 semaines en cybersécurité pour débutants. Ateliers concrets : réseaux, Linux et sécurité numérique. Débute jeudi 29 octobre (150 $ au total).',
+    descriptionAr: 'دورة تطبيقية في أساسيات الأمن السيبراني للمبتدئين لمدة 6 أسابيع. تدريب عملي على الشبكات، لينكس، والسلامة الرقمية. تبدأ الخميس 29 أكتوبر (150$ للدورة كاملة).',
   },
   {
     id: 'foundation-arabic-16-plus',
@@ -108,12 +140,14 @@ export const FALL_2026_COURSES: CourseDefinition[] = [
     isAdultEligible: true, // 18+ registered by themselves
     is16Plus: true,
     sessions: {
-      female: 'Friday',
+      female: 'Thursday',
       male: 'Sunday',
-      default: 'Friday (Women) / Sunday (Men)',
+      default: 'Thursday (Women) / Sunday (Men)',
     },
     isActive: true,
-    description: 'Comprehensive program for non-native adults and teens (16+). Female session on Friday, Male session on Sunday.',
+    description: 'Comprehensive program for non-native adults and teens (16+). Female session on Thursday, Male session on Sunday. $15/session.',
+    descriptionFr: 'Programme complet pour adultes et adolescents non-arabophones (16 ans et +). Session femmes le jeudi, session hommes le dimanche. 15 $/séance.',
+    descriptionAr: 'برنامج متكامل للكبار واليافعين غير الناطقين بالعربية (16 سنة فما فوق). جلسة النساء يوم الخميس، وجلسة الرجال يوم الأحد. 15 دولار للجلسة.',
   },
 ];
 

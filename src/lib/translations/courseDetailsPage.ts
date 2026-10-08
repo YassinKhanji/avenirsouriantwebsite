@@ -83,11 +83,11 @@ export const COURSE_DETAILS_PAGE_TRANSLATIONS: Record<Language, CourseDetailsPag
     registerCard: {
       title: 'Prêt à vous inscrire ?',
       subtitle: 'Réservez votre place dès aujourd’hui. Places limitées pour garantir un encadrement personnalisé.',
-      button: 'Enregistrer vous',
+      button: 'S’inscrire maintenant',
       questions: 'Des questions ? Appelez-nous directement :',
     },
     stickyBar: {
-      button: 'Enregistrer vous',
+      button: 'S’inscrire maintenant',
     },
   },
 

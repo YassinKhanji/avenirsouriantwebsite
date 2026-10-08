@@ -1444,7 +1444,7 @@ export default function RegisterNow() {
                                                   : course.name}
                                               </p>
                                               {course.description && (
-                                                <p className="text-xs text-gray-500 mt-0.5">{course.description}</p>
+                                                <p className="text-xs text-gray-500 mt-0.5">{uiLang === 'ar' && course.descriptionAr ? course.descriptionAr : uiLang === 'fr' && course.descriptionFr ? course.descriptionFr : course.description}</p>
                                               )}
                                               {/* Auto Session Badge for 16+ */}
                                               {course.is16Plus && student.gender && (
@@ -1656,7 +1656,7 @@ export default function RegisterNow() {
                                             ? course.nameFr
                                             : course.name}
                                         </p>
-                                        <p className="text-xs text-gray-500 mt-0.5">{course.description}</p>
+                                        <p className="text-xs text-gray-500 mt-0.5">{uiLang === 'ar' && course.descriptionAr ? course.descriptionAr : uiLang === 'fr' && course.descriptionFr ? course.descriptionFr : course.description}</p>
 
                                         {/* Automatic Gender Session Badge */}
                                         <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold">

@@ -97,8 +97,8 @@ export const COMMON_TRANSLATIONS: Record<Language, CommonTranslations> = {
       home: 'Accueil',
       programs: 'Programmes',
       contact: 'Contact',
-      register: 'Enregistrer vous',
-      registerNow: 'Enregistrer vous',
+      register: 'S’inscrire',
+      registerNow: 'S’inscrire maintenant',
     },
     footer: {
       tagline: "Rejoignez l'Avenir Souriant et offrez à votre enfant le cadeau de la langue et de l'aventure.",

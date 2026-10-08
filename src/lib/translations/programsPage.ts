@@ -58,7 +58,7 @@ export const PROGRAMS_PAGE_TRANSLATIONS: Record<Language, ProgramsPageTranslatio
     },
     banner: {
       text: '🎓 Les inscriptions sont ouvertes — les places sont limitées !',
-      button: 'Enregistrer vous',
+      button: "S'inscrire maintenant",
     },
     card: {
       enrollingNow: 'Inscriptions ouvertes',
@@ -66,12 +66,12 @@ export const PROGRAMS_PAGE_TRANSLATIONS: Record<Language, ProgramsPageTranslatio
       tuition: 'Tarif',
       learnMore: 'En savoir plus',
       findOutMore: 'Découvrir le cours',
-      registerNow: 'Enregistrer vous',
+      registerNow: "S'inscrire",
     },
     bottomCta: {
       title: 'Prêt à inscrire votre enfant ?',
       subtitle: "Rejoignez la communauté de l'Avenir Souriant dès aujourd'hui. Chaque cohorte accueille un nombre restreint d'élèves pour assurer un suivi personnalisé de grande qualité.",
-      registerBtn: 'Enregistrer vous',
+      registerBtn: "S'inscrire maintenant",
       contactBtn: 'Nous contacter',
     },
   },
