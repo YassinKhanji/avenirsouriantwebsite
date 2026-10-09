@@ -11,7 +11,7 @@ export interface FormDictionary {
     typeAndContact: string;
     courseAndEdu: string;
     paymentAndReview: string;
-    appointment: string;
+    appointment?: string;
     done: string;
   };
 
